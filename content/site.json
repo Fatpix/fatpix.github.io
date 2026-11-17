@@ -1,0 +1,11 @@
+{
+  "nome": "Il Tuo Nome",
+  "ruolo": "Designer",
+  "descrizione": "Portfolio di Il Tuo Nome: progetti di design.",
+  "email": "ciao@esempio.it",
+  "lingua": "it",
+  "social": [
+    { "etichetta": "LinkedIn", "url": "https://www.linkedin.com/" },
+    { "etichetta": "Instagram", "url": "https://www.instagram.com/" }
+  ]
+}

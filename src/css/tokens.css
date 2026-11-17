@@ -1,0 +1,26 @@
+/* Design tokens: tema generico nero su bianco. Sostituisci i valori con quelli di Figma. */
+:root {
+  --colore-sfondo: #ffffff;
+  --colore-testo: #000000;
+  --colore-testo-attenuato: #595959;
+  --colore-linea: #000000;
+  --colore-segnaposto: #ebebeb;
+  --colore-accento: #000000;
+
+  --font-testo: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-titoli: var(--font-testo);
+
+  --testo-s: 0.875rem;
+  --testo-m: 1.0625rem;
+  --testo-l: 1.375rem;
+  --testo-xl: clamp(2.5rem, 8vw, 6rem);
+
+  --spazio-s: 0.75rem;
+  --spazio-m: 1.5rem;
+  --spazio-l: clamp(2.5rem, 7vw, 5.5rem);
+
+  --larghezza-max: 80rem;
+  --larghezza-testo: 38rem;
+  --raggio: 0;
+  --spessore-linea: 1px;
+}
