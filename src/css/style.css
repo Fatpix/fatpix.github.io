@@ -15,14 +15,21 @@ h1 { font-size: var(--testo-xl); }
 .salta:focus { left: var(--spazio-m); top: var(--spazio-s); background: var(--colore-testo); color: var(--colore-sfondo); padding: var(--spazio-s); z-index: 10; }
 .contenitore { width: min(100% - 2 * var(--spazio-m), var(--larghezza-max)); margin-inline: auto; }
 
-/* Menu fisso: nome e voci sono elementi fissi separati, così il "negativo" (difference) si fonde con ciò che sta dietro alla pagina. */
-:root { --menu-margine: clamp(1rem, 2.6vw, 2.5rem); --menu-corpo: 0.875rem; --menu-interlinea: 1.3; --menu-nome-corpo: 1.75rem; }
-.menu-nome { position: fixed; z-index: 20; top: var(--menu-margine); left: var(--menu-margine); display: inline-grid; writing-mode: vertical-rl; font: 400 var(--menu-nome-corpo)/1 var(--font-display); text-decoration: none; white-space: nowrap; color: #fff; mix-blend-mode: difference; }
+/* Menu fisso: nome e voci sono elementi fissi separati, così il "negativo" (difference) si fonde con ciò che sta dietro alla pagina.
+   Misure ricavate dallo screenshot di Figma in proporzione alla larghezza della pagina (vw). */
+:root {
+  --menu-x: clamp(1rem, 2vw, 3rem);
+  --menu-y: clamp(1rem, 2.5vw, 3.5rem);
+  --menu-nome-corpo: clamp(1.4rem, 2.5vw, 3.5rem);
+  --corpo-mono: clamp(0.875rem, 1.2vw, 1.0625rem);
+  --menu-interlinea: 1.1;
+}
+.menu-nome { position: fixed; z-index: 20; top: var(--menu-y); left: var(--menu-x); display: inline-grid; writing-mode: vertical-rl; font: 400 var(--menu-nome-corpo)/1 var(--font-display); letter-spacing: 0.08em; text-decoration: none; white-space: nowrap; color: #fff; mix-blend-mode: difference; }
 .menu-nome > span { grid-area: 1 / 1; }
 .nome-alias { visibility: hidden; }
-.menu-voci a { position: fixed; z-index: 20; left: calc(var(--menu-margine) + var(--menu-nome-corpo) + 0.5rem); font: 400 var(--menu-corpo)/var(--menu-interlinea) var(--font-mono); text-decoration: none; color: #fff; mix-blend-mode: difference; transition: none; }
-.menu-voci a:nth-child(1) { top: var(--menu-margine); }
-.menu-voci a:nth-child(2) { top: calc(var(--menu-margine) + var(--menu-corpo) * var(--menu-interlinea)); }
+.menu-voci a { position: fixed; z-index: 20; left: calc(var(--menu-x) + var(--menu-nome-corpo) + max(0.4rem, 0.85vw)); font: 400 var(--corpo-mono)/var(--menu-interlinea) var(--font-mono); text-decoration: none; color: #fff; mix-blend-mode: difference; transition: none; }
+.menu-voci a:nth-child(1) { top: var(--menu-y); }
+.menu-voci a:nth-child(2) { top: calc(var(--menu-y) + var(--corpo-mono) * var(--menu-interlinea)); }
 /* Hover e voce attiva: rosso pieno, senza negativo */
 .menu-nome:hover, .menu-nome:focus-visible, .menu-voci a:hover, .menu-voci a:focus-visible, .menu-voci a[aria-current="page"] { color: var(--colore-hover); mix-blend-mode: normal; }
 .menu-nome:hover .nome-esteso, .menu-nome:focus-visible .nome-esteso { visibility: hidden; }
@@ -31,7 +38,7 @@ h1 { font-size: var(--testo-xl); }
 /* Footer */
 .footer { padding: var(--spazio-l) clamp(1rem, 2.6vw, 2.5rem) var(--spazio-m); }
 .footer-titolo { font: 400 clamp(4rem, 9vw, 8rem)/0.95 var(--font-display); margin: 0 0 var(--spazio-m); }
-.footer-riga { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; font: 400 clamp(0.875rem, 1.2vw, 1.0625rem)/1.4 var(--font-mono); }
+.footer-riga { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; font: 400 var(--corpo-mono)/1.4 var(--font-mono); }
 .footer-riga a { text-decoration: none; }
 .footer-contatti { display: flex; align-items: center; gap: 0.5rem; }
 .linea { display: block; height: 1px; background: var(--colore-linea-rossa); }

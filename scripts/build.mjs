@@ -48,11 +48,11 @@ function page({ depth, title, desc, current, body, root }) {
 </head>
 <body>
 <a class="salta" href="#contenuto">Vai al contenuto</a>
-<header class="header contenitore">
-  <a class="logo" href="${home}">${esc(site.nome)}</a>
-  <nav aria-label="Principale">
-    <a href="${home}"${current === 'home' ? ' aria-current="page"' : ''}>Lavori</a>
-    <a href="${p}chi-sono/"${current === 'chi-sono' ? ' aria-current="page"' : ''}>Chi sono</a>
+<header class="menu">
+  <a class="menu-nome" href="${home}" aria-label="${esc(site.nome)}, vai alla home"><span class="nome-esteso">${esc(site.nome)}</span><span class="nome-alias" aria-hidden="true">${esc(site.alias || site.nome)}</span></a>
+  <nav class="menu-voci" aria-label="Principale">
+    <a href="${home}"${current === 'home' ? ' aria-current="page"' : ''}>Works</a>
+    <a href="${p}chi-sono/"${current === 'chi-sono' ? ' aria-current="page"' : ''}>About me</a>
   </nav>
 </header>
 <main id="contenuto" class="contenitore">
