@@ -1,8 +1,12 @@
+@font-face { font-family: "Anton"; src: url("../fonts/anton-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Roboto Mono"; src: url("../fonts/roboto-mono-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; background: var(--colore-sfondo); color: var(--colore-testo); font: var(--testo-m)/1.6 var(--font-testo); -webkit-font-smoothing: antialiased; }
 img { display: block; max-width: 100%; height: auto; }
-a { color: inherit; text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
+a { color: inherit; text-underline-offset: 0.2em; text-decoration-thickness: 1px; transition: color .15s; }
+a:hover { color: var(--colore-hover); }
 :focus-visible { outline: 3px solid var(--colore-accento); outline-offset: 3px; }
 h1, h2 { font-family: var(--font-titoli); font-weight: 700; letter-spacing: -0.02em; line-height: 1.02; margin: 0; }
 h1 { font-size: var(--testo-xl); }
@@ -15,12 +19,19 @@ h1 { font-size: var(--testo-xl); }
 .header { display: flex; justify-content: space-between; align-items: baseline; gap: var(--spazio-m); padding-block: var(--spazio-m); border-bottom: var(--spessore-linea) solid var(--colore-linea); }
 .header nav { display: flex; gap: var(--spazio-m); }
 .header a { text-decoration: none; }
-.header a:hover, .header a[aria-current="page"] { text-decoration: underline; }
+.header a[aria-current="page"] { text-decoration: underline; }
 .logo { font-weight: 700; letter-spacing: -0.01em; }
 
 main { padding-block: var(--spazio-l); }
-.footer { border-top: var(--spessore-linea) solid var(--colore-linea); padding-block: var(--spazio-m) var(--spazio-l); display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--spazio-m); font-size: var(--testo-s); }
-.footer ul { display: flex; gap: var(--spazio-m); list-style: none; margin: 0; padding: 0; }
+.footer { padding: var(--spazio-l) clamp(1rem, 2.6vw, 2.5rem) var(--spazio-m); }
+.footer-titolo { font: 400 clamp(4rem, 9vw, 8rem)/0.95 var(--font-display); margin: 0 0 var(--spazio-m); }
+.footer-riga { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; font: 400 clamp(0.875rem, 1.2vw, 1.0625rem)/1.4 var(--font-mono); }
+.footer-riga a { text-decoration: none; }
+.footer-contatti { display: flex; align-items: center; gap: 0.5rem; }
+.linea { display: block; height: 1px; background: var(--colore-linea-rossa); }
+.linea-lunga { flex: 1 1 2rem; }
+.linea-corta { width: 2.5rem; }
+@media (max-width: 40rem) { .linea-corta { width: 1rem; } }
 
 /* Landing */
 .intro { margin-bottom: var(--spazio-l); }
@@ -29,7 +40,8 @@ main { padding-block: var(--spazio-l); }
 .card a { text-decoration: none; display: block; }
 .card img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--raggio); background: var(--colore-segnaposto); }
 .card h2 { font-size: var(--testo-l); letter-spacing: -0.01em; margin-top: var(--spazio-s); }
-.card a:hover h2 { text-decoration: underline; text-decoration-thickness: 2px; }
+.card h2 { transition: color .15s; }
+.card a:hover h2 { color: var(--colore-hover); }
 .card p { margin: 0.25rem 0 0; color: var(--colore-testo-attenuato); font-size: var(--testo-s); }
 
 /* Dettaglio */
@@ -41,8 +53,8 @@ main { padding-block: var(--spazio-l); }
 .testo p { margin: 0 0 var(--spazio-m); }
 .galleria { display: grid; gap: var(--spazio-m); margin-block: var(--spazio-l); }
 .galleria img { width: 100%; border-radius: var(--raggio); background: var(--colore-segnaposto); }
-.pulsante { display: inline-block; border: var(--spessore-linea) solid var(--colore-testo); padding: 0.6rem 1.1rem; text-decoration: none; margin: 0 var(--spazio-s) var(--spazio-s) 0; transition: background-color .15s, color .15s; }
-.pulsante:hover { background: var(--colore-testo); color: var(--colore-sfondo); }
+.pulsante { display: inline-block; border: var(--spessore-linea) solid var(--colore-testo); padding: 0.6rem 1.1rem; text-decoration: none; margin: 0 var(--spazio-s) var(--spazio-s) 0; transition: color .15s; }
+.pulsante:hover { color: var(--colore-hover); }
 .sequenza { display: flex; justify-content: space-between; gap: var(--spazio-m); border-top: var(--spessore-linea) solid var(--colore-linea); margin-top: var(--spazio-l); padding-top: var(--spazio-m); }
 
 /* Chi sono */

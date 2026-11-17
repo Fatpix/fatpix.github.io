@@ -1,14 +1,18 @@
 /* Design tokens: tema generico nero su bianco. Sostituisci i valori con quelli di Figma. */
 :root {
-  --colore-sfondo: #ffffff;
+  --colore-sfondo: #f5f5f5;
   --colore-testo: #000000;
   --colore-testo-attenuato: #595959;
   --colore-linea: #000000;
   --colore-segnaposto: #ebebeb;
   --colore-accento: #000000;
+  --colore-hover: #ef1111;
+  --colore-linea-rossa: #b94a3f; /* stimato dallo screenshot: sostituire con il HEX di Figma */
 
   --font-testo: "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-titoli: var(--font-testo);
+  --font-display: "Anton", Impact, "Arial Narrow Bold", sans-serif;
+  --font-mono: "Roboto Mono", ui-monospace, Menlo, Consolas, monospace;
 
   --testo-s: 0.875rem;
   --testo-m: 1.0625rem;

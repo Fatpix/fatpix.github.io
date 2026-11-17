@@ -29,7 +29,10 @@ function page({ depth, title, desc, current, body, root }) {
   const p = root ? '/' : '../'.repeat(depth);
   const home = p || './';
   const full = title ? `${title} | ${site.nome}` : `${site.nome} | ${site.ruolo}`;
-  const social = (site.social || []).map(s => `<li><a href="${esc(s.url)}" rel="noopener">${esc(s.etichetta)}</a></li>`).join('');
+  const contatti = [
+    ...(site.social || []).map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.etichetta)}</a>`),
+    `<a href="mailto:${esc(site.email)}">${esc(site.etichetta_email || 'Contattami')}</a>`
+  ].join('<span class="linea linea-corta" aria-hidden="true"></span>');
   return `<!doctype html>
 <html lang="${site.lingua || 'it'}">
 <head>
@@ -55,9 +58,13 @@ function page({ depth, title, desc, current, body, root }) {
 <main id="contenuto" class="contenitore">
 ${body}
 </main>
-<footer class="footer contenitore">
-  <a href="mailto:${esc(site.email)}">${esc(site.email)}</a>
-  <ul>${social}</ul>
+<footer class="footer">
+  <p class="footer-titolo">${esc(site.footer_titolo || '')}</p>
+  <div class="footer-riga">
+    <span>${esc(site.nome)}</span>
+    <span class="linea linea-lunga" aria-hidden="true"></span>
+    <nav class="footer-contatti" aria-label="Contatti">${contatti}</nav>
+  </div>
 </footer>
 </body>
 </html>
@@ -69,6 +76,7 @@ rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
 cpSync('src/css', `${OUT}/css`, { recursive: true });
 cpSync('src/static', OUT, { recursive: true });
+cpSync('src/fonts', `${OUT}/fonts`, { recursive: true });
 
 // Lavori
 const lavori = readdirSync(`${C}/lavori`, { withFileTypes: true })

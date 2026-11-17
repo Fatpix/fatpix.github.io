@@ -1,11 +1,19 @@
 {
-  "nome": "Il Tuo Nome",
+  "nome": "Filippo Arpe",
   "ruolo": "Designer",
   "descrizione": "Portfolio di Il Tuo Nome: progetti di design.",
-  "email": "ciao@esempio.it",
+  "email": "filippoarpe@gmail.com",
   "lingua": "it",
   "social": [
-    { "etichetta": "LinkedIn", "url": "https://www.linkedin.com/" },
-    { "etichetta": "Instagram", "url": "https://www.instagram.com/" }
-  ]
+    {
+      "etichetta": "Instagram",
+      "url": "https://www.instagram.com/fatpix.zip/"
+    },
+    {
+      "etichetta": "Linkedin",
+      "url": "https://www.linkedin.com/in/filippo-arpe-a4b229312/"
+    }
+  ],
+  "footer_titolo": "THX",
+  "etichetta_email": "Let’s Talk"
 }
