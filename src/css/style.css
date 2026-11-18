@@ -20,16 +20,16 @@ h1 { font-size: var(--testo-xl); }
 :root {
   --menu-x: clamp(1rem, 2vw, 3rem);
   --menu-y: clamp(1rem, 2.5vw, 3.5rem);
-  --menu-nome-corpo: clamp(1.4rem, 2.5vw, 3.5rem);
-  --corpo-mono: clamp(0.875rem, 1.2vw, 1.0625rem);
+  --menu-nome-corpo: clamp(1.6rem, 2.95vw, 4rem);
+  --corpo-mono: clamp(0.75rem, 1.2vw, 1.0625rem);
   --menu-interlinea: 1.1;
 }
-.menu-nome { position: fixed; z-index: 20; top: var(--menu-y); left: var(--menu-x); display: inline-grid; writing-mode: vertical-rl; font: 400 var(--menu-nome-corpo)/1 var(--font-display); letter-spacing: 0.08em; text-decoration: none; white-space: nowrap; color: #fff; mix-blend-mode: difference; }
+.menu-nome { position: fixed; z-index: 20; top: var(--menu-y); left: var(--menu-x); display: inline-grid; writing-mode: vertical-rl; font: 400 var(--menu-nome-corpo)/1 var(--font-display); letter-spacing: 0.04em; text-decoration: none; white-space: nowrap; color: #fff; mix-blend-mode: difference; }
 .menu-nome > span { grid-area: 1 / 1; }
 .nome-alias { visibility: hidden; }
 .menu-voci a { position: fixed; z-index: 20; left: calc(var(--menu-x) + var(--menu-nome-corpo) + max(0.4rem, 0.85vw)); font: 400 var(--corpo-mono)/var(--menu-interlinea) var(--font-mono); text-decoration: none; color: #fff; mix-blend-mode: difference; transition: none; }
-.menu-voci a:nth-child(1) { top: var(--menu-y); }
-.menu-voci a:nth-child(2) { top: calc(var(--menu-y) + var(--corpo-mono) * var(--menu-interlinea)); }
+.menu-voci a:nth-child(1) { top: calc(var(--menu-y) - 0.2vw); }
+.menu-voci a:nth-child(2) { top: calc(var(--menu-y) - 0.2vw + var(--corpo-mono) * var(--menu-interlinea)); }
 /* Hover e voce attiva: rosso pieno, senza negativo */
 .menu-nome:hover, .menu-nome:focus-visible, .menu-voci a:hover, .menu-voci a:focus-visible, .menu-voci a[aria-current="page"] { color: var(--colore-hover); mix-blend-mode: normal; }
 .menu-nome:hover .nome-esteso, .menu-nome:focus-visible .nome-esteso { visibility: hidden; }
