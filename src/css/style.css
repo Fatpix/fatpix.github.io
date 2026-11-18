@@ -98,6 +98,7 @@ main {
     justify-content: space-between;
     padding-inline: var(--spazio-m);
     height: var(--menu-h-mobile);
+    background: var(--colore-sfondo); /* evita che il contenuto trasparisca sotto */
   }
 
   /* Nome: orizzontale, mostra alias breve */
@@ -105,6 +106,8 @@ main {
     position: static;
     writing-mode: horizontal-tb;
     font-size: 1.5rem;
+    color: var(--colore-testo);
+    mix-blend-mode: normal;
   }
   .nome-esteso { display: none; }
   .nome-alias  { visibility: visible; }
@@ -115,6 +118,9 @@ main {
     position: static;
     top: auto; left: auto;
     font-size: 0.875rem;
+    padding-block: 0.75rem; /* touch target minimo 44px */
+    color: var(--colore-testo);
+    mix-blend-mode: normal;
   }
 
   /* Contenuto: margini simmetrici, clearance dalla top bar */
