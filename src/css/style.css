@@ -46,7 +46,13 @@ h1 { font-size: var(--testo-xl); }
 .linea-corta { width: 2.5rem; }
 @media (max-width: 40rem) { .linea-corta { width: 1rem; } }
 
-main { padding-block: 11rem var(--spazio-l); }
+main {
+  padding-block: 11rem var(--spazio-l);
+  margin-left: calc(var(--menu-x) + var(--menu-nome-corpo) + max(0.4rem, 0.85vw));
+  margin-right: calc(var(--menu-x) + var(--menu-nome-corpo) + max(0.4rem, 0.85vw));
+  width: auto;
+  max-width: var(--larghezza-max);
+}
 
 /* Landing */
 .intro { margin-bottom: var(--spazio-l); }
