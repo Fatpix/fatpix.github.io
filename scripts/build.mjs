@@ -137,7 +137,7 @@ const cursorScript = `<script>
 })();
 </script>`;
 let homeHtml = readFileSync(`${OUT}/index.html`, 'utf8');
-homeHtml = homeHtml.replace('<body${current ? ` class="pagina-${current}"` : ''}>', '<body${current ? ` class="pagina-${current}"` : ''}>' + antiFlicker + loaderDiv + cursorBadge).replace('</body>', '<script src="loader.js"></script>' + cursorScript + '</body>');
+homeHtml = homeHtml.replace(/<body[^>]*>/, '$&' + antiFlicker + loaderDiv + cursorBadge).replace('</body>', '<script src="loader.js"></script>' + cursorScript + '</body>');
 writeFileSync(`${OUT}/index.html`, homeHtml);
 
 // Dettaglio
