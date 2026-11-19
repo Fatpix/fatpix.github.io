@@ -29,6 +29,8 @@ def paras(b):
 
 def copy_assets(from_dir, to_dir):
     os.makedirs(to_dir, exist_ok=True)
+    if not os.path.exists(from_dir):
+        return
     for f in os.listdir(from_dir):
         if not f.endswith('.md'):
             src = os.path.join(from_dir, f)
@@ -37,6 +39,165 @@ def copy_assets(from_dir, to_dir):
                 shutil.copytree(src, dst, dirs_exist_ok=True)
             else:
                 shutil.copy2(src, dst)
+
+def generate_project_placeholders(out_dir, num, title, role):
+    os.makedirs(out_dir, exist_ok=True)
+    files = {
+        "cover.svg": f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="100%">
+  <rect width="1200" height="900" fill="#ebebeb"/>
+  <rect x="24" y="24" width="1152" height="852" fill="none" stroke="#d5d5d5" stroke-width="2"/>
+  <g transform="translate(600, 430)" text-anchor="middle">
+    <circle cx="0" cy="-60" r="48" fill="none" stroke="#b0b0b0" stroke-width="3"/>
+    <text x="0" y="-48" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="32" font-weight="600" fill="#888888">{num:02d}</text>
+    <text x="0" y="30" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="44" font-weight="700" fill="#333333" letter-spacing="-0.5">{title}</text>
+    <text x="0" y="75" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#777777" letter-spacing="1">{role.upper()}</text>
+  </g>
+</svg>""",
+        "hero.svg": f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%">
+  <rect width="1600" height="900" fill="#ebebeb"/>
+  <rect x="32" y="32" width="1536" height="836" fill="none" stroke="#d5d5d5" stroke-width="2"/>
+  <g transform="translate(800, 420)" text-anchor="middle">
+    <rect x="-140" y="-120" width="280" height="140" rx="8" fill="none" stroke="#999999" stroke-width="2.5" stroke-dasharray="6,6"/>
+    <text x="0" y="-42" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="48" font-weight="700" fill="#222222" letter-spacing="-1">{title.upper()}</text>
+    <text x="0" y="70" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="22" font-weight="500" fill="#666666" letter-spacing="2">HERO IDENTITY &amp; SYSTEM</text>
+    <line x1="-80" y1="110" x2="80" y2="110" stroke="#d5d5d5" stroke-width="2"/>
+  </g>
+</svg>""",
+        "concept.svg": f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="100%">
+  <rect width="1200" height="900" fill="#ebebeb"/>
+  <rect x="24" y="24" width="1152" height="852" fill="none" stroke="#d5d5d5" stroke-width="2"/>
+  <g transform="translate(600, 400)" text-anchor="middle">
+    <circle cx="-120" cy="0" r="90" fill="none" stroke="#cccccc" stroke-width="1.5" stroke-dasharray="4,4"/>
+    <circle cx="120" cy="0" r="90" fill="none" stroke="#cccccc" stroke-width="1.5" stroke-dasharray="4,4"/>
+    <rect x="-180" y="-90" width="360" height="180" fill="none" stroke="#b0b0b0" stroke-width="2"/>
+    <line x1="-240" y1="0" x2="240" y2="0" stroke="#cccccc" stroke-width="1"/>
+    <line x1="0" y1="-140" x2="0" y2="140" stroke="#cccccc" stroke-width="1"/>
+    <text x="0" y="8" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="32" font-weight="700" fill="#333333">{title}</text>
+    <text x="0" y="160" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="20" font-weight="500" fill="#666666" letter-spacing="1.5">CONCEPT &amp; GEOMETRIC GRID</text>
+    <text x="0" y="195" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#888888">Modular Construction System</text>
+  </g>
+</svg>""",
+        "web-01.svg": f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="100%">
+  <rect width="1600" height="1000" fill="#ebebeb"/>
+  <rect x="32" y="32" width="1536" height="936" rx="12" fill="#f0f0f0" stroke="#d5d5d5" stroke-width="2"/>
+  <rect x="32" y="32" width="1536" height="56" rx="12" fill="#e5e5e5"/>
+  <rect x="32" y="76" width="1536" height="12" fill="#e5e5e5"/>
+  <circle cx="64" cy="60" r="6" fill="#cccccc"/>
+  <circle cx="84" cy="60" r="6" fill="#cccccc"/>
+  <circle cx="104" cy="60" r="6" fill="#cccccc"/>
+  <rect x="140" y="48" width="400" height="24" rx="4" fill="#ffffff" stroke="#d5d5d5" stroke-width="1"/>
+  <text x="155" y="65" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" fill="#888888">https://progetto-{num:02d}.design</text>
+  <g transform="translate(800, 520)" text-anchor="middle">
+    <rect x="-680" y="-380" width="1360" height="740" fill="#ffffff" rx="6" stroke="#e0e0e0" stroke-width="1.5"/>
+    <text x="0" y="-30" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="44" font-weight="700" fill="#222222" letter-spacing="-0.5">WEB EXPERIENCE 01</text>
+    <text x="0" y="20" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#666666" letter-spacing="1">DESKTOP HOMEPAGE INTERFACE</text>
+    <rect x="-120" y="60" width="240" height="40" rx="4" fill="#ebebeb" stroke="#d0d0d0" stroke-width="1"/>
+    <text x="0" y="85" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" font-weight="500" fill="#666666">DESKTOP INTERFACE</text>
+  </g>
+</svg>""",
+        "web-02.svg": f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="100%">
+  <rect width="1600" height="1000" fill="#ebebeb"/>
+  <rect x="32" y="32" width="1536" height="936" rx="12" fill="#f0f0f0" stroke="#d5d5d5" stroke-width="2"/>
+  <rect x="32" y="32" width="1536" height="56" rx="12" fill="#e5e5e5"/>
+  <rect x="32" y="76" width="1536" height="12" fill="#e5e5e5"/>
+  <circle cx="64" cy="60" r="6" fill="#cccccc"/>
+  <circle cx="84" cy="60" r="6" fill="#cccccc"/>
+  <circle cx="104" cy="60" r="6" fill="#cccccc"/>
+  <rect x="140" y="48" width="400" height="24" rx="4" fill="#ffffff" stroke="#d5d5d5" stroke-width="1"/>
+  <text x="155" y="65" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="12" fill="#888888">https://progetto-{num:02d}.design/catalog</text>
+  <g transform="translate(800, 520)" text-anchor="middle">
+    <rect x="-680" y="-380" width="1360" height="740" fill="#ffffff" rx="6" stroke="#e0e0e0" stroke-width="1.5"/>
+    <text x="0" y="-30" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="44" font-weight="700" fill="#222222" letter-spacing="-0.5">WEB EXPERIENCE 02</text>
+    <text x="0" y="20" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="20" font-weight="400" fill="#666666" letter-spacing="1">INTERACTIVE CATALOG &amp; SYSTEM</text>
+    <rect x="-120" y="60" width="240" height="40" rx="4" fill="#ebebeb" stroke="#d0d0d0" stroke-width="1"/>
+    <text x="0" y="85" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="14" font-weight="500" fill="#666666">DESKTOP INTERFACE</text>
+  </g>
+</svg>""",
+        "banner.svg": f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 750" width="100%">
+  <rect width="1800" height="750" fill="#ebebeb"/>
+  <rect x="28" y="28" width="1744" height="694" fill="none" stroke="#d5d5d5" stroke-width="2"/>
+  <g transform="translate(900, 360)" text-anchor="middle">
+    <rect x="-800" y="-280" width="1600" height="560" fill="#e2e2e2" stroke="#cccccc" stroke-width="1.5"/>
+    <text x="0" y="-20" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="52" font-weight="700" fill="#222222" letter-spacing="-0.5">OUTDOOR CAMPAIGN &amp; BANNER</text>
+    <text x="0" y="35" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="22" font-weight="400" fill="#666666" letter-spacing="1.5">ENVIRONMENTAL SIGNAGE — {title.upper()}</text>
+    <line x1="-120" y1="80" x2="120" y2="80" stroke="#999999" stroke-width="2"/>
+  </g>
+</svg>""",
+        "mobile-01.svg": f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1600" width="100%">
+  <rect width="900" height="1600" fill="#ebebeb"/>
+  <rect x="40" y="40" width="820" height="1520" rx="48" fill="#f8f8f8" stroke="#d5d5d5" stroke-width="3"/>
+  <rect x="360" y="68" width="180" height="32" rx="16" fill="#e0e0e0"/>
+  <g transform="translate(450, 780)" text-anchor="middle">
+    <rect x="-350" y="-620" width="700" height="1240" rx="24" fill="#ffffff" stroke="#e0e0e0" stroke-width="1.5"/>
+    <circle cx="0" cy="-280" r="50" fill="none" stroke="#cccccc" stroke-width="2"/>
+    <text x="0" y="-268" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="32" font-weight="700" fill="#666666">01</text>
+    <text x="0" y="-120" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="40" font-weight="700" fill="#222222">MOBILE VIEW 01</text>
+    <text x="0" y="-70" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="18" font-weight="400" fill="#666666" letter-spacing="1">FEED &amp; COMMUNITY SCREEN</text>
+    <rect x="-280" y="20" width="560" height="160" rx="12" fill="#f5f5f5" stroke="#e8e8e8" stroke-width="1"/>
+    <rect x="-280" y="210" width="560" height="160" rx="12" fill="#f5f5f5" stroke="#e8e8e8" stroke-width="1"/>
+    <rect x="-280" y="400" width="560" height="160" rx="12" fill="#f5f5f5" stroke="#e8e8e8" stroke-width="1"/>
+  </g>
+</svg>""",
+        "mobile-02.svg": f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1600" width="100%">
+  <rect width="900" height="1600" fill="#ebebeb"/>
+  <rect x="40" y="40" width="820" height="1520" rx="48" fill="#f8f8f8" stroke="#d5d5d5" stroke-width="3"/>
+  <rect x="360" y="68" width="180" height="32" rx="16" fill="#e0e0e0"/>
+  <g transform="translate(450, 780)" text-anchor="middle">
+    <rect x="-350" y="-620" width="700" height="1240" rx="24" fill="#ffffff" stroke="#e0e0e0" stroke-width="1.5"/>
+    <circle cx="0" cy="-280" r="50" fill="none" stroke="#cccccc" stroke-width="2"/>
+    <text x="0" y="-268" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="32" font-weight="700" fill="#666666">02</text>
+    <text x="0" y="-120" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="40" font-weight="700" fill="#222222">MOBILE VIEW 02</text>
+    <text x="0" y="-70" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="18" font-weight="400" fill="#666666" letter-spacing="1">DETAILED VIEW &amp; INTERACTION</text>
+    <rect x="-280" y="20" width="560" height="160" rx="12" fill="#f5f5f5" stroke="#e8e8e8" stroke-width="1"/>
+    <rect x="-280" y="210" width="560" height="160" rx="12" fill="#f5f5f5" stroke="#e8e8e8" stroke-width="1"/>
+    <rect x="-280" y="400" width="560" height="160" rx="12" fill="#f5f5f5" stroke="#e8e8e8" stroke-width="1"/>
+  </g>
+</svg>""",
+        "merch-01.svg": f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1250" width="100%">
+  <rect width="1000" height="1250" fill="#ebebeb"/>
+  <rect x="24" y="24" width="952" height="1202" fill="none" stroke="#d5d5d5" stroke-width="2"/>
+  <g transform="translate(500, 600)" text-anchor="middle">
+    <rect x="-360" y="-460" width="720" height="920" rx="16" fill="#f4f4f4" stroke="#dcdcdc" stroke-width="2"/>
+    <rect x="-180" y="-280" width="360" height="360" rx="8" fill="none" stroke="#c0c0c0" stroke-width="2" stroke-dasharray="6,6"/>
+    <text x="0" y="-85" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="44" font-weight="700" fill="#222222">TOTE BAG MOCKUP</text>
+    <text x="0" y="-35" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="18" font-weight="500" fill="#777777" letter-spacing="1">MERCHANDISE &amp; COLLATERAL</text>
+    <text x="0" y="200" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#999999">Physical Brand Touchpoint 01</text>
+  </g>
+</svg>""",
+        "merch-02.svg": f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1250" width="100%">
+  <rect width="1000" height="1250" fill="#ebebeb"/>
+  <rect x="24" y="24" width="952" height="1202" fill="none" stroke="#d5d5d5" stroke-width="2"/>
+  <g transform="translate(500, 600)" text-anchor="middle">
+    <rect x="-360" y="-460" width="720" height="920" rx="16" fill="#f4f4f4" stroke="#dcdcdc" stroke-width="2"/>
+    <rect x="-180" y="-280" width="360" height="360" rx="8" fill="none" stroke="#c0c0c0" stroke-width="2" stroke-dasharray="6,6"/>
+    <text x="0" y="-85" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="44" font-weight="700" fill="#222222">PRODUCT MOCKUP</text>
+    <text x="0" y="-35" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="18" font-weight="500" fill="#777777" letter-spacing="1">MERCHANDISE &amp; PACKAGING</text>
+    <text x="0" y="200" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#999999">Physical Brand Touchpoint 02</text>
+  </g>
+</svg>"""
+    }
+    for fname, svg_content in files.items():
+        dst = os.path.join(out_dir, fname)
+        if not os.path.exists(dst):
+            with open(dst, "w", encoding="utf-8") as f:
+                f.write(svg_content)
+
+def generate_about_placeholder(out_dir):
+    os.makedirs(out_dir, exist_ok=True)
+    dst = os.path.join(out_dir, "foto.svg")
+    if not os.path.exists(dst):
+        with open(dst, "w", encoding="utf-8") as f:
+            f.write("""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="100%">
+  <rect width="1200" height="900" fill="#ebebeb"/>
+  <rect x="24" y="24" width="1152" height="852" fill="none" stroke="#d5d5d5" stroke-width="2"/>
+  <g transform="translate(600, 450)" text-anchor="middle">
+    <circle cx="0" cy="-40" r="90" fill="none" stroke="#b0b0b0" stroke-width="2"/>
+    <circle cx="0" cy="-60" r="35" fill="none" stroke="#999999" stroke-width="2"/>
+    <path d="M -55 20 A 55 45 0 0 1 55 20 Z" fill="none" stroke="#999999" stroke-width="2"/>
+    <text x="0" y="90" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="28" font-weight="600" fill="#555555" letter-spacing="1">ABOUT ME</text>
+    <text x="0" y="125" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="16" font-weight="400" fill="#888888">Visual Designer &amp; Creative</text>
+  </g>
+</svg>""")
 
 def page(depth=0, title='', desc='', current='', body='', root=False, back=False):
     p = '/' if root else '../' * depth
@@ -149,8 +310,10 @@ def sort_key(item):
         return 999
 lavori.sort(key=sort_key)
 
-for l in lavori:
-    copy_assets(f"{C}/lavori/{l['slug']}", f"{OUT}/lavori/{l['slug']}")
+for i, l in enumerate(lavori):
+    out_proj = f"{OUT}/lavori/{l['slug']}"
+    copy_assets(f"{C}/lavori/{l['slug']}", out_proj)
+    generate_project_placeholders(out_proj, i + 1, l['meta'].get('titolo', f'Progetto {i+1}'), l['meta'].get('ruolo', 'Design'))
 
 # Landing
 cards_html = '\n'.join([
@@ -278,6 +441,7 @@ for i, l in enumerate(lavori):
 # Chi sono
 about = parse(f'{C}/chi-sono/chi-sono.md')
 copy_assets(f'{C}/chi-sono', f'{OUT}/chi-sono')
+generate_about_placeholder(f'{OUT}/chi-sono')
 foto_src = esc(about['meta'].get('foto', 'foto.svg'))
 location = esc(about['meta'].get('location', 'Genova/Italy'))
 

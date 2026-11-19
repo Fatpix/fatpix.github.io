@@ -1,9 +1,9 @@
 ---
-titolo: Outforgood
+titolo: Progetto 1
 anno: 2025
-ruolo: Brand Identity, Art Direction, Web Design
-team: Filippo Arpe, Giacomo Nappi, Francesca Cattaneo, Francesca Scalise, Giulia Seritti
-cliente: Outforgood
+ruolo: Brand Identity, Web Design
+team: Designer 01, Designer 02
+cliente: Cliente 01
 ordine: 1
 bozza: false
 cover: cover.svg
@@ -14,6 +14,6 @@ banner: banner.svg
 schermi_mobile: mobile-01.svg, mobile-02.svg
 merch: merch-01.svg, merch-02.svg
 ---
-The identity created for Outforgood is dedicated to raising awareness about human impact on natural environments. Through dynamic visuals and expressive typography, the project blends an urban aesthetic with organic elements to communicate a powerful message of sustainability.
+Descrizione del progetto: contesto, concept e soluzioni visive adottate per Progetto 1. Il sistema visivo è stato sviluppato per garantire coerenza, impatto comunicativo e riconoscibilità attraverso tutti i touchpoint digitali e fisici.
 
-Developed as a multifaceted system, the branding extends across digital platforms, environmental signage, and physical merchandise, ensuring a consistent and engaging narrative across all touchpoints.
+Dettagli aggiuntivi sul processo creativo e sullo sviluppo dei componenti, dall'identità di base fino alle applicazioni web responsive, ai manifesti ambientali e al merchandising dedicato.

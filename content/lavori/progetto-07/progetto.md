@@ -1,12 +1,19 @@
 ---
-titolo: Progetto 07
+titolo: Progetto 7
 anno: 2024
 ruolo: Type Design, Publication
+team: Designer 01, Designer 02
+cliente: Cliente 07
 ordine: 7
 bozza: false
 cover: cover.svg
-immagini: img-01.svg, img-02.svg
+hero: hero.svg
+concept: concept.svg
+schermi_web: web-01.svg, web-02.svg
+banner: banner.svg
+schermi_mobile: mobile-01.svg, mobile-02.svg
+merch: merch-01.svg, merch-02.svg
 ---
-Descrizione del progetto: contesto, concept e soluzioni adottate per Progetto 07.
+Descrizione del progetto: contesto, concept e soluzioni visive adottate per Progetto 7. Il sistema visivo è stato sviluppato per garantire coerenza, impatto comunicativo e riconoscibilità attraverso tutti i touchpoint digitali e fisici.
 
-Dettagli aggiuntivi sul processo creativo e sui risultati del lavoro.
+Dettagli aggiuntivi sul processo creativo e sullo sviluppo dei componenti, dall'identità di base fino alle applicazioni web responsive, ai manifesti ambientali e al merchandising dedicato.
