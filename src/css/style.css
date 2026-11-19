@@ -188,7 +188,6 @@ html.skip-loader #loader { display: none !important; }
 /* ── Mobile: menu orizzontale fisso in alto con blending diretto sul body ──────────────── */
 @media (max-width: 44rem) {
   :root {
-    --menu-y-mobile: 1.25rem;
     --menu-h-mobile: 3.25rem;
   }
 
@@ -197,17 +196,21 @@ html.skip-loader #loader { display: none !important; }
     display: contents;
   }
 
-  /* Nome: orizzontale fisso a sinistra, in negativo, rosso solido al tocco */
+  /* Nome: orizzontale fisso a sinistra, centrato verticalmente a 3.25rem */
   .menu-nome {
     position: fixed;
     z-index: 20;
-    top: var(--menu-y-mobile);
+    top: 0;
     left: var(--spazio-m);
+    height: var(--menu-h-mobile);
     writing-mode: horizontal-tb;
     display: inline-grid;
+    align-items: center;
     font-size: clamp(1.2rem, 4vw, 1.45rem);
     color: #fff;
     mix-blend-mode: difference;
+    padding: 0;
+    margin: 0;
   }
   .menu-nome > span { grid-area: 1 / 1; }
   .nome-esteso { display: inline; visibility: visible; }
@@ -217,24 +220,29 @@ html.skip-loader #loader { display: none !important; }
   .menu-nome.mostra-alias .nome-esteso { visibility: hidden !important; }
   .menu-nome.mostra-alias .nome-alias { visibility: visible !important; }
 
-  /* Voci nav: elementi fissi indipendenti a destra, in negativo, rosso solido se attiva o hover */
+  /* Voci nav: elementi fissi indipendenti a destra, perfettamente allineati sulla stessa mediana */
   .menu-voci {
     display: contents;
   }
   .menu-voci a {
     position: fixed;
     z-index: 20;
-    top: calc(var(--menu-y-mobile) + 0.15rem);
+    top: 0;
+    height: var(--menu-h-mobile);
+    display: flex;
+    align-items: center;
     font-size: 0.875rem;
     color: #fff;
     mix-blend-mode: difference;
-    padding: 0.25rem;
+    padding: 0;
+    margin: 0;
+    white-space: nowrap;
   }
   .menu-voci a:last-child {
     right: var(--spazio-m);
   }
   .menu-voci a:first-child:not(:last-child) {
-    right: calc(var(--spazio-m) + 5.5rem);
+    right: calc(var(--spazio-m) + 5.2rem + var(--spazio-m));
   }
   .menu-voci a:hover,
   .menu-voci a:focus-visible,
