@@ -47,7 +47,7 @@ function page({ depth, title, desc, current, body, root, back }) {
 <link rel="stylesheet" href="${p}css/tokens.css">
 <link rel="stylesheet" href="${p}css/style.css">
 </head>
-<body>
+<body${current ? ` class="pagina-${current}"` : ''}>
 <a class="salta" href="#contenuto">Vai al contenuto</a>
 <header class="menu">
   <button type="button" class="menu-nome" aria-label="${esc(site.nome)}"><span class="nome-esteso">${esc(site.nome)}</span><span class="nome-alias" aria-hidden="true">${esc(site.alias || site.nome)}</span></button>
@@ -137,7 +137,7 @@ const cursorScript = `<script>
 })();
 </script>`;
 let homeHtml = readFileSync(`${OUT}/index.html`, 'utf8');
-homeHtml = homeHtml.replace('<body>', '<body>' + antiFlicker + loaderDiv + cursorBadge).replace('</body>', '<script src="loader.js"></script>' + cursorScript + '</body>');
+homeHtml = homeHtml.replace('<body${current ? ` class="pagina-${current}"` : ''}>', '<body${current ? ` class="pagina-${current}"` : ''}>' + antiFlicker + loaderDiv + cursorBadge).replace('</body>', '<script src="loader.js"></script>' + cursorScript + '</body>');
 writeFileSync(`${OUT}/index.html`, homeHtml);
 
 // Dettaglio
@@ -172,13 +172,32 @@ ${nav}
 // Chi sono
 const about = parse(`${C}/chi-sono/chi-sono.md`);
 copyAssets(`${C}/chi-sono`, `${OUT}/chi-sono`);
+const fotoSrc = esc(about.meta.foto || 'foto.svg');
+const location = esc(about.meta.location || 'Genova/Italy');
+
+const aboutBody = `<article class="about-layout">
+  <div class="about-colonna-sinistra">
+    <div class="about-foto">
+      <img src="${fotoSrc}" alt="Placeholder" width="1200" height="900">
+    </div>
+  </div>
+  
+  <div class="about-colonna-destra">
+    <div class="testo about-bio">
+      ${paras(about.body)}
+    </div>
+    
+    <div class="about-location">
+      <span>Located</span>
+      <span class="linea-rossa-flex" aria-hidden="true"></span>
+      <span>${location}</span>
+    </div>
+  </div>
+</article>`;
+
 write('chi-sono', page({
-  depth: 1, current: 'chi-sono', title: about.meta.titolo, desc: about.body.split('\n')[0],
-  body: `<div class="chi-sono">
-<div class="testo"><h1>${esc(about.meta.titolo)}</h1>
-${paras(about.body)}</div>
-${about.meta.foto ? `<img src="${esc(about.meta.foto)}" alt="Ritratto di ${esc(site.nome)}">` : ''}
-</div>`
+  depth: 1, current: 'chi-sono', title: 'About me', desc: about.body.split('\n')[0],
+  body: aboutBody
 }));
 
 // 404: i link e gli stili usano percorsi dalla radice, perché la pagina viene servita a indirizzi qualsiasi

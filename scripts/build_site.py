@@ -69,7 +69,7 @@ def page(depth=0, title='', desc='', current='', body='', root=False, back=False
 <link rel="stylesheet" href="__P__css/tokens.css">
 <link rel="stylesheet" href="__P__css/style.css">
 </head>
-<body>
+<body__BODY_CLASS__>
 <a class="salta" href="#contenuto">Vai al contenuto</a>
 <header class="menu">
   <button type="button" class="menu-nome" aria-label="__NOME__"><span class="nome-esteso">__NOME__</span><span class="nome-alias" aria-hidden="true">__ALIAS__</span></button>
@@ -110,6 +110,7 @@ __BODY__
         .replace('__TITLE__', esc(full))
         .replace('__DESC__', esc(desc or site.get('descrizione', '')))
         .replace('__P__', p)
+        .replace('__BODY_CLASS__', f' class="pagina-{current}"' if current else '')
         .replace('__NOME__', esc(site['nome']))
         .replace('__ALIAS__', esc(site.get('alias', site['nome'])))
         .replace('__MENU_LINKS__', menu_links)
@@ -188,7 +189,7 @@ cursor_script = """<script>
 with open(f'{OUT}/index.html', 'r', encoding='utf-8') as f:
     home_html = f.read()
 
-home_html = home_html.replace('<body>', '<body>' + anti_flicker + loader_div + cursor_badge).replace('</body>', '<script src="loader.js"></script>' + cursor_script + '</body>')
+home_html = home_html.replace('<body__BODY_CLASS__>', '<body__BODY_CLASS__>' + anti_flicker + loader_div + cursor_badge).replace('</body>', '<script src="loader.js"></script>' + cursor_script + '</body>')
 with open(f'{OUT}/index.html', 'w', encoding='utf-8') as f:
     f.write(home_html)
 
@@ -233,13 +234,29 @@ for i, l in enumerate(lavori):
 # Chi sono
 about = parse(f'{C}/chi-sono/chi-sono.md')
 copy_assets(f'{C}/chi-sono', f'{OUT}/chi-sono')
-foto_html = f'<img src="{esc(about["meta"]["foto"])}" alt="Ritratto di {esc(site["nome"])}">' if about['meta'].get('foto') else ''
-about_body = f"""<div class="chi-sono">
-<div class="testo"><h1>{esc(about['meta'].get('titolo', ''))}</h1>
-{paras(about['body'])}</div>
-{foto_html}
-</div>"""
-write('chi-sono', page(depth=1, current='chi-sono', title=about['meta'].get('titolo', ''), desc=about['body'].split('\n')[0], body=about_body))
+foto_src = esc(about['meta'].get('foto', 'foto.svg'))
+location = esc(about['meta'].get('location', 'Genova/Italy'))
+
+about_body = f"""<article class="about-layout">
+  <div class="about-colonna-sinistra">
+    <div class="about-foto">
+      <img src="{foto_src}" alt="Placeholder" width="1200" height="900">
+    </div>
+  </div>
+  
+  <div class="about-colonna-destra">
+    <div class="testo about-bio">
+      {paras(about['body'])}
+    </div>
+    
+    <div class="about-location">
+      <span>Located</span>
+      <span class="linea-rossa-flex" aria-hidden="true"></span>
+      <span>{location}</span>
+    </div>
+  </div>
+</article>"""
+write('chi-sono', page(depth=1, current='chi-sono', title='About me', desc=about['body'].split('\n')[0], body=about_body))
 
 # 404
 write_404 = page(depth=0, root=True, title='Pagina non trovata', body='<div class="testo"><h1>Pagina non trovata</h1><p>Questo indirizzo non esiste. Torna alla <a href="/">home</a> per vedere i lavori.</p></div>')

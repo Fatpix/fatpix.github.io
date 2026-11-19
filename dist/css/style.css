@@ -158,11 +158,67 @@ main {
 .pulsante:hover { color: var(--colore-hover); }
 .sequenza { display: flex; justify-content: space-between; gap: var(--spazio-m); border-top: var(--spessore-linea) solid var(--colore-linea); margin-top: var(--spazio-l); padding-top: var(--spazio-m); }
 
-/* Chi sono */
-.chi-sono { display: grid; gap: var(--spazio-l); }
-.chi-sono h1 { margin-bottom: var(--spazio-m); }
-.chi-sono .testo p:first-of-type { font-size: var(--testo-l); line-height: 1.4; }
-@media (min-width: 52rem) { .chi-sono { grid-template-columns: 1fr 1fr; align-items: start; } }
+/* ── Layout pagina About me (Chi sono) ─────────────────── */
+body.pagina-chi-sono main {
+  padding-top: clamp(14rem, 18vw, 16.5rem);
+}
+@media (max-width: 44rem) {
+  body.pagina-chi-sono main {
+    padding-top: calc(var(--menu-h-mobile) + var(--spazio-l));
+  }
+}
+
+.about-layout {
+  display: grid;
+  grid-template-columns: minmax(18rem, 26rem) 1fr;
+  column-gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: start;
+}
+.about-foto img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--raggio);
+  background: var(--colore-segnaposto);
+}
+.about-colonna-destra {
+  display: flex;
+  flex-direction: column;
+}
+.about-bio {
+  font-family: var(--font-mono);
+  font-size: clamp(0.85rem, 1.1vw, 1.05rem);
+  line-height: 1.7;
+  max-width: 52rem;
+}
+.about-bio p {
+  margin: 0 0 1.25rem;
+}
+.about-bio p:last-child {
+  margin-bottom: 0;
+}
+.about-location {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: var(--corpo-mono);
+  margin-top: var(--spazio-l);
+  max-width: 52rem;
+}
+.linea-rossa-flex {
+  flex: 1 1 2rem;
+  height: 1px;
+  background: var(--colore-linea-rossa);
+}
+
+@media (max-width: 52rem) {
+  .about-layout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spazio-l);
+  }
+}
 
 /* ── Loading screen (solo home) ─────────────────────────── */
 html.skip-loader #loader { display: none !important; }
