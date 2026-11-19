@@ -25,7 +25,7 @@ const copyAssets = (from, to) => {
 };
 
 // Layout comune. depth = profondità della pagina (0 = radice) per costruire i percorsi relativi.
-function page({ depth, title, desc, current, body, root }) {
+function page({ depth, title, desc, current, body, root, back }) {
   const p = root ? '/' : '../'.repeat(depth);
   const home = p || './';
   const full = title ? `${title} | ${site.nome}` : `${site.nome} | ${site.ruolo}`;
@@ -53,6 +53,7 @@ function page({ depth, title, desc, current, body, root }) {
   <nav class="menu-voci" aria-label="Principale">
     <a href="${home}"${current === 'home' ? ' aria-current="page"' : ''}>Works</a>
     <a href="${p}chi-sono/"${current === 'chi-sono' ? ' aria-current="page"' : ''}>About me</a>
+    ${back ? `<a href="${home}">Back</a>` : ''}
   </nav>
 </header>
 <main id="contenuto" class="contenitore">
@@ -109,7 +110,7 @@ lavori.forEach((l, i) => {
   ${next ? `<a href="../${next.slug}/">Successivo: ${esc(next.meta.titolo)}</a>` : '<span></span>'}
 </nav>`;
   write(`lavori/${l.slug}`, page({
-    depth: 2, title: m.titolo, desc: l.body.split('\n')[0],
+    depth: 2, title: m.titolo, desc: l.body.split('\n')[0], back: true,
     body: `<article>
 <header class="dettaglio-testa">
   <h1>${esc(m.titolo)}</h1>

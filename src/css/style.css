@@ -30,6 +30,7 @@ h1 { font-size: var(--testo-xl); }
 .menu-voci a { position: fixed; z-index: 20; left: calc(var(--menu-x) + var(--menu-nome-corpo) + max(0.4rem, 0.85vw)); font: 400 var(--corpo-mono)/var(--menu-interlinea) var(--font-mono); text-decoration: none; color: #fff; mix-blend-mode: difference; transition: none; }
 .menu-voci a:nth-child(1) { top: calc(var(--menu-y) - 0.2vw); }
 .menu-voci a:nth-child(2) { top: calc(var(--menu-y) - 0.2vw + var(--corpo-mono) * var(--menu-interlinea)); }
+.menu-voci a:nth-child(3) { top: calc(var(--menu-y) - 0.2vw + var(--corpo-mono) * var(--menu-interlinea) * 2); }
 /* Hover e voce attiva: rosso pieno, senza negativo */
 .menu-nome:hover, .menu-nome:focus-visible, .menu-voci a:hover, .menu-voci a:focus-visible, .menu-voci a[aria-current="page"] { color: var(--colore-hover); mix-blend-mode: normal; }
 .menu-nome:hover .nome-esteso, .menu-nome:focus-visible .nome-esteso { visibility: hidden; }
