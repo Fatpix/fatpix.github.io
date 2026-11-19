@@ -1,9 +1,25 @@
 @font-face { font-family: "Anton"; src: url("../fonts/anton-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Pixelify Sans"; src: url("../fonts/pixelify-sans-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: block; }
 
-*, *::before, *::after { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
-body { margin: 0; background: var(--colore-sfondo); color: var(--colore-testo); font: var(--testo-m)/1.6 var(--font-testo); -webkit-font-smoothing: antialiased; }
+*, *::before, *::after {
+  box-sizing: border-box;
+  -webkit-hyphens: none !important;
+  -moz-hyphens: none !important;
+  -ms-hyphens: none !important;
+  hyphens: none !important;
+}
+html { -webkit-text-size-adjust: 100%; -webkit-hyphens: none !important; hyphens: none !important; }
+body {
+  margin: 0;
+  background: var(--colore-sfondo);
+  color: var(--colore-testo);
+  font: var(--testo-m)/1.6 var(--font-testo);
+  -webkit-font-smoothing: antialiased;
+  -webkit-hyphens: none !important;
+  -moz-hyphens: none !important;
+  -ms-hyphens: none !important;
+  hyphens: none !important;
+}
 img { display: block; max-width: 100%; height: auto; }
 a { color: inherit; text-underline-offset: 0.2em; text-decoration-thickness: 1px; transition: color .15s; }
 a:hover { color: var(--colore-hover); }
