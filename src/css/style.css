@@ -85,6 +85,17 @@ main {
 .chi-sono .testo p:first-of-type { font-size: var(--testo-l); line-height: 1.4; }
 @media (min-width: 52rem) { .chi-sono { grid-template-columns: 1fr 1fr; align-items: start; } }
 
+/* ── Loading screen (solo home) ─────────────────────────── */
+#loader { position: fixed; inset: 0; z-index: 999; background: var(--colore-sfondo); display: flex; align-items: center; justify-content: center; transition: opacity 400ms ease; }
+#loader.nascosto { opacity: 0; pointer-events: none; }
+.loader-inner { width: min(22rem, calc(100vw - 3rem)); display: flex; flex-direction: column; gap: var(--spazio-s); }
+.loader-nome { font: 400 clamp(2.5rem, 8vw, 4rem)/1 var(--font-display); letter-spacing: 0.04em; margin: 0 0 var(--spazio-m); color: var(--colore-testo); }
+.loader-log { font: 400 var(--corpo-mono)/1.8 var(--font-mono); color: var(--colore-testo-attenuato); min-height: 7.5rem; }
+.loader-log .ok { color: var(--colore-hover); }
+.loader-barra { height: 1px; background: rgba(0,0,0,0.12); }
+.loader-fill { height: 1px; background: var(--colore-testo); width: 0%; transition: width 200ms ease; }
+.loader-pct { font: 400 var(--corpo-mono)/1 var(--font-mono); color: var(--colore-testo-attenuato); text-align: right; margin: 0.4rem 0 0; }
+
 /* ── Mobile: menu orizzontale fisso in alto ──────────────── */
 @media (max-width: 44rem) {
   :root { --menu-h-mobile: 3.25rem; }
