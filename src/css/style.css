@@ -89,7 +89,7 @@ main {
 /* Landing */
 .intro { margin-bottom: var(--spazio-l); }
 .intro p { color: var(--colore-testo-attenuato); font-size: var(--testo-l); margin: var(--spazio-m) 0 0; }
-.griglia { display: grid; gap: var(--spazio-l) var(--spazio-m); grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr)); list-style: none; margin: 0; padding: 0; }
+.griglia { display: grid; gap: var(--spazio-l); grid-template-columns: 1fr; list-style: none; margin: 0; padding: 0; }
 .card a { text-decoration: none; display: block; }
 .card img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--raggio); background: var(--colore-segnaposto); }
 .card h2 { font-size: var(--testo-l); letter-spacing: -0.01em; margin-top: var(--spazio-s); }
