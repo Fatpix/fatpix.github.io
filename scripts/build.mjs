@@ -52,9 +52,11 @@ function page({ depth, title, desc, current, body, root, back }) {
 <header class="menu">
   <button type="button" class="menu-nome" aria-label="${esc(site.nome)}"><span class="nome-esteso">${esc(site.nome)}</span><span class="nome-alias" aria-hidden="true">${esc(site.alias || site.nome)}</span></button>
   <nav class="menu-voci" aria-label="Principale">
-    <a href="${home}"${current === 'home' ? ' aria-current="page"' : ''}>Works</a>
-    <a href="${p}chi-sono/"${current === 'chi-sono' ? ' aria-current="page"' : ''}>About me</a>
-    ${back ? `<a href="${home}">Back</a>` : ''}
+    ${back
+      ? `<a href="${home}">Back</a>`
+      : `<a href="${home}"${current === 'home' ? ' aria-current="page"' : ''}>Works</a>
+    <a href="${p}chi-sono/"${current === 'chi-sono' ? ' aria-current="page"' : ''}>About me</a>`
+    }
   </nav>
 </header>
 <main id="contenuto" class="contenitore">
