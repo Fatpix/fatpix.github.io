@@ -12,7 +12,7 @@
   --font-testo: "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-titoli: var(--font-testo);
   --font-display: "Anton", Impact, "Arial Narrow Bold", sans-serif;
-  --font-mono: "Roboto Mono", ui-monospace, Menlo, Consolas, monospace;
+  --font-mono: "Pixelify Sans", ui-monospace, Menlo, Consolas, monospace;
 
   --testo-s: 0.875rem;
   --testo-m: 1.0625rem;
