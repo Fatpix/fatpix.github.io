@@ -115,13 +115,13 @@ main {
 .card a:hover h2 { color: var(--colore-hover); }
 .card p { margin: 0.25rem 0 0; color: var(--colore-testo-attenuato); font-size: var(--testo-s); }
 
-/* Cursore badge custom in hover sui progetti */
+/* Cursore badge custom in hover sui progetti e immagini */
 .cursor-badge {
   position: fixed;
   top: 0;
   left: 0;
   pointer-events: none;
-  z-index: 50;
+  z-index: 999999;
   background: #ffffff;
   color: #000000;
   mix-blend-mode: difference;
@@ -140,9 +140,73 @@ main {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .griglia .card a {
+  .griglia .card a,
+  .progetto-hero-media img,
+  .progetto-concept-media img,
+  .progetto-showcase img,
+  .about-foto img {
     cursor: none;
   }
+}
+
+.progetto-hero-media img,
+.progetto-concept-media img,
+.progetto-showcase img {
+  cursor: pointer;
+}
+
+/* Lightbox a schermo pieno per foto di progetto */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 99990;
+  background: rgba(0, 0, 0, 0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1rem, 3vw, 2.5rem);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease;
+}
+.lightbox.aperto {
+  opacity: 1;
+  pointer-events: auto;
+}
+.lightbox-img {
+  max-width: 90vw;
+  max-height: 88vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: var(--raggio);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  user-select: none;
+}
+.lightbox-chiudi {
+  position: fixed;
+  top: clamp(1.2rem, 2.5vw, 2.5rem);
+  left: var(--menu-x);
+  z-index: 100005;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1;
+  color: #ffffff;
+  mix-blend-mode: difference;
+  text-transform: lowercase;
+  outline: none;
+  transition: color 150ms ease;
+}
+.lightbox-chiudi:hover,
+.lightbox-chiudi:focus-visible {
+  color: var(--colore-hover) !important;
+  mix-blend-mode: normal !important;
 }
 
 /* Dettaglio */

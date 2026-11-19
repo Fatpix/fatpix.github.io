@@ -195,6 +195,7 @@ function page({ depth, title, desc, current, body, root, back }) {
     ...(site.social || []).map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.etichetta)}</a>`),
     `<a href="mailto:${esc(site.email)}">${esc(site.etichetta_email || 'Contattami')}</a>`
   ].join('<span class="linea linea-corta" aria-hidden="true"></span>');
+  const extraBody = current === 'progetto' ? `<div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-modal="true"><button type="button" class="lightbox-chiudi" aria-label="Chiudi visualizzazione a schermo pieno">x</button><img class="lightbox-img" src="" alt=""></div>` : '';
   return `<!doctype html>
 <html lang="${site.lingua || 'it'}">
 <head>
@@ -210,6 +211,8 @@ function page({ depth, title, desc, current, body, root, back }) {
 <link rel="stylesheet" href="${p}css/style.css">
 </head>
 <body${current ? ` class="pagina-${current}"` : ''}>
+<div id="cursorBadge" class="cursor-badge" aria-hidden="true"></div>
+${extraBody}
 <a class="salta" href="#contenuto">Vai al contenuto</a>
 <header class="menu">
   <button type="button" class="menu-nome" aria-label="${esc(site.nome)}"><span class="nome-esteso">${esc(site.nome)}</span><span class="nome-alias" aria-hidden="true">${esc(site.alias || site.nome)}</span></button>
@@ -235,16 +238,86 @@ ${body}
 <script>
 (function() {
   var el = document.querySelector('.menu-nome');
-  if (!el) return;
-  var timer;
-  el.addEventListener('click', function() {
-    el.classList.add('mostra-alias');
-    clearTimeout(timer);
-    timer = setTimeout(function() {
-      el.classList.remove('mostra-alias');
-      el.blur();
-    }, 1500);
-  });
+  if (el) {
+    var timer;
+    el.addEventListener('click', function() {
+      el.classList.add('mostra-alias');
+      clearTimeout(timer);
+      timer = setTimeout(function() {
+        el.classList.remove('mostra-alias');
+        el.blur();
+      }, 1500);
+    });
+  }
+
+  var badge = document.getElementById('cursorBadge');
+  if (badge && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    var over = false;
+    var setBadge = function(text) {
+      badge.textContent = text;
+      badge.classList.add('visibile');
+      over = true;
+    };
+    var hideBadge = function() {
+      badge.classList.remove('visibile');
+      over = false;
+    };
+
+    document.querySelectorAll('.griglia .card a').forEach(function(a) {
+      a.addEventListener('mouseenter', function() { setBadge('Learn More'); });
+      a.addEventListener('mouseleave', hideBadge);
+    });
+
+    document.querySelectorAll('.progetto-hero-media img, .progetto-concept-media img, .progetto-showcase img').forEach(function(img) {
+      img.addEventListener('mouseenter', function() { setBadge('Take a look'); });
+      img.addEventListener('mouseleave', hideBadge);
+    });
+
+    document.querySelectorAll('.about-foto img').forEach(function(img) {
+      img.addEventListener('mouseenter', function() { setBadge('Hi, this is me!'); });
+      img.addEventListener('mouseleave', hideBadge);
+    });
+
+    window.addEventListener('mousemove', function(e) {
+      if (over) {
+        badge.style.transform = 'translate3d(' + e.clientX + 'px,' + e.clientY + 'px,0) translate(-50%,-50%)';
+      }
+    }, { passive: true });
+  }
+
+  var lb = document.getElementById('lightbox');
+  if (lb) {
+    var lbImg = lb.querySelector('.lightbox-img');
+    var btnChiudi = lb.querySelector('.lightbox-chiudi');
+    var openLb = function(src, alt) {
+      lbImg.src = src;
+      lbImg.alt = alt || '';
+      lb.classList.add('aperto');
+      lb.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      if (badge) badge.classList.remove('visibile');
+    };
+    var closeLb = function() {
+      lb.classList.remove('aperto');
+      lb.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      lbImg.src = '';
+    };
+
+    document.querySelectorAll('.progetto-hero-media img, .progetto-concept-media img, .progetto-showcase img').forEach(function(img) {
+      img.addEventListener('click', function() {
+        openLb(img.src, img.alt);
+      });
+    });
+
+    if (btnChiudi) btnChiudi.addEventListener('click', closeLb);
+    lb.addEventListener('click', function(e) {
+      if (e.target === lb) closeLb();
+    });
+    window.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && lb.classList.contains('aperto')) closeLb();
+    });
+  }
 })();
 </script>
 </body>
@@ -261,9 +334,9 @@ cpSync('src/fonts', `${OUT}/fonts`, { recursive: true });
 
 // Lavori
 const lavori = readdirSync(`${C}/lavori`, { withFileTypes: true })
-  .filter(d => d.isDirectory() && existsSync(`${C}/lavori/${d.name}/progetto.md`))
+  .filter(d => d.isDirectory() && !d.name.toLowerCase().includes('esempio') && existsSync(`${C}/lavori/${d.name}/progetto.md`))
   .map(d => ({ slug: d.name, ...parse(`${C}/lavori/${d.name}/progetto.md`) }))
-  .filter(l => l.meta.bozza !== 'true')
+  .filter(l => l.meta.bozza !== 'true' && !l.meta.titolo?.toLowerCase().includes('esempio'))
   .sort((a, b) => (Number(a.meta.ordine) || 999) - (Number(b.meta.ordine) || 999));
 
 for (let i = 0; i < lavori.length; i++) {
@@ -284,27 +357,11 @@ writeFileSync(`${OUT}/index.html`, page({
   body: `<section class="intro"><h1>${esc(site.nome)}</h1><p>${esc(site.ruolo)}</p></section>\n<ul class="griglia">\n${cards}\n</ul>`
 }));
 
-// Inietta loader e cursore badge nella home
+// Inietta loader nella home
 const antiFlicker = `<script>try{var r=false,n=performance.getEntriesByType('navigation')[0];if(n)r=(n.type==='reload');else if(performance.navigation)r=(performance.navigation.type===1);if(document.referrer&&new URL(document.referrer).origin===window.location.origin&&sessionStorage.getItem('portfolio_loader_shown')&&!r){document.documentElement.classList.add('skip-loader');}}catch(e){}</script>`;
 const loaderDiv = `<div id="loader" aria-hidden="true"><div class="loader-inner"><div class="loader-log" id="loaderLog"></div><div class="loader-barra"><div class="loader-fill" id="loaderFill"></div></div><p class="loader-pct" id="loaderPct">0%</p></div></div>`;
-const cursorBadge = `<div id="cursorBadge" class="cursor-badge" aria-hidden="true">Learn More</div>`;
-const cursorScript = `<script>
-(function() {
-  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-  var b = document.getElementById('cursorBadge');
-  if (!b) return;
-  var over = false;
-  document.querySelectorAll('.griglia .card a').forEach(function(a) {
-    a.addEventListener('mouseenter', function() { over = true; b.classList.add('visibile'); });
-    a.addEventListener('mouseleave', function() { over = false; b.classList.remove('visibile'); });
-  });
-  window.addEventListener('mousemove', function(e) {
-    if (over) b.style.transform = 'translate3d(' + e.clientX + 'px,' + e.clientY + 'px,0) translate(-50%,-50%)';
-  }, { passive: true });
-})();
-</script>`;
 let homeHtml = readFileSync(`${OUT}/index.html`, 'utf8');
-homeHtml = homeHtml.replace(/<body[^>]*>/, '$&' + antiFlicker + loaderDiv + cursorBadge).replace('</body>', '<script src="loader.js"></script>' + cursorScript + '</body>');
+homeHtml = homeHtml.replace(/class="pagina-home">/, '$&' + antiFlicker + loaderDiv).replace('</body>', '<script src="loader.js"></script></body>');
 writeFileSync(`${OUT}/index.html`, homeHtml);
 
 // Dettaglio

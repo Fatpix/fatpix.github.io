@@ -216,6 +216,8 @@ def page(depth=0, title='', desc='', current='', body='', root=False, back=False
     else:
         menu_links = f'<a href="{home}"{cur_home}>Works</a>\n    <a href="{p}chi-sono/"{cur_about}>About me</a>'
 
+    extra_body = '<div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-modal="true"><button type="button" class="lightbox-chiudi" aria-label="Chiudi visualizzazione a schermo pieno">x</button><img class="lightbox-img" src="" alt=""></div>' if current == 'progetto' else ''
+
     template = """<!doctype html>
 <html lang="__LANG__">
 <head>
@@ -231,6 +233,8 @@ def page(depth=0, title='', desc='', current='', body='', root=False, back=False
 <link rel="stylesheet" href="__P__css/style.css">
 </head>
 <body__BODY_CLASS__>
+<div id="cursorBadge" class="cursor-badge" aria-hidden="true"></div>
+__EXTRA_BODY__
 <a class="salta" href="#contenuto">Vai al contenuto</a>
 <header class="menu">
   <button type="button" class="menu-nome" aria-label="__NOME__"><span class="nome-esteso">__NOME__</span><span class="nome-alias" aria-hidden="true">__ALIAS__</span></button>
@@ -252,16 +256,86 @@ __BODY__
 <script>
 (function() {
   var el = document.querySelector('.menu-nome');
-  if (!el) return;
-  var timer;
-  el.addEventListener('click', function() {
-    el.classList.add('mostra-alias');
-    clearTimeout(timer);
-    timer = setTimeout(function() {
-      el.classList.remove('mostra-alias');
-      el.blur();
-    }, 1500);
-  });
+  if (el) {
+    var timer;
+    el.addEventListener('click', function() {
+      el.classList.add('mostra-alias');
+      clearTimeout(timer);
+      timer = setTimeout(function() {
+        el.classList.remove('mostra-alias');
+        el.blur();
+      }, 1500);
+    });
+  }
+
+  var badge = document.getElementById('cursorBadge');
+  if (badge && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    var over = false;
+    var setBadge = function(text) {
+      badge.textContent = text;
+      badge.classList.add('visibile');
+      over = true;
+    };
+    var hideBadge = function() {
+      badge.classList.remove('visibile');
+      over = false;
+    };
+
+    document.querySelectorAll('.griglia .card a').forEach(function(a) {
+      a.addEventListener('mouseenter', function() { setBadge('Learn More'); });
+      a.addEventListener('mouseleave', hideBadge);
+    });
+
+    document.querySelectorAll('.progetto-hero-media img, .progetto-concept-media img, .progetto-showcase img').forEach(function(img) {
+      img.addEventListener('mouseenter', function() { setBadge('Take a look'); });
+      img.addEventListener('mouseleave', hideBadge);
+    });
+
+    document.querySelectorAll('.about-foto img').forEach(function(img) {
+      img.addEventListener('mouseenter', function() { setBadge('Hi, this is me!'); });
+      img.addEventListener('mouseleave', hideBadge);
+    });
+
+    window.addEventListener('mousemove', function(e) {
+      if (over) {
+        badge.style.transform = 'translate3d(' + e.clientX + 'px,' + e.clientY + 'px,0) translate(-50%,-50%)';
+      }
+    }, { passive: true });
+  }
+
+  var lb = document.getElementById('lightbox');
+  if (lb) {
+    var lbImg = lb.querySelector('.lightbox-img');
+    var btnChiudi = lb.querySelector('.lightbox-chiudi');
+    var openLb = function(src, alt) {
+      lbImg.src = src;
+      lbImg.alt = alt || '';
+      lb.classList.add('aperto');
+      lb.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      if (badge) badge.classList.remove('visibile');
+    };
+    var closeLb = function() {
+      lb.classList.remove('aperto');
+      lb.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      lbImg.src = '';
+    };
+
+    document.querySelectorAll('.progetto-hero-media img, .progetto-concept-media img, .progetto-showcase img').forEach(function(img) {
+      img.addEventListener('click', function() {
+        openLb(img.src, img.alt);
+      });
+    });
+
+    if (btnChiudi) btnChiudi.addEventListener('click', closeLb);
+    lb.addEventListener('click', function(e) {
+      if (e.target === lb) closeLb();
+    });
+    window.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && lb.classList.contains('aperto')) closeLb();
+    });
+  }
 })();
 </script>
 </body>
@@ -272,6 +346,7 @@ __BODY__
         .replace('__DESC__', esc(desc or site.get('descrizione', '')))
         .replace('__P__', p)
         .replace('__BODY_CLASS__', f' class="pagina-{current}"' if current else '')
+        .replace('__EXTRA_BODY__', extra_body)
         .replace('__NOME__', esc(site['nome']))
         .replace('__ALIAS__', esc(site.get('alias', site['nome'])))
         .replace('__MENU_LINKS__', menu_links)
@@ -298,9 +373,9 @@ lavori = []
 lavori_dir = f'{C}/lavori'
 for d in sorted(os.listdir(lavori_dir)):
     p_path = os.path.join(lavori_dir, d, 'progetto.md')
-    if os.path.isdir(os.path.join(lavori_dir, d)) and os.path.exists(p_path):
+    if os.path.isdir(os.path.join(lavori_dir, d)) and 'esempio' not in d.lower() and os.path.exists(p_path):
         parsed = parse(p_path)
-        if parsed['meta'].get('bozza') != 'true':
+        if parsed['meta'].get('bozza') != 'true' and 'esempio' not in parsed['meta'].get('titolo', '').lower():
             lavori.append({'slug': d, 'meta': parsed['meta'], 'body': parsed['body']})
 
 def sort_key(item):
@@ -332,27 +407,10 @@ with open(f'{OUT}/index.html', 'w', encoding='utf-8') as f:
 
 anti_flicker = "<script>try{var r=false,n=performance.getEntriesByType('navigation')[0];if(n)r=(n.type==='reload');else if(performance.navigation)r=(performance.navigation.type===1);if(document.referrer&&new URL(document.referrer).origin===window.location.origin&&sessionStorage.getItem('portfolio_loader_shown')&&!r){document.documentElement.classList.add('skip-loader');}}catch(e){}</script>"
 loader_div = '<div id="loader" aria-hidden="true"><div class="loader-inner"><div class="loader-log" id="loaderLog"></div><div class="loader-barra"><div class="loader-fill" id="loaderFill"></div></div><p class="loader-pct" id="loaderPct">0%</p></div></div>'
-cursor_badge = '<div id="cursorBadge" class="cursor-badge" aria-hidden="true">Learn More</div>'
-cursor_script = """<script>
-(function() {
-  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-  var b = document.getElementById('cursorBadge');
-  if (!b) return;
-  var over = false;
-  document.querySelectorAll('.griglia .card a').forEach(function(a) {
-    a.addEventListener('mouseenter', function() { over = true; b.classList.add('visibile'); });
-    a.addEventListener('mouseleave', function() { over = false; b.classList.remove('visibile'); });
-  });
-  window.addEventListener('mousemove', function(e) {
-    if (over) b.style.transform = 'translate3d(' + e.clientX + 'px,' + e.clientY + 'px,0) translate(-50%,-50%)';
-  }, { passive: true });
-})();
-</script>"""
-
 with open(f'{OUT}/index.html', 'r', encoding='utf-8') as f:
     home_html = f.read()
 
-home_html = home_html.replace('<body__BODY_CLASS__>', '<body__BODY_CLASS__>' + anti_flicker + loader_div + cursor_badge).replace('</body>', '<script src="loader.js"></script>' + cursor_script + '</body>')
+home_html = home_html.replace('class="pagina-home">', 'class="pagina-home">' + anti_flicker + loader_div).replace('</body>', '<script src="loader.js"></script></body>')
 with open(f'{OUT}/index.html', 'w', encoding='utf-8') as f:
     f.write(home_html)
 
