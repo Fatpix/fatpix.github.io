@@ -116,6 +116,7 @@ writeFileSync(`${OUT}/index.html`, page({
 }));
 
 // Inietta loader e cursore badge nella home
+const antiFlicker = `<script>try{var r=false,n=performance.getEntriesByType('navigation')[0];if(n)r=(n.type==='reload');else if(performance.navigation)r=(performance.navigation.type===1);if(document.referrer&&new URL(document.referrer).origin===window.location.origin&&sessionStorage.getItem('portfolio_loader_shown')&&!r){document.documentElement.classList.add('skip-loader');}}catch(e){}</script>`;
 const loaderDiv = `<div id="loader" aria-hidden="true"><div class="loader-inner"><div class="loader-log" id="loaderLog"></div><div class="loader-barra"><div class="loader-fill" id="loaderFill"></div></div><p class="loader-pct" id="loaderPct">0%</p></div></div>`;
 const cursorBadge = `<div id="cursorBadge" class="cursor-badge" aria-hidden="true">Learn More</div>`;
 const cursorScript = `<script>
@@ -134,7 +135,7 @@ const cursorScript = `<script>
 })();
 </script>`;
 let homeHtml = readFileSync(`${OUT}/index.html`, 'utf8');
-homeHtml = homeHtml.replace('<body>', '<body>' + loaderDiv + cursorBadge).replace('</body>', '<script src="loader.js"></script>' + cursorScript + '</body>');
+homeHtml = homeHtml.replace('<body>', '<body>' + antiFlicker + loaderDiv + cursorBadge).replace('</body>', '<script src="loader.js"></script>' + cursorScript + '</body>');
 writeFileSync(`${OUT}/index.html`, homeHtml);
 
 // Dettaglio

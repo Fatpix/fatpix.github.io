@@ -147,6 +147,7 @@ main {
 @media (min-width: 52rem) { .chi-sono { grid-template-columns: 1fr 1fr; align-items: start; } }
 
 /* ── Loading screen (solo home) ─────────────────────────── */
+html.skip-loader #loader { display: none !important; }
 #loader { position: fixed; inset: 0; z-index: 999; background: var(--colore-sfondo); display: flex; align-items: center; justify-content: center; transition: opacity 400ms ease; }
 #loader.nascosto { opacity: 0; pointer-events: none; }
 .loader-inner { width: min(22rem, calc(100vw - 3rem)); display: flex; flex-direction: column; gap: var(--spazio-s); }

@@ -1,4 +1,47 @@
 (function () {
+  var el = document.getElementById('loader');
+  if (!el) return;
+
+  // 1. Riconosci se è un ricaricamento (F5 / Cmd+R)
+  var isReload = false;
+  try {
+    var nav = performance.getEntriesByType('navigation')[0];
+    if (nav) {
+      isReload = (nav.type === 'reload');
+    } else if (performance.navigation) {
+      isReload = (performance.navigation.type === 1);
+    }
+  } catch (e) {}
+
+  // 2. Riconosci se proviene da una navigazione interna (altra pagina del sito)
+  var isInternalNav = false;
+  if (document.referrer) {
+    try {
+      var ref = new URL(document.referrer);
+      if (ref.origin === window.location.origin) {
+        isInternalNav = true;
+      }
+    } catch (e) {}
+  }
+
+  var alreadyShown = sessionStorage.getItem('portfolio_loader_shown');
+
+  // Se è navigazione interna E non è un reload E è già stato mostrato in questa sessione: salta!
+  if (isInternalNav && alreadyShown && !isReload) {
+    el.remove();
+    return;
+  }
+
+  // Segna che è stato mostrato per la sessione corrente
+  try {
+    sessionStorage.setItem('portfolio_loader_shown', '1');
+  } catch (e) {}
+
+  var log  = document.getElementById('loaderLog');
+  var fill = document.getElementById('loaderFill');
+  var pct  = document.getElementById('loaderPct');
+  if (!log || !fill || !pct) return;
+
   var steps = [
     'Creating lobby',
     'Joining lobby',
@@ -6,11 +49,6 @@
     'Loading works',
     'All systems go'
   ];
-  var log  = document.getElementById('loaderLog');
-  var fill = document.getElementById('loaderFill');
-  var pct  = document.getElementById('loaderPct');
-  var el   = document.getElementById('loader');
-  if (!log || !fill || !pct || !el) return;
 
   document.body.style.overflow = 'hidden';
 
@@ -60,6 +98,5 @@
     setTimeout(tick, 260 + Math.random() * 160);
   }
 
-  // Piccolo timeout per sincronizzare il rendering iniziale
   setTimeout(tick, 100);
 })();
