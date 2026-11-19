@@ -189,7 +189,7 @@ html.skip-loader #loader { display: none !important; }
 @media (max-width: 44rem) {
   :root { --menu-h-mobile: 3.25rem; }
 
-  /* Contenitore header diventa top bar */
+  /* Contenitore header diventa top bar trasparente */
   .menu {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -199,34 +199,40 @@ html.skip-loader #loader { display: none !important; }
     justify-content: space-between;
     padding-inline: var(--spazio-m);
     height: var(--menu-h-mobile);
-    background: var(--colore-sfondo); /* evita che il contenuto trasparisca sotto */
+    background: transparent;
+    pointer-events: none;
   }
 
-  /* Nome: orizzontale, sovrapposto in griglia (Filippo Arpe di default, Fatpix al tocco/hover) */
+  /* Nome: orizzontale, sovrapposto in griglia (in negativo, rosso solido su tocco) */
   .menu-nome {
     position: static;
     writing-mode: horizontal-tb;
     display: inline-grid;
     font-size: clamp(1.2rem, 4vw, 1.45rem);
-    color: var(--colore-testo);
-    mix-blend-mode: normal;
+    color: #fff;
+    mix-blend-mode: difference;
+    pointer-events: auto;
   }
   .menu-nome > span { grid-area: 1 / 1; }
   .nome-esteso { display: inline; visibility: visible; }
   .nome-alias  { visibility: hidden; }
 
-  .menu-nome.mostra-alias { color: var(--colore-hover); }
-  .menu-nome.mostra-alias .nome-esteso { visibility: hidden; }
-  .menu-nome.mostra-alias .nome-alias { visibility: visible; }
+  .menu-nome.mostra-alias { color: var(--colore-hover) !important; mix-blend-mode: normal !important; }
+  .menu-nome.mostra-alias .nome-esteso { visibility: hidden !important; }
+  .menu-nome.mostra-alias .nome-alias { visibility: visible !important; }
 
-  /* Voci nav: fila orizzontale */
-  .menu-voci { display: flex; align-items: center; gap: var(--spazio-m); }
+  /* Voci nav: fila orizzontale in negativo, rosso solido se attiva o hover */
+  .menu-voci { display: flex; align-items: center; gap: var(--spazio-m); pointer-events: auto; }
   .menu-voci a {
     position: static;
     top: auto; left: auto;
     font-size: 0.875rem;
     padding-block: 0.75rem; /* touch target minimo 44px */
-    color: var(--colore-testo);
+    color: #fff;
+    mix-blend-mode: difference;
+  }
+  .menu-voci a:hover, .menu-voci a:focus-visible, .menu-voci a[aria-current="page"] {
+    color: var(--colore-hover);
     mix-blend-mode: normal;
   }
 
