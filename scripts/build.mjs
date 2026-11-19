@@ -115,10 +115,26 @@ writeFileSync(`${OUT}/index.html`, page({
   body: `<section class="intro"><h1>${esc(site.nome)}</h1><p>${esc(site.ruolo)}</p></section>\n<ul class="griglia">\n${cards}\n</ul>`
 }));
 
-// Inietta loader nella home
+// Inietta loader e cursore badge nella home
 const loaderDiv = `<div id="loader" aria-hidden="true"><div class="loader-inner"><div class="loader-log" id="loaderLog"></div><div class="loader-barra"><div class="loader-fill" id="loaderFill"></div></div><p class="loader-pct" id="loaderPct">0%</p></div></div>`;
+const cursorBadge = `<div id="cursorBadge" class="cursor-badge" aria-hidden="true">Learn More</div>`;
+const cursorScript = `<script>
+(function() {
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  var b = document.getElementById('cursorBadge');
+  if (!b) return;
+  var over = false;
+  document.querySelectorAll('.griglia .card a').forEach(function(a) {
+    a.addEventListener('mouseenter', function() { over = true; b.classList.add('visibile'); });
+    a.addEventListener('mouseleave', function() { over = false; b.classList.remove('visibile'); });
+  });
+  window.addEventListener('mousemove', function(e) {
+    if (over) b.style.transform = 'translate3d(' + e.clientX + 'px,' + e.clientY + 'px,0) translate(-50%,-50%)';
+  }, { passive: true });
+})();
+</script>`;
 let homeHtml = readFileSync(`${OUT}/index.html`, 'utf8');
-homeHtml = homeHtml.replace('<body>', '<body>' + loaderDiv).replace('</body>', '<script src="loader.js"></script></body>');
+homeHtml = homeHtml.replace('<body>', '<body>' + loaderDiv + cursorBadge).replace('</body>', '<script src="loader.js"></script>' + cursorScript + '</body>');
 writeFileSync(`${OUT}/index.html`, homeHtml);
 
 // Dettaglio

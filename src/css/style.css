@@ -97,6 +97,36 @@ main {
 .card a:hover h2 { color: var(--colore-hover); }
 .card p { margin: 0.25rem 0 0; color: var(--colore-testo-attenuato); font-size: var(--testo-s); }
 
+/* Cursore badge custom in hover sui progetti */
+.cursor-badge {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 50;
+  background: #ffffff;
+  color: #000000;
+  mix-blend-mode: difference;
+  font: 400 0.85rem/1 var(--font-mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.65rem;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate3d(-9999px, -9999px, 0) translate(-50%, -50%);
+  transition: opacity 150ms ease;
+  will-change: transform, opacity;
+}
+.cursor-badge.visibile {
+  opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .griglia .card a {
+    cursor: none;
+  }
+}
+
 /* Dettaglio */
 .dettaglio-testa { display: grid; gap: var(--spazio-m); margin-bottom: var(--spazio-l); }
 .meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: var(--spazio-m); margin: 0; padding-top: var(--spazio-m); border-top: var(--spessore-linea) solid var(--colore-linea); }
