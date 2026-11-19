@@ -68,6 +68,23 @@ ${body}
     <nav class="footer-contatti" aria-label="Contatti">${contatti}</nav>
   </div>
 </footer>
+<script>
+(function() {
+  var el = document.querySelector('.menu-nome');
+  if (!el) return;
+  var timer;
+  el.addEventListener('click', function(e) {
+    if (${current === 'home' ? 'true' : 'false'}) {
+      e.preventDefault();
+    }
+    el.classList.add('mostra-alias');
+    clearTimeout(timer);
+    timer = setTimeout(function() {
+      el.classList.remove('mostra-alias');
+    }, 1500);
+  });
+})();
+</script>
 </body>
 </html>
 `;

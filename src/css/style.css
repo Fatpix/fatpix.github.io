@@ -32,9 +32,9 @@ h1 { font-size: var(--testo-xl); }
 .menu-voci a:nth-child(2) { top: calc(var(--menu-y) - 0.2vw + var(--corpo-mono) * var(--menu-interlinea)); }
 .menu-voci a:nth-child(3) { top: calc(var(--menu-y) - 0.2vw + var(--corpo-mono) * var(--menu-interlinea) * 2); }
 /* Hover e voce attiva: rosso pieno, senza negativo */
-.menu-nome:hover, .menu-nome:focus-visible, .menu-voci a:hover, .menu-voci a:focus-visible, .menu-voci a[aria-current="page"] { color: var(--colore-hover); mix-blend-mode: normal; }
-.menu-nome:hover .nome-esteso, .menu-nome:focus-visible .nome-esteso { visibility: hidden; }
-.menu-nome:hover .nome-alias, .menu-nome:focus-visible .nome-alias { visibility: visible; }
+.menu-nome:hover, .menu-nome:focus-visible, .menu-nome.mostra-alias, .menu-voci a:hover, .menu-voci a:focus-visible, .menu-voci a[aria-current="page"] { color: var(--colore-hover); mix-blend-mode: normal; }
+.menu-nome:hover .nome-esteso, .menu-nome:focus-visible .nome-esteso, .menu-nome.mostra-alias .nome-esteso { visibility: hidden; }
+.menu-nome:hover .nome-alias, .menu-nome:focus-visible .nome-alias, .menu-nome.mostra-alias .nome-alias { visibility: visible; }
 
 /* Footer */
 .footer { padding: var(--spazio-l) clamp(1rem, 2.6vw, 2.5rem) var(--spazio-m); }
@@ -140,16 +140,22 @@ main {
     background: var(--colore-sfondo); /* evita che il contenuto trasparisca sotto */
   }
 
-  /* Nome: orizzontale, mostra alias breve */
+  /* Nome: orizzontale, sovrapposto in griglia (Filippo Arpe di default, Fatpix al tocco/hover) */
   .menu-nome {
     position: static;
     writing-mode: horizontal-tb;
-    font-size: 1.5rem;
+    display: inline-grid;
+    font-size: clamp(1.2rem, 4vw, 1.45rem);
     color: var(--colore-testo);
     mix-blend-mode: normal;
   }
-  .nome-esteso { display: none; }
-  .nome-alias  { visibility: visible; }
+  .menu-nome > span { grid-area: 1 / 1; }
+  .nome-esteso { display: inline; visibility: visible; }
+  .nome-alias  { visibility: hidden; }
+
+  .menu-nome.mostra-alias { color: var(--colore-hover); }
+  .menu-nome.mostra-alias .nome-esteso { visibility: hidden; }
+  .menu-nome.mostra-alias .nome-alias { visibility: visible; }
 
   /* Voci nav: fila orizzontale */
   .menu-voci { display: flex; align-items: center; gap: var(--spazio-m); }
