@@ -50,7 +50,7 @@ function page({ depth, title, desc, current, body, root, back }) {
 <body>
 <a class="salta" href="#contenuto">Vai al contenuto</a>
 <header class="menu">
-  <a class="menu-nome" href="${home}" aria-label="${esc(site.nome)}, vai alla home"><span class="nome-esteso">${esc(site.nome)}</span><span class="nome-alias" aria-hidden="true">${esc(site.alias || site.nome)}</span></a>
+  <button type="button" class="menu-nome" aria-label="${esc(site.nome)}"><span class="nome-esteso">${esc(site.nome)}</span><span class="nome-alias" aria-hidden="true">${esc(site.alias || site.nome)}</span></button>
   <nav class="menu-voci" aria-label="Principale">
     <a href="${home}"${current === 'home' ? ' aria-current="page"' : ''}>Works</a>
     <a href="${p}chi-sono/"${current === 'chi-sono' ? ' aria-current="page"' : ''}>About me</a>
@@ -73,14 +73,12 @@ ${body}
   var el = document.querySelector('.menu-nome');
   if (!el) return;
   var timer;
-  el.addEventListener('click', function(e) {
-    if (${current === 'home' ? 'true' : 'false'}) {
-      e.preventDefault();
-    }
+  el.addEventListener('click', function() {
     el.classList.add('mostra-alias');
     clearTimeout(timer);
     timer = setTimeout(function() {
       el.classList.remove('mostra-alias');
+      el.blur();
     }, 1500);
   });
 })();
