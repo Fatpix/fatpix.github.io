@@ -191,22 +191,22 @@ html.skip-loader #loader { display: none !important; }
     --menu-h-mobile: 3.25rem;
   }
 
-  /* Rimuove qualsiasi stacking context dal wrapper per consentire il blending reale */
+  /* Nessun display:contents per garantire piena compatibilità con Safari iOS */
   .menu {
-    display: contents;
+    position: static;
+    background: transparent;
   }
 
-  /* Nome: orizzontale fisso a sinistra, centrato verticalmente a 3.25rem */
+  /* Nome: orizzontale fisso in alto a sinistra, in negativo, rosso solido al tocco */
   .menu-nome {
     position: fixed;
     z-index: 20;
-    top: 0;
+    top: 1.25rem;
     left: var(--spazio-m);
-    height: var(--menu-h-mobile);
     writing-mode: horizontal-tb;
     display: inline-grid;
-    align-items: center;
     font-size: clamp(1.2rem, 4vw, 1.45rem);
+    line-height: 1;
     color: #fff;
     mix-blend-mode: difference;
     padding: 0;
@@ -220,18 +220,16 @@ html.skip-loader #loader { display: none !important; }
   .menu-nome.mostra-alias .nome-esteso { visibility: hidden !important; }
   .menu-nome.mostra-alias .nome-alias { visibility: visible !important; }
 
-  /* Voci nav: elementi fissi indipendenti a destra, perfettamente allineati sulla stessa mediana */
+  /* Voci nav: elementi fissi indipendenti a destra, in negativo sul body */
   .menu-voci {
-    display: contents;
+    position: static;
   }
   .menu-voci a {
     position: fixed;
     z-index: 20;
-    top: 0;
-    height: var(--menu-h-mobile);
-    display: flex;
-    align-items: center;
+    top: 1.35rem;
     font-size: 0.875rem;
+    line-height: 1;
     color: #fff;
     mix-blend-mode: difference;
     padding: 0;
@@ -242,7 +240,7 @@ html.skip-loader #loader { display: none !important; }
     right: var(--spazio-m);
   }
   .menu-voci a:first-child:not(:last-child) {
-    right: calc(var(--spazio-m) + 4.1rem + 1.25rem);
+    right: calc(var(--spazio-m) + 5rem);
   }
   .menu-voci a:hover,
   .menu-voci a:focus-visible,
