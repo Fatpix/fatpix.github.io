@@ -398,7 +398,23 @@ cards_html = '\n'.join([
     for l in lavori
 ])
 
-home_body = f"""<section class="intro"><h1>{esc(site['nome'])}</h1><p>{esc(site.get('ruolo', ''))}</p></section>\n<ul class="griglia">\n{cards_html}\n</ul>"""
+asterisk_svg = """<svg class="titolo-asterisco" viewBox="0 0 84 86" aria-hidden="true">
+  <g transform="translate(42, 43)">
+    <rect x="-9.5" y="-43" width="19" height="43" fill="#000000"/>
+    <rect x="-9.5" y="-43" width="19" height="43" fill="#000000" transform="rotate(72)"/>
+    <rect x="-9.5" y="-43" width="19" height="43" fill="#000000" transform="rotate(144)"/>
+    <rect x="-9.5" y="-43" width="19" height="43" fill="#000000" transform="rotate(216)"/>
+    <rect x="-9.5" y="-43" width="19" height="43" fill="#000000" transform="rotate(288)"/>
+  </g>
+</svg>"""
+
+home_body = f"""<div class="landing-titolo-wrap">
+  {asterisk_svg}
+  <h1 class="titolo-testo">My Works</h1>
+</div>
+<ul class="griglia">
+{cards_html}
+</ul>"""
 
 with open(f'{OUT}/index.html', 'w', encoding='utf-8') as f:
     f.write(page(depth=0, current='home', desc=site.get('descrizione', ''), body=home_body))

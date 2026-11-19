@@ -350,9 +350,26 @@ const cards = lavori.map(l => `<li class="card"><a href="lavori/${l.slug}/">
   <h2>${esc(l.meta.titolo)}</h2>
   <p>${esc(l.meta.ruolo)}${l.meta.anno ? ', ' + esc(l.meta.anno) : ''}</p>
 </a></li>`).join('\n');
+
+const asteriskSvg = `<svg class="titolo-asterisco" viewBox="0 0 84 86" aria-hidden="true">
+  <g transform="translate(42, 43)">
+    <rect x="-9.5" y="-43" width="19" height="43" fill="#000000"/>
+    <rect x="-9.5" y="-43" width="19" height="43" fill="#000000" transform="rotate(72)"/>
+    <rect x="-9.5" y="-43" width="19" height="43" fill="#000000" transform="rotate(144)"/>
+    <rect x="-9.5" y="-43" width="19" height="43" fill="#000000" transform="rotate(216)"/>
+    <rect x="-9.5" y="-43" width="19" height="43" fill="#000000" transform="rotate(288)"/>
+  </g>
+</svg>`;
+
 writeFileSync(`${OUT}/index.html`, page({
   depth: 0, current: 'home', desc: site.descrizione,
-  body: `<section class="intro"><h1>${esc(site.nome)}</h1><p>${esc(site.ruolo)}</p></section>\n<ul class="griglia">\n${cards}\n</ul>`
+  body: `<div class="landing-titolo-wrap">
+  ${asteriskSvg}
+  <h1 class="titolo-testo">My Works</h1>
+</div>
+<ul class="griglia">
+${cards}
+</ul>`
 }));
 
 // Inietta loader nella home
