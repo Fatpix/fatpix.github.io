@@ -6,7 +6,6 @@ ordine: 1
 bozza: false
 cover: cover.svg
 immagini: img-01.svg, img-02.svg
-link: Vedi il progetto | https://www.esempio.it
 ---
 Descrizione breve del lavoro: il contesto, l'obiettivo e il tuo contributo.
 
