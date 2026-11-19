@@ -252,37 +252,35 @@ ${body}
 
   var badge = document.getElementById('cursorBadge');
   if (badge && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-    var over = false;
     var setBadge = function(text) {
       badge.textContent = text;
       badge.classList.add('visibile');
-      over = true;
     };
     var hideBadge = function() {
       badge.classList.remove('visibile');
-      over = false;
     };
 
-    document.querySelectorAll('.griglia .card a').forEach(function(a) {
-      a.addEventListener('mouseenter', function() { setBadge('Learn More'); });
-      a.addEventListener('mouseleave', hideBadge);
-    });
-
-    document.querySelectorAll('.progetto-hero-media img, .progetto-concept-media img, .progetto-showcase img').forEach(function(img) {
-      img.addEventListener('mouseenter', function() { setBadge('Take a look'); });
-      img.addEventListener('mouseleave', hideBadge);
-    });
-
-    document.querySelectorAll('.about-foto img').forEach(function(img) {
-      img.addEventListener('mouseenter', function() { setBadge('Hi, this is me!'); });
-      img.addEventListener('mouseleave', hideBadge);
-    });
-
     window.addEventListener('mousemove', function(e) {
-      if (over) {
-        badge.style.transform = 'translate3d(' + e.clientX + 'px,' + e.clientY + 'px,0) translate(-50%,-50%)';
-      }
+      badge.style.transform = 'translate3d(' + e.clientX + 'px,' + e.clientY + 'px,0) translate(-50%,-50%)';
     }, { passive: true });
+
+    document.addEventListener('mouseover', function(e) {
+      var t = e.target;
+      if (!t) return;
+      if (t.closest('.about-foto')) {
+        setBadge('Hi, this is me!');
+      } else if (t.closest('.progetto-hero-media, .progetto-concept-media, .progetto-showcase, .progetto-dettaglio img')) {
+        setBadge('Take a look');
+      } else if (t.closest('.griglia .card')) {
+        setBadge('Learn More');
+      } else {
+        hideBadge();
+      }
+    });
+
+    document.addEventListener('mouseleave', function() {
+      hideBadge();
+    });
   }
 
   var lb = document.getElementById('lightbox');
