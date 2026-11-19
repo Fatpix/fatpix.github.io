@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Progetto 05 | Filippo Arpe</title>
+<meta name="description" content="Descrizione del progetto: contesto, concept e soluzioni adottate per Progetto 05.">
+<meta property="og:title" content="Progetto 05 | Filippo Arpe">
+<meta property="og:description" content="Descrizione del progetto: contesto, concept e soluzioni adottate per Progetto 05.">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="preload" href="../../fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../../css/tokens.css">
+<link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+<a class="salta" href="#contenuto">Vai al contenuto</a>
+<header class="menu">
+  <button type="button" class="menu-nome" aria-label="Filippo Arpe"><span class="nome-esteso">Filippo Arpe</span><span class="nome-alias" aria-hidden="true">Fatpix</span></button>
+  <nav class="menu-voci" aria-label="Principale">
+    <a href="../../">Back</a>
+  </nav>
+</header>
+<main id="contenuto" class="contenitore">
+<article>
+<header class="dettaglio-testa">
+  <h1>Progetto 05</h1>
+  <dl class="meta">
+    <div><dt>Anno</dt><dd>2024</dd></div>
+    <div><dt>Ruolo</dt><dd>Poster Series, Graphic Design</dd></div>
+  </dl>
+</header>
+<div class="testo"><p>Descrizione del progetto: contesto, concept e soluzioni adottate per Progetto 05.</p>
+<p>Dettagli aggiuntivi sul processo creativo e sui risultati del lavoro.</p></div>
+<div class="galleria">
+<img src="img-01.svg" alt="" loading="lazy">
+<img src="img-02.svg" alt="" loading="lazy">
+</div>
+<nav class="sequenza" aria-label="Altri lavori">
+  <a href="../progetto-04/">Precedente: Progetto 04</a>
+  <a href="../progetto-06/">Successivo: Progetto 06</a>
+</nav>
+</article>
+</main>
+<footer class="footer">
+  <p class="footer-titolo">THX</p>
+  <div class="footer-riga">
+    <span>Filippo Arpe</span>
+    <span class="linea linea-lunga" aria-hidden="true"></span>
+    <nav class="footer-contatti" aria-label="Contatti"><a href="https://www.instagram.com/fatpix.zip/" target="_blank" rel="noopener">Instagram</a><span class="linea linea-corta" aria-hidden="true"></span><a href="https://www.linkedin.com/in/filippo-arpe-a4b229312/" target="_blank" rel="noopener">Linkedin</a><span class="linea linea-corta" aria-hidden="true"></span><a href="mailto:filippoarpe@gmail.com">Let’s Talk</a></nav>
+  </div>
+</footer>
+<script>
+(function() {
+  var el = document.querySelector('.menu-nome');
+  if (!el) return;
+  var timer;
+  el.addEventListener('click', function() {
+    el.classList.add('mostra-alias');
+    clearTimeout(timer);
+    timer = setTimeout(function() {
+      el.classList.remove('mostra-alias');
+      el.blur();
+    }, 1500);
+  });
+})();
+</script>
+</body>
+</html>

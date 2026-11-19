@@ -27,13 +27,7 @@ h1 { font-size: var(--testo-xl); }
 .menu-nome {
   position: fixed;
   z-index: 20;
-  top: var(--menu-y);
-  left: var(--menu-x);
   display: inline-grid;
-  writing-mode: vertical-rl;
-  font: 400 var(--menu-nome-corpo)/1 var(--font-display);
-  letter-spacing: 0.04em;
-  text-decoration: none;
   white-space: nowrap;
   color: #fff;
   mix-blend-mode: difference;
@@ -47,10 +41,34 @@ h1 { font-size: var(--testo-xl); }
 }
 .menu-nome > span { grid-area: 1 / 1; }
 .nome-alias { visibility: hidden; }
-.menu-voci a { position: fixed; z-index: 20; left: calc(var(--menu-x) + var(--menu-nome-corpo) + max(0.4rem, 0.85vw)); font: 400 var(--corpo-mono)/var(--menu-interlinea) var(--font-mono); text-decoration: none; color: #fff; mix-blend-mode: difference; transition: none; }
-.menu-voci a:nth-child(1) { top: calc(var(--menu-y) - 0.2vw); }
-.menu-voci a:nth-child(2) { top: calc(var(--menu-y) - 0.2vw + var(--corpo-mono) * var(--menu-interlinea)); }
-.menu-voci a:nth-child(3) { top: calc(var(--menu-y) - 0.2vw + var(--corpo-mono) * var(--menu-interlinea) * 2); }
+
+.menu-voci a {
+  position: fixed;
+  z-index: 20;
+  text-decoration: none;
+  color: #fff;
+  mix-blend-mode: difference;
+  transition: none;
+  white-space: nowrap;
+}
+
+/* Layout menu per schermi desktop */
+@media (min-width: 44.0625rem) {
+  .menu-nome {
+    top: var(--menu-y);
+    left: var(--menu-x);
+    writing-mode: vertical-rl;
+    font: 400 var(--menu-nome-corpo)/1 var(--font-display);
+    letter-spacing: 0.04em;
+  }
+  .menu-voci a {
+    left: calc(var(--menu-x) + var(--menu-nome-corpo) + max(0.4rem, 0.85vw));
+    font: 400 var(--corpo-mono)/var(--menu-interlinea) var(--font-mono);
+  }
+  .menu-voci a:nth-child(1) { top: calc(var(--menu-y) - 0.2vw); }
+  .menu-voci a:nth-child(2) { top: calc(var(--menu-y) - 0.2vw + var(--corpo-mono) * var(--menu-interlinea)); }
+  .menu-voci a:nth-child(3) { top: calc(var(--menu-y) - 0.2vw + var(--corpo-mono) * var(--menu-interlinea) * 2); }
+}
 
 /* Hover desktop: solo su schermi con mouse reale, mai su touch */
 @media (hover: hover) and (pointer: fine) {
@@ -199,18 +217,13 @@ html.skip-loader #loader { display: none !important; }
 
   /* Nome: orizzontale fisso in alto a sinistra, in negativo, rosso solido al tocco */
   .menu-nome {
-    position: fixed;
-    z-index: 20;
     top: 1.25rem;
     left: var(--spazio-m);
     writing-mode: horizontal-tb;
-    display: inline-grid;
+    font-family: var(--font-display);
     font-size: clamp(1.2rem, 4vw, 1.45rem);
     line-height: 1;
-    color: #fff;
-    mix-blend-mode: difference;
-    padding: 0;
-    margin: 0;
+    letter-spacing: 0.04em;
   }
   .menu-nome > span { grid-area: 1 / 1; }
   .nome-esteso { display: inline; visibility: visible; }
@@ -225,22 +238,19 @@ html.skip-loader #loader { display: none !important; }
     position: static;
   }
   .menu-voci a {
-    position: fixed;
-    z-index: 20;
     top: 1.35rem;
+    left: auto;
+    font-family: var(--font-mono);
     font-size: 0.875rem;
     line-height: 1;
-    color: #fff;
-    mix-blend-mode: difference;
-    padding: 0;
-    margin: 0;
-    white-space: nowrap;
   }
   .menu-voci a:last-child {
+    left: auto;
     right: var(--spazio-m);
   }
   .menu-voci a:first-child:not(:last-child) {
-    right: calc(var(--spazio-m) + 5rem);
+    left: auto;
+    right: calc(var(--spazio-m) + 5.5rem);
   }
   .menu-voci a:hover,
   .menu-voci a:focus-visible,
