@@ -202,9 +202,6 @@ for i, l in enumerate(lavori):
     links_list = [x.split('|') for x in m.get('link', '').replace(';', ',').split(',') if '|' in x]
     links_html = ''.join([f'<a class="pulsante" href="{esc(u.strip())}" rel="noopener">{esc(t.strip())}</a>' for t, u in links_list if u.strip()])
     
-    imgs = [x.strip() for x in m.get('immagini', '').split(',') if x.strip()]
-    imgs_html = '\n'.join([f'<img src="{esc(img)}" alt="" loading="lazy">' for img in imgs])
-    
     prev_link = f'<a href="../{prev_l["slug"]}/">Precedente: {esc(prev_l["meta"]["titolo"])}</a>' if prev_l else '<span></span>'
     next_link = f'<a href="../{next_l["slug"]}/">Successivo: {esc(next_l["meta"]["titolo"])}</a>' if next_l else '<span></span>'
     nav_html = f"""<nav class="sequenza" aria-label="Altri lavori">
@@ -212,24 +209,71 @@ for i, l in enumerate(lavori):
   {next_link}
 </nav>"""
 
-    anno_html = f'<div><dt>Anno</dt><dd>{esc(m["anno"])}</dd></div>' if m.get('anno') else ''
-    ruolo_html = f'<div><dt>Ruolo</dt><dd>{esc(m["ruolo"])}</dd></div>' if m.get('ruolo') else ''
+    # Metadata
+    meta_items = []
+    if m.get('anno'):
+        meta_items.append(f'<div><dt>Anno</dt><dd>{esc(m["anno"])}</dd></div>')
+    if m.get('ruolo'):
+        meta_items.append(f'<div><dt>Ruolo</dt><dd>{esc(m["ruolo"])}</dd></div>')
+    if m.get('team'):
+        meta_items.append(f'<div><dt>Team</dt><dd>{esc(m["team"])}</dd></div>')
+    if m.get('cliente'):
+        meta_items.append(f'<div><dt>Cliente</dt><dd>{esc(m["cliente"])}</dd></div>')
+    meta_html = '\n'.join(meta_items)
 
-    detail_body = f"""<article>
-<header class="dettaglio-testa">
-  <h1>{esc(m.get('titolo', ''))}</h1>
-  <dl class="meta">
-    {anno_html}
-    {ruolo_html}
+    # Modular media
+    hero_img = m.get('hero')
+    hero_html = f'<div class="progetto-hero-media"><img src="{esc(hero_img)}" alt="Hero di {esc(m.get("titolo", ""))}"></div>' if hero_img else ''
+
+    concept_img = m.get('concept')
+    concept_html = f'<div class="progetto-concept-media"><img src="{esc(concept_img)}" alt="Concept di {esc(m.get("titolo", ""))}"></div>' if concept_img else ''
+
+    web_imgs = [x.strip() for x in m.get('schermi_web', '').split(',') if x.strip()]
+    web_html = '\n'.join([f'<div class="showcase-item showcase-full"><img src="{esc(img)}" alt="" loading="lazy"></div>' for img in web_imgs])
+
+    banner_img = m.get('banner')
+    banner_html = f'<div class="showcase-item showcase-banner"><img src="{esc(banner_img)}" alt="" loading="lazy"></div>' if banner_img else ''
+
+    mobile_imgs = [x.strip() for x in m.get('schermi_mobile', '').split(',') if x.strip()]
+    mobile_html = f'<div class="showcase-grid-2 showcase-mobile">' + '\n'.join([f'<div class="showcase-col"><img src="{esc(img)}" alt="" loading="lazy"></div>' for img in mobile_imgs]) + '</div>' if mobile_imgs else ''
+
+    merch_imgs = [x.strip() for x in m.get('merch', '').split(',') if x.strip()]
+    merch_html = f'<div class="showcase-grid-2 showcase-merch">' + '\n'.join([f'<div class="showcase-col"><img src="{esc(img)}" alt="" loading="lazy"></div>' for img in merch_imgs]) + '</div>' if merch_imgs else ''
+
+    # Fallback su immagini standard se non ci sono sezioni modulari
+    standard_imgs = [x.strip() for x in m.get('immagini', '').split(',') if x.strip()]
+    fallback_html = '\n'.join([f'<div class="showcase-item"><img src="{esc(img)}" alt="" loading="lazy"></div>' for img in standard_imgs]) if not (web_imgs or banner_img or mobile_imgs or merch_imgs) else ''
+
+    detail_body = f"""<article class="progetto-dettaglio">
+<header class="progetto-testata">
+  <div class="progetto-titolo-blocco">
+    <h1>{esc(m.get('titolo', ''))}</h1>
+    {hero_html}
+  </div>
+  <dl class="meta progetto-meta">
+    {meta_html}
   </dl>
 </header>
-<div class="testo">{paras(l['body'])}{f'<p>{links_html}</p>' if links_html else ''}</div>
-<div class="galleria">
-{imgs_html}
+
+<div class="progetto-intro-griglia">
+  {concept_html}
+  <div class="testo progetto-testo">
+    {paras(l['body'])}
+    {f'<p>{links_html}</p>' if links_html else ''}
+  </div>
 </div>
+
+<div class="progetto-showcase">
+  {web_html}
+  {banner_html}
+  {mobile_html}
+  {merch_html}
+  {fallback_html}
+</div>
+
 {nav_html}
 </article>"""
-    write(f"lavori/{l['slug']}", page(depth=2, title=m.get('titolo', ''), desc=l['body'].split('\n')[0], back=True, body=detail_body))
+    write(f"lavori/{l['slug']}", page(depth=2, current='progetto', title=m.get('titolo', ''), desc=l['body'].split('\n')[0], back=True, body=detail_body))
 
 # Chi sono
 about = parse(f'{C}/chi-sono/chi-sono.md')

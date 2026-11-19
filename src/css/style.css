@@ -156,7 +156,179 @@ main {
 .galleria img { width: 100%; border-radius: var(--raggio); background: var(--colore-segnaposto); }
 .pulsante { display: inline-block; border: var(--spessore-linea) solid var(--colore-testo); padding: 0.6rem 1.1rem; text-decoration: none; margin: 0 var(--spazio-s) var(--spazio-s) 0; transition: color .15s; }
 .pulsante:hover { color: var(--colore-hover); }
-.sequenza { display: flex; justify-content: space-between; gap: var(--spazio-m); border-top: var(--spessore-linea) solid var(--colore-linea); margin-top: var(--spazio-l); padding-top: var(--spazio-m); }
+.sequenza { display: flex; justify-content: space-between; gap: var(--spazio-m); border-top: var(--spessore-linea) solid var(--colore-linea); margin-top: var(--spazio-l); padding-top: var(--spazio-m); font-family: var(--font-mono); font-size: var(--corpo-mono); }
+.sequenza a { text-decoration: none; color: var(--colore-testo); transition: color 0.15s ease; }
+.sequenza a:hover { color: var(--colore-hover); }
+
+/* ── Layout pagina Progetto (Dettaglio modulare da Figma) ─ */
+body.pagina-progetto main {
+  padding-top: clamp(11rem, 14vw, 13.5rem);
+}
+@media (max-width: 44rem) {
+  body.pagina-progetto main {
+    padding-top: calc(var(--menu-h-mobile) + var(--spazio-l));
+  }
+}
+
+.progetto-dettaglio {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3rem, 6vw, 5.5rem);
+}
+
+.progetto-testata {
+  display: grid;
+  grid-template-columns: 1fr minmax(18rem, 24rem);
+  gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: start;
+}
+
+.progetto-titolo-blocco {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spazio-m);
+}
+
+.progetto-titolo-blocco h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.progetto-hero-media img {
+  width: 100%;
+  max-width: 32rem;
+  aspect-ratio: 2 / 1;
+  object-fit: contain;
+  border-radius: var(--raggio);
+  background: var(--colore-segnaposto);
+  display: block;
+}
+
+.progetto-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  border-top: none;
+  padding-top: 0.25rem;
+  margin: 0;
+}
+
+.progetto-meta > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.progetto-meta dt {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--colore-testo-attenuato);
+}
+
+.progetto-meta dd {
+  font-family: var(--font-mono);
+  font-size: var(--corpo-mono);
+  line-height: 1.45;
+  color: var(--colore-testo);
+  margin: 0;
+}
+
+.progetto-intro-griglia {
+  display: grid;
+  grid-template-columns: minmax(18rem, 26rem) 1fr;
+  column-gap: clamp(2rem, 5vw, 4.5rem);
+  align-items: start;
+}
+
+.progetto-concept-media img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  border-radius: var(--raggio);
+  background: var(--colore-segnaposto);
+  display: block;
+}
+
+.progetto-testo {
+  font-family: var(--font-mono);
+  font-size: clamp(0.85rem, 1.1vw, 1.05rem);
+  line-height: 1.7;
+  max-width: 52rem;
+}
+
+.progetto-testo p {
+  margin: 0 0 1.25rem;
+}
+
+.progetto-testo p:last-child {
+  margin-bottom: 0;
+}
+
+.progetto-showcase {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 4.5vw, 3.5rem);
+}
+
+.showcase-item img,
+.showcase-col img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--raggio);
+  background: var(--colore-segnaposto);
+  display: block;
+}
+
+.showcase-full img {
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+
+.showcase-banner img {
+  aspect-ratio: 18 / 7.5;
+  object-fit: cover;
+}
+
+.showcase-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1rem, 2.5vw, 2.5rem);
+}
+
+.showcase-mobile img {
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+}
+
+.showcase-merch img {
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+@media (max-width: 56rem) {
+  .progetto-testata {
+    grid-template-columns: 1fr;
+    gap: var(--spazio-l);
+  }
+  .progetto-meta {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spazio-m);
+  }
+  .progetto-intro-griglia {
+    grid-template-columns: 1fr;
+    gap: var(--spazio-l);
+  }
+  .showcase-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
 
 /* ── Layout pagina About me (Chi sono) ─────────────────── */
 body.pagina-chi-sono main {

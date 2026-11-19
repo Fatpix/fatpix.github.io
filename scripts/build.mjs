@@ -145,27 +145,70 @@ lavori.forEach((l, i) => {
   const m = l.meta, prev = lavori[i - 1], next = lavori[i + 1];
   const links = list(m.link?.replace(/;/g, ',')).map(x => x.split('|').map(s => s.trim()))
     .filter(([, u]) => u).map(([t, u]) => `<a class="pulsante" href="${esc(u)}" rel="noopener">${esc(t)}</a>`).join('');
-  const imgs = list(m.immagini).map(f => `<img src="${esc(f)}" alt="" loading="lazy">`).join('\n');
   const nav = `<nav class="sequenza" aria-label="Altri lavori">
   ${prev ? `<a href="../${prev.slug}/">Precedente: ${esc(prev.meta.titolo)}</a>` : '<span></span>'}
   ${next ? `<a href="../${next.slug}/">Successivo: ${esc(next.meta.titolo)}</a>` : '<span></span>'}
 </nav>`;
-  write(`lavori/${l.slug}`, page({
-    depth: 2, title: m.titolo, desc: l.body.split('\n')[0], back: true,
-    body: `<article>
-<header class="dettaglio-testa">
-  <h1>${esc(m.titolo)}</h1>
-  <dl class="meta">
-    ${m.anno ? `<div><dt>Anno</dt><dd>${esc(m.anno)}</dd></div>` : ''}
-    ${m.ruolo ? `<div><dt>Ruolo</dt><dd>${esc(m.ruolo)}</dd></div>` : ''}
+
+  const metaItems = [
+    m.anno ? `<div><dt>Anno</dt><dd>${esc(m.anno)}</dd></div>` : '',
+    m.ruolo ? `<div><dt>Ruolo</dt><dd>${esc(m.ruolo)}</dd></div>` : '',
+    m.team ? `<div><dt>Team</dt><dd>${esc(m.team)}</dd></div>` : '',
+    m.cliente ? `<div><dt>Cliente</dt><dd>${esc(m.cliente)}</dd></div>` : ''
+  ].filter(Boolean).join('\n');
+
+  const heroHtml = m.hero ? `<div class="progetto-hero-media"><img src="${esc(m.hero)}" alt="Hero di ${esc(m.titolo)}"></div>` : '';
+  const conceptHtml = m.concept ? `<div class="progetto-concept-media"><img src="${esc(m.concept)}" alt="Concept di ${esc(m.titolo)}"></div>` : '';
+
+  const webImgs = list(m.schermi_web);
+  const webHtml = webImgs.map(f => `<div class="showcase-item showcase-full"><img src="${esc(f)}" alt="" loading="lazy"></div>`).join('\n');
+
+  const bannerHtml = m.banner ? `<div class="showcase-item showcase-banner"><img src="${esc(m.banner)}" alt="" loading="lazy"></div>` : '';
+
+  const mobileImgs = list(m.schermi_mobile);
+  const mobileHtml = mobileImgs.length ? `<div class="showcase-grid-2 showcase-mobile">${mobileImgs.map(f => `<div class="showcase-col"><img src="${esc(f)}" alt="" loading="lazy"></div>`).join('\n')}</div>` : '';
+
+  const merchImgs = list(m.merch);
+  const merchHtml = merchImgs.length ? `<div class="showcase-grid-2 showcase-merch">${merchImgs.map(f => `<div class="showcase-col"><img src="${esc(f)}" alt="" loading="lazy"></div>`).join('\n')}</div>` : '';
+
+  const fallbackImgs = list(m.immagini);
+  const fallbackHtml = (!webImgs.length && !m.banner && !mobileImgs.length && !merchImgs.length)
+    ? fallbackImgs.map(f => `<div class="showcase-item"><img src="${esc(f)}" alt="" loading="lazy"></div>`).join('\n')
+    : '';
+
+  const detailBody = `<article class="progetto-dettaglio">
+<header class="progetto-testata">
+  <div class="progetto-titolo-blocco">
+    <h1>${esc(m.titolo)}</h1>
+    ${heroHtml}
+  </div>
+  <dl class="meta progetto-meta">
+    ${metaItems}
   </dl>
 </header>
-<div class="testo">${paras(l.body)}${links ? `<p>${links}</p>` : ''}</div>
-<div class="galleria">
-${imgs}
+
+<div class="progetto-intro-griglia">
+  ${conceptHtml}
+  <div class="testo progetto-testo">
+    ${paras(l.body)}
+    ${links ? `<p>${links}</p>` : ''}
+  </div>
 </div>
+
+<div class="progetto-showcase">
+  ${webHtml}
+  ${bannerHtml}
+  ${mobileHtml}
+  ${merchHtml}
+  ${fallbackHtml}
+</div>
+
 ${nav}
-</article>`
+</article>`;
+
+  write(`lavori/${l.slug}`, page({
+    depth: 2, current: 'progetto', title: m.titolo, desc: l.body.split('\n')[0], back: true,
+    body: detailBody
   }));
 });
 
