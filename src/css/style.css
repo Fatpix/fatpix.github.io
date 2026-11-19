@@ -242,7 +242,7 @@ html.skip-loader #loader { display: none !important; }
     right: var(--spazio-m);
   }
   .menu-voci a:first-child:not(:last-child) {
-    right: calc(var(--spazio-m) + 5.2rem + var(--spazio-m));
+    right: calc(var(--spazio-m) + 4.1rem + 1.25rem);
   }
   .menu-voci a:hover,
   .menu-voci a:focus-visible,
