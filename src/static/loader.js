@@ -10,39 +10,56 @@
   var fill = document.getElementById('loaderFill');
   var pct  = document.getElementById('loaderPct');
   var el   = document.getElementById('loader');
-  var i = 0;
+  if (!log || !fill || !pct || !el) return;
 
   document.body.style.overflow = 'hidden';
 
+  // Pre-crea tutte le 5 righe per bloccare l'altezza ed evitare qualsiasi reflow o layout shift
+  log.innerHTML = '';
+  var rowElements = [];
+  for (var s = 0; s < steps.length; s++) {
+    var riga = document.createElement('div');
+    riga.className = 'loader-riga';
+    var label = document.createElement('span');
+    label.className = 'step-label';
+    label.textContent = steps[s];
+    var status = document.createElement('span');
+    status.className = 'step-status';
+    status.textContent = '...';
+    riga.appendChild(label);
+    riga.appendChild(status);
+    log.appendChild(riga);
+    rowElements.push({ riga: riga, status: status });
+  }
+
+  var i = 0;
+
   function tick() {
-    // Segna lo step precedente come OK
-    if (i > 0) {
-      var prev = log.lastElementChild;
-      if (prev) prev.innerHTML = steps[i - 1] + ' <span class="ok">OK</span>';
+    if (i > 0 && i - 1 < rowElements.length) {
+      rowElements[i - 1].status.textContent = 'OK';
+      rowElements[i - 1].status.classList.add('ok');
     }
 
-    var progress = Math.round(i / steps.length * 100);
+    var progress = Math.round((i / steps.length) * 100);
     fill.style.width = progress + '%';
     pct.textContent  = progress + '%';
 
     if (i >= steps.length) {
-      // Tutto caricato: fade out
       setTimeout(function () {
         el.classList.add('nascosto');
         el.addEventListener('transitionend', function () {
           el.remove();
           document.body.style.overflow = '';
         }, { once: true });
-      }, 300);
+      }, 350);
       return;
     }
 
-    var line = document.createElement('div');
-    line.textContent = steps[i] + '...';
-    log.appendChild(line);
+    rowElements[i].riga.classList.add('visibile');
     i++;
-    setTimeout(tick, 250 + Math.random() * 200);
+    setTimeout(tick, 260 + Math.random() * 160);
   }
 
-  tick();
+  // Piccolo timeout per sincronizzare il rendering iniziale
+  setTimeout(tick, 100);
 })();

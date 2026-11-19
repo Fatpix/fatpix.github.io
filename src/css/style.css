@@ -1,5 +1,5 @@
 @font-face { font-family: "Anton"; src: url("../fonts/anton-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
-@font-face { font-family: "Pixelify Sans"; src: url("../fonts/pixelify-sans-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Pixelify Sans"; src: url("../fonts/pixelify-sans-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: block; }
 
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
@@ -89,12 +89,39 @@ main {
 #loader { position: fixed; inset: 0; z-index: 999; background: var(--colore-sfondo); display: flex; align-items: center; justify-content: center; transition: opacity 400ms ease; }
 #loader.nascosto { opacity: 0; pointer-events: none; }
 .loader-inner { width: min(22rem, calc(100vw - 3rem)); display: flex; flex-direction: column; gap: var(--spazio-s); }
-.loader-nome { font: 400 clamp(2.5rem, 8vw, 4rem)/1 var(--font-display); letter-spacing: 0.04em; margin: 0 0 var(--spazio-m); color: var(--colore-testo); }
-.loader-log { font: 400 var(--corpo-mono)/1.8 var(--font-mono); color: var(--colore-testo-attenuato); min-height: 7.5rem; }
-.loader-log .ok { color: var(--colore-hover); }
-.loader-barra { height: 1px; background: rgba(0,0,0,0.12); }
+.loader-log {
+  font: 400 var(--corpo-mono)/1.8 var(--font-mono);
+  color: var(--colore-testo-attenuato);
+  height: calc(5 * 1.8em);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-sizing: content-box;
+}
+.loader-riga {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 1.8em;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+.loader-riga.visibile { opacity: 1; }
+.loader-riga .step-status {
+  min-width: 2.5ch;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.loader-riga .step-status.ok { color: var(--colore-hover); font-weight: 700; }
+.loader-barra { height: 1px; background: rgba(0,0,0,0.12); width: 100%; overflow: hidden; }
 .loader-fill { height: 1px; background: var(--colore-testo); width: 0%; transition: width 200ms ease; }
-.loader-pct { font: 400 var(--corpo-mono)/1 var(--font-mono); color: var(--colore-testo-attenuato); text-align: right; margin: 0.4rem 0 0; }
+.loader-pct {
+  font: 400 var(--corpo-mono)/1 var(--font-mono);
+  color: var(--colore-testo-attenuato);
+  text-align: right;
+  margin: 0.4rem 0 0;
+  font-variant-numeric: tabular-nums;
+}
 
 /* ── Mobile: menu orizzontale fisso in alto ──────────────── */
 @media (max-width: 44rem) {
