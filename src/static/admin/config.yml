@@ -1,0 +1,68 @@
+backend:
+  name: github
+  repo: fatpix/fatpix.github.io
+  branch: main
+
+# Modalità salvataggio
+media_folder: "content/assets"
+public_folder: ""
+
+collections:
+  - name: "lavori"
+    label: "Progetti"
+    label_singular: "Progetto"
+    folder: "content/lavori"
+    path: "{{slug}}/progetto"
+    media_folder: ""
+    public_folder: ""
+    create: true
+    slug: "progetto-{{ordine}}"
+    editor:
+      preview: false
+    fields:
+      - { name: "titolo", label: "Titolo Progetto (es: Progetto 1)", widget: "string" }
+      - { name: "anno", label: "Anno", widget: "string", default: "2025" }
+      - { name: "ruolo", label: "Ruolo (es: Brand Identity, Web Design)", widget: "string", default: "Brand Identity, Web Design" }
+      - { name: "team", label: "Team / Collaboratori", widget: "string", required: false }
+      - { name: "cliente", label: "Cliente", widget: "string", required: false }
+      - { name: "ordine", label: "Ordine di visualizzazione (1-9)", widget: "number", value_type: "int" }
+      - { name: "bozza", label: "Nascondi / Bozza", widget: "boolean", default: false }
+      - { name: "cover", label: "Immagine di Copertina (Card Home)", widget: "image", required: false }
+      - { name: "hero", label: "Hero Media (Testata Progetto)", widget: "image", required: false }
+      - { name: "concept", label: "Concept / Diagramma", widget: "image", required: false }
+      - { name: "schermi_web", label: "Schermi Web Desktop (nomi file separati da virgola)", widget: "string", required: false }
+      - { name: "banner", label: "Banner Panoramico Outdoor", widget: "image", required: false }
+      - { name: "schermi_mobile", label: "Schermi Mobile (nomi file separati da virgola)", widget: "string", required: false }
+      - { name: "merch", label: "Merchandising / Packaging (nomi file separati da virgola)", widget: "string", required: false }
+      - { name: "body", label: "Descrizione / Testo narrativo del progetto", widget: "markdown" }
+
+  - name: "pagine"
+    label: "Pagine e Informazioni"
+    files:
+      - name: "chi-sono"
+        label: "About Me (Chi Sono)"
+        file: "content/chi-sono/chi-sono.md"
+        media_folder: ""
+        public_folder: ""
+        fields:
+          - { name: "location", label: "Posizione / Città (es: Genova/Italy)", widget: "string" }
+          - { name: "foto", label: "Foto Profilo", widget: "image", default: "foto.svg" }
+          - { name: "body", label: "Biografia / Presentazione", widget: "markdown" }
+
+      - name: "sito"
+        label: "Dati Sito & Social"
+        file: "content/site.json"
+        format: "json"
+        fields:
+          - { name: "nome", label: "Nome Visibile", widget: "string" }
+          - { name: "alias", label: "Alias (Rosso al tocco)", widget: "string" }
+          - { name: "ruolo", label: "Ruolo", widget: "string" }
+          - { name: "email", label: "Email", widget: "string" }
+          - { name: "etichetta_email", label: "Testo Link Email (es: Let's Talk)", widget: "string" }
+          - { name: "footer_titolo", label: "Testo Titolo Footer (es: THX)", widget: "string" }
+          - label: "Social Links"
+            name: "social"
+            widget: "list"
+            fields:
+              - { name: "etichetta", label: "Nome Social", widget: "string" }
+              - { name: "url", label: "URL Profilo", widget: "string" }
