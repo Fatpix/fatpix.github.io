@@ -27,6 +27,23 @@ def paras(b):
     ps = [p for p in re.split(r'\n{2,}', b) if p.strip()]
     return '\n'.join([f"<p>{esc(p).replace(chr(10), '<br>')}</p>" for p in ps])
 
+def is_video(src):
+    if not src: return False
+    return bool(re.search(r'\.(mp4|webm|mov|ogg)$', str(src), re.I))
+
+def render_media(src, alt='', width=None, height=None, priority=False, lazy=None, cls=''):
+    if not src: return ''
+    u = esc(src)
+    a = esc(alt)
+    w = f' width="{width}"' if width else ''
+    h = f' height="{height}"' if height else ''
+    prio = ' fetchpriority="high"' if priority else ''
+    lazy_str = ' loading="lazy"' if lazy else (' loading="eager"' if lazy is False else '')
+    cls_str = f' class="{cls}"' if cls else ''
+    if is_video(src):
+        return f'<video src="{u}"{cls_str}{w}{h} autoplay loop muted playsinline preload="metadata" aria-label="{a}"></video>'
+    return f'<img src="{u}" alt="{a}"{cls_str}{w}{h}{prio}{lazy_str} decoding="async">'
+
 def copy_assets(from_dir, to_dir):
     os.makedirs(to_dir, exist_ok=True)
     if not os.path.exists(from_dir):
@@ -216,7 +233,7 @@ def page(depth=0, title='', desc='', current='', body='', root=False, back=False
     else:
         menu_links = f'<a href="{home}"{cur_home}>Works</a>\n    <a href="{p}chi-sono/"{cur_about}>About me</a>'
 
-    extra_body = '<div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-modal="true"><button type="button" class="lightbox-chiudi" aria-label="Chiudi visualizzazione a schermo pieno">x</button><img class="lightbox-img" src="" alt=""></div>' if current == 'progetto' else ''
+    extra_body = '<div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-modal="true"><button type="button" class="lightbox-chiudi" aria-label="Chiudi visualizzazione a schermo pieno">x</button><img class="lightbox-img" src="" alt="" style="display:none;"><video class="lightbox-video" src="" autoplay loop muted playsinline controls style="display:none;"></video></div>' if current == 'progetto' else ''
 
     template = """<!doctype html>
 <html lang="__LANG__">
@@ -287,7 +304,7 @@ __BODY__
       if (!t) return;
       if (t.closest('.about-foto')) {
         setBadge('Hi, this is me!');
-      } else if (t.closest('.progetto-hero-media, .progetto-concept-media, .progetto-showcase, .progetto-dettaglio img')) {
+      } else if (t.closest('.progetto-hero-media, .progetto-concept-media, .progetto-showcase, .progetto-dettaglio img, .progetto-dettaglio video')) {
         setBadge('Take a look');
       } else if (t.closest('.griglia .card')) {
         setBadge('Learn More');
@@ -304,10 +321,29 @@ __BODY__
   var lb = document.getElementById('lightbox');
   if (lb) {
     var lbImg = lb.querySelector('.lightbox-img');
+    var lbVideo = lb.querySelector('.lightbox-video');
     var btnChiudi = lb.querySelector('.lightbox-chiudi');
-    var openLb = function(src, alt) {
-      lbImg.src = src;
-      lbImg.alt = alt || '';
+    var openLb = function(mediaEl) {
+      var isVid = mediaEl.tagName.toLowerCase() === 'video' || /\.(mp4|webm|mov|ogg)$/i.test(mediaEl.currentSrc || mediaEl.src || '');
+      if (isVid) {
+        if (lbImg) { lbImg.style.display = 'none'; lbImg.src = ''; }
+        if (lbVideo) {
+          lbVideo.src = mediaEl.currentSrc || mediaEl.src;
+          lbVideo.style.display = 'block';
+          lbVideo.play().catch(function() {});
+        }
+      } else {
+        if (lbVideo) {
+          lbVideo.pause();
+          lbVideo.src = '';
+          lbVideo.style.display = 'none';
+        }
+        if (lbImg) {
+          lbImg.src = mediaEl.currentSrc || mediaEl.src;
+          lbImg.alt = mediaEl.alt || '';
+          lbImg.style.display = 'block';
+        }
+      }
       lb.classList.add('aperto');
       lb.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
@@ -317,12 +353,20 @@ __BODY__
       lb.classList.remove('aperto');
       lb.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
-      lbImg.src = '';
+      if (lbVideo) {
+        lbVideo.pause();
+        lbVideo.src = '';
+        lbVideo.style.display = 'none';
+      }
+      if (lbImg) {
+        lbImg.src = '';
+        lbImg.style.display = 'none';
+      }
     };
 
-    document.querySelectorAll('.progetto-hero-media img, .progetto-concept-media img, .progetto-showcase img').forEach(function(img) {
-      img.addEventListener('click', function() {
-        openLb(img.src, img.alt);
+    document.querySelectorAll('.progetto-hero-media img, .progetto-hero-media video, .progetto-concept-media img, .progetto-concept-media video, .progetto-showcase img, .progetto-showcase video').forEach(function(el) {
+      el.addEventListener('click', function() {
+        openLb(el);
       });
     });
 
@@ -393,7 +437,7 @@ for i, l in enumerate(lavori):
 # Landing
 cards_html = '\n'.join([
     f"""<li class="card"><a href="lavori/{l['slug']}/">
-  <img src="lavori/{l['slug']}/{esc(l['meta'].get('cover', ''))}" alt="Anteprima di {esc(l['meta'].get('titolo', ''))}" width="1600" height="900" loading="lazy" decoding="async">
+  {render_media(f"lavori/{l['slug']}/{l['meta'].get('cover', '')}", f"Anteprima di {l['meta'].get('titolo', '')}", width=1600, height=900, lazy=True)}
   <h2>{esc(l['meta'].get('titolo', ''))}</h2>
   <p>{esc(l['meta'].get('ruolo', ''))}{', ' + esc(l['meta'].get('anno')) if l['meta'].get('anno') else ''}</p>
 </a></li>"""
@@ -459,30 +503,31 @@ for i, l in enumerate(lavori):
     meta_html = '\n'.join(meta_items)
 
     # Modular media
+    t_val = m.get('titolo', '')
     hero_img = m.get('hero')
-    hero_html = f'<div class="progetto-hero-media"><img src="{esc(hero_img)}" alt="Hero di {esc(m.get("titolo", ""))}" fetchpriority="high" decoding="async"></div>' if hero_img else ''
+    hero_html = f'<div class="progetto-hero-media">{render_media(hero_img, f"Hero di {t_val}", priority=True, lazy=False)}</div>' if hero_img else ''
 
     concept_img = m.get('concept')
-    concept_html = f'<div class="progetto-concept-media"><img src="{esc(concept_img)}" alt="Concept di {esc(m.get("titolo", ""))}" decoding="async"></div>' if concept_img else ''
+    concept_html = f'<div class="progetto-concept-media">{render_media(concept_img, f"Concept di {t_val}", lazy=False)}</div>' if concept_img else ''
 
     raw_web = [m.get('web_01'), m.get('web_02')]
     web_imgs = [x for x in raw_web if x] or [x.strip() for x in m.get('schermi_web', '').split(',') if x.strip()]
-    web_html = '\n'.join([f'<div class="showcase-item showcase-full"><img src="{esc(img)}" alt="" loading="lazy" decoding="async"></div>' for img in web_imgs])
+    web_html = '\n'.join([f'<div class="showcase-item showcase-full">{render_media(img, "", lazy=True)}</div>' for img in web_imgs])
 
     banner_img = m.get('banner')
-    banner_html = f'<div class="showcase-item showcase-banner"><img src="{esc(banner_img)}" alt="" loading="lazy" decoding="async"></div>' if banner_img else ''
+    banner_html = f'<div class="showcase-item showcase-banner">{render_media(banner_img, "", lazy=True)}</div>' if banner_img else ''
 
     raw_mob = [m.get('mobile_01'), m.get('mobile_02')]
     mobile_imgs = [x for x in raw_mob if x] or [x.strip() for x in m.get('schermi_mobile', '').split(',') if x.strip()]
-    mobile_html = f'<div class="showcase-grid-2 showcase-mobile">' + '\n'.join([f'<div class="showcase-col"><img src="{esc(img)}" alt="" loading="lazy" decoding="async"></div>' for img in mobile_imgs]) + '</div>' if mobile_imgs else ''
+    mobile_html = f'<div class="showcase-grid-2 showcase-mobile">' + '\n'.join([f'<div class="showcase-col">{render_media(img, "", lazy=True)}</div>' for img in mobile_imgs]) + '</div>' if mobile_imgs else ''
 
     raw_merch = [m.get('merch_01'), m.get('merch_02')]
     merch_imgs = [x for x in raw_merch if x] or [x.strip() for x in m.get('merch', '').split(',') if x.strip()]
-    merch_html = f'<div class="showcase-grid-2 showcase-merch">' + '\n'.join([f'<div class="showcase-col"><img src="{esc(img)}" alt="" loading="lazy" decoding="async"></div>' for img in merch_imgs]) + '</div>' if merch_imgs else ''
+    merch_html = f'<div class="showcase-grid-2 showcase-merch">' + '\n'.join([f'<div class="showcase-col">{render_media(img, "", lazy=True)}</div>' for img in merch_imgs]) + '</div>' if merch_imgs else ''
 
     # Fallback su immagini standard se non ci sono sezioni modulari
     standard_imgs = [x.strip() for x in m.get('immagini', '').split(',') if x.strip()]
-    fallback_html = '\n'.join([f'<div class="showcase-item"><img src="{esc(img)}" alt="" loading="lazy" decoding="async"></div>' for img in standard_imgs]) if not (web_imgs or banner_img or mobile_imgs or merch_imgs) else ''
+    fallback_html = '\n'.join([f'<div class="showcase-item">{render_media(img, "", lazy=True)}</div>' for img in standard_imgs]) if not (web_imgs or banner_img or mobile_imgs or merch_imgs) else ''
 
     detail_body = f"""<article class="progetto-dettaglio">
 <header class="progetto-testata">
@@ -525,7 +570,7 @@ location = esc(about['meta'].get('location', 'Genova/Italy'))
 about_body = f"""<article class="about-layout">
   <div class="about-colonna-sinistra">
     <div class="about-foto">
-      <img src="{foto_src}" alt="Foto di {esc(site.get('nome', ''))}" fetchpriority="high" decoding="async">
+      {render_media(foto_src, f"Foto di {site.get('nome', '')}", priority=True, lazy=False)}
     </div>
   </div>
   

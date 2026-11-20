@@ -19,6 +19,21 @@ function parse(file) {
 }
 const paras = b => b.split(/\n{2,}/).filter(Boolean).map(p => `<p>${esc(p).replace(/\n/g, '<br>')}</p>`).join('\n');
 const list = s => (s || '').split(',').map(x => x.trim()).filter(Boolean);
+const isVideo = src => /\.(mp4|webm|mov|ogg)$/i.test(src || '');
+const renderMedia = (src, alt = '', opts = {}) => {
+  if (!src) return '';
+  const u = esc(src);
+  const a = esc(alt);
+  const w = opts.width ? ` width="${opts.width}"` : '';
+  const h = opts.height ? ` height="${opts.height}"` : '';
+  const prio = opts.priority ? ' fetchpriority="high"' : '';
+  const lazy = opts.lazy ? ' loading="lazy"' : (opts.lazy === false ? ' loading="eager"' : '');
+  const cls = opts.cls ? ` class="${opts.cls}"` : '';
+  if (isVideo(src)) {
+    return `<video src="${u}"${cls}${w}${h} autoplay loop muted playsinline preload="metadata" aria-label="${a}"></video>`;
+  }
+  return `<img src="${u}" alt="${a}"${cls}${w}${h}${prio}${lazy} decoding="async">`;
+};
 
 let sharp = null;
 try {
@@ -228,7 +243,7 @@ function page({ depth, title, desc, current, body, root, back }) {
     ...(site.social || []).map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.etichetta)}</a>`),
     `<a href="mailto:${esc(site.email)}">${esc(site.etichetta_email || 'Contattami')}</a>`
   ].join('<span class="linea linea-corta" aria-hidden="true"></span>');
-  const extraBody = current === 'progetto' ? `<div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-modal="true"><button type="button" class="lightbox-chiudi" aria-label="Chiudi visualizzazione a schermo pieno">x</button><img class="lightbox-img" src="" alt=""></div>` : '';
+  const extraBody = current === 'progetto' ? `<div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-modal="true"><button type="button" class="lightbox-chiudi" aria-label="Chiudi visualizzazione a schermo pieno">x</button><img class="lightbox-img" src="" alt="" style="display:none;"><video class="lightbox-video" src="" autoplay loop muted playsinline controls style="display:none;"></video></div>` : '';
   return `<!doctype html>
 <html lang="${site.lingua || 'it'}">
 <head>
@@ -302,7 +317,7 @@ ${body}
       if (!t) return;
       if (t.closest('.about-foto')) {
         setBadge('Hi, this is me!');
-      } else if (t.closest('.progetto-hero-media, .progetto-concept-media, .progetto-showcase, .progetto-dettaglio img')) {
+      } else if (t.closest('.progetto-hero-media, .progetto-concept-media, .progetto-showcase, .progetto-dettaglio img, .progetto-dettaglio video')) {
         setBadge('Take a look');
       } else if (t.closest('.griglia .card')) {
         setBadge('Learn More');
@@ -319,10 +334,29 @@ ${body}
   var lb = document.getElementById('lightbox');
   if (lb) {
     var lbImg = lb.querySelector('.lightbox-img');
+    var lbVideo = lb.querySelector('.lightbox-video');
     var btnChiudi = lb.querySelector('.lightbox-chiudi');
-    var openLb = function(src, alt) {
-      lbImg.src = src;
-      lbImg.alt = alt || '';
+    var openLb = function(mediaEl) {
+      var isVid = mediaEl.tagName.toLowerCase() === 'video' || /\.(mp4|webm|mov|ogg)$/i.test(mediaEl.currentSrc || mediaEl.src || '');
+      if (isVid) {
+        if (lbImg) { lbImg.style.display = 'none'; lbImg.src = ''; }
+        if (lbVideo) {
+          lbVideo.src = mediaEl.currentSrc || mediaEl.src;
+          lbVideo.style.display = 'block';
+          lbVideo.play().catch(function() {});
+        }
+      } else {
+        if (lbVideo) {
+          lbVideo.pause();
+          lbVideo.src = '';
+          lbVideo.style.display = 'none';
+        }
+        if (lbImg) {
+          lbImg.src = mediaEl.currentSrc || mediaEl.src;
+          lbImg.alt = mediaEl.alt || '';
+          lbImg.style.display = 'block';
+        }
+      }
       lb.classList.add('aperto');
       lb.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
@@ -332,12 +366,20 @@ ${body}
       lb.classList.remove('aperto');
       lb.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
-      lbImg.src = '';
+      if (lbVideo) {
+        lbVideo.pause();
+        lbVideo.src = '';
+        lbVideo.style.display = 'none';
+      }
+      if (lbImg) {
+        lbImg.src = '';
+        lbImg.style.display = 'none';
+      }
     };
 
-    document.querySelectorAll('.progetto-hero-media img, .progetto-concept-media img, .progetto-showcase img').forEach(function(img) {
-      img.addEventListener('click', function() {
-        openLb(img.src, img.alt);
+    document.querySelectorAll('.progetto-hero-media img, .progetto-hero-media video, .progetto-concept-media img, .progetto-concept-media video, .progetto-showcase img, .progetto-showcase video').forEach(function(el) {
+      el.addEventListener('click', function() {
+        openLb(el);
       });
     });
 
@@ -380,7 +422,7 @@ for (let i = 0; i < lavori.length; i++) {
 
 // Landing
 const cards = lavori.map(l => `<li class="card"><a href="lavori/${l.slug}/">
-  <img src="lavori/${l.slug}/${esc(l.meta.cover)}" alt="Anteprima di ${esc(l.meta.titolo)}" width="1600" height="900" loading="lazy" decoding="async">
+  ${renderMedia(`lavori/${l.slug}/${l.meta.cover}`, `Anteprima di ${l.meta.titolo}`, { width: 1600, height: 900, lazy: true })}
   <h2>${esc(l.meta.titolo)}</h2>
   <p>${esc(l.meta.ruolo)}${l.meta.anno ? ', ' + esc(l.meta.anno) : ''}</p>
 </a></li>`).join('\n');
@@ -430,26 +472,26 @@ lavori.forEach((l, i) => {
     m.cliente ? `<div><dt>Cliente</dt><dd>${esc(m.cliente)}</dd></div>` : ''
   ].filter(Boolean).join('\n');
 
-  const heroHtml = m.hero ? `<div class="progetto-hero-media"><img src="${esc(m.hero)}" alt="Hero di ${esc(m.titolo)}" fetchpriority="high" decoding="async"></div>` : '';
-  const conceptHtml = m.concept ? `<div class="progetto-concept-media"><img src="${esc(m.concept)}" alt="Concept di ${esc(m.titolo)}" decoding="async"></div>` : '';
+  const heroHtml = m.hero ? `<div class="progetto-hero-media">${renderMedia(m.hero, `Hero di ${m.titolo}`, { priority: true, lazy: false })}</div>` : '';
+  const conceptHtml = m.concept ? `<div class="progetto-concept-media">${renderMedia(m.concept, `Concept di ${m.titolo}`, { lazy: false })}</div>` : '';
 
   const webImgs = [m.web_01, m.web_02].filter(Boolean);
   const finalWeb = webImgs.length ? webImgs : list(m.schermi_web);
-  const webHtml = finalWeb.map(f => `<div class="showcase-item showcase-full"><img src="${esc(f)}" alt="" loading="lazy" decoding="async"></div>`).join('\n');
+  const webHtml = finalWeb.map(f => `<div class="showcase-item showcase-full">${renderMedia(f, '', { lazy: true })}</div>`).join('\n');
 
-  const bannerHtml = m.banner ? `<div class="showcase-item showcase-banner"><img src="${esc(m.banner)}" alt="" loading="lazy" decoding="async"></div>` : '';
+  const bannerHtml = m.banner ? `<div class="showcase-item showcase-banner">${renderMedia(m.banner, '', { lazy: true })}</div>` : '';
 
   const mobImgs = [m.mobile_01, m.mobile_02].filter(Boolean);
   const finalMob = mobImgs.length ? mobImgs : list(m.schermi_mobile);
-  const mobileHtml = finalMob.length ? `<div class="showcase-grid-2 showcase-mobile">${finalMob.map(f => `<div class="showcase-col"><img src="${esc(f)}" alt="" loading="lazy" decoding="async"></div>`).join('\n')}</div>` : '';
+  const mobileHtml = finalMob.length ? `<div class="showcase-grid-2 showcase-mobile">${finalMob.map(f => `<div class="showcase-col">${renderMedia(f, '', { lazy: true })}</div>`).join('\n')}</div>` : '';
 
   const merchList = [m.merch_01, m.merch_02].filter(Boolean);
   const finalMerch = merchList.length ? merchList : list(m.merch);
-  const merchHtml = finalMerch.length ? `<div class="showcase-grid-2 showcase-merch">${finalMerch.map(f => `<div class="showcase-col"><img src="${esc(f)}" alt="" loading="lazy" decoding="async"></div>`).join('\n')}</div>` : '';
+  const merchHtml = finalMerch.length ? `<div class="showcase-grid-2 showcase-merch">${finalMerch.map(f => `<div class="showcase-col">${renderMedia(f, '', { lazy: true })}</div>`).join('\n')}</div>` : '';
 
   const fallbackImgs = list(m.immagini);
   const fallbackHtml = (!finalWeb.length && !m.banner && !finalMob.length && !finalMerch.length)
-    ? fallbackImgs.map(f => `<div class="showcase-item"><img src="${esc(f)}" alt="" loading="lazy" decoding="async"></div>`).join('\n')
+    ? fallbackImgs.map(f => `<div class="showcase-item">${renderMedia(f, '', { lazy: true })}</div>`).join('\n')
     : '';
 
   const detailBody = `<article class="progetto-dettaglio">
@@ -498,7 +540,7 @@ const location = esc(about.meta.location || 'Genova/Italy');
 const aboutBody = `<article class="about-layout">
   <div class="about-colonna-sinistra">
     <div class="about-foto">
-      <img src="${fotoSrc}" alt="Foto di ${esc(site.nome)}" fetchpriority="high" decoding="async">
+      ${renderMedia(fotoSrc, `Foto di ${site.nome}`, { priority: true, lazy: false })}
     </div>
   </div>
   

@@ -230,7 +230,14 @@
       }
 
       async function compressFile(file) {
-        if (!file || !file.type.startsWith('image/') || file.type.includes('svg')) return file;
+        if (!file) return file;
+        var name = (file.name || '').toLowerCase();
+        var type = (file.type || '').toLowerCase();
+        // Mai comprimere o alterare video, GIF animate o vettoriali SVG
+        if (type.startsWith('video/') || name.endsWith('.mp4') || name.endsWith('.webm') || name.endsWith('.mov') || name.endsWith('.ogg')) return file;
+        if (type === 'image/gif' || name.endsWith('.gif')) return file;
+        if (type.includes('svg') || name.endsWith('.svg')) return file;
+        if (!type.startsWith('image/')) return file;
         // Se già sotto i 350 KB, è già ottimale
         if (file.size <= 350 * 1024) return file;
 
@@ -297,7 +304,11 @@
         if (target._compressing) return;
 
         var file = target.files[0];
-        if (!file || !file.type.startsWith('image/') || file.size <= 350 * 1024) return;
+        if (!file) return;
+        var name = (file.name || '').toLowerCase();
+        var type = (file.type || '').toLowerCase();
+        if (type.startsWith('video/') || name.endsWith('.mp4') || name.endsWith('.webm') || name.endsWith('.mov') || type === 'image/gif' || name.endsWith('.gif')) return;
+        if (!type.startsWith('image/') || file.size <= 350 * 1024) return;
 
         target._compressing = true;
         try {
