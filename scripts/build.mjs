@@ -253,7 +253,11 @@ function page({ depth, title, desc, current, body, root, back }) {
 <meta name="description" content="${esc(desc || site.descrizione)}">
 <meta property="og:title" content="${esc(full)}">
 <meta property="og:description" content="${esc(desc || site.descrizione)}">
+<link rel="icon" href="${p}favicon.ico" sizes="any">
+<link rel="icon" href="${p}favicon.png" type="image/png" sizes="32x32">
+<link rel="icon" href="${p}favicon-192.png" type="image/png" sizes="192x192">
 <link rel="icon" href="${p}favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="${p}apple-touch-icon.png">
 <link rel="preload" href="${p}fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${p}css/tokens.css">
 <link rel="stylesheet" href="${p}css/style.css">

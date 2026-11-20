@@ -244,7 +244,11 @@ def page(depth=0, title='', desc='', current='', body='', root=False, back=False
 <meta name="description" content="__DESC__">
 <meta property="og:title" content="__TITLE__">
 <meta property="og:description" content="__DESC__">
+<link rel="icon" href="__P__favicon.ico" sizes="any">
+<link rel="icon" href="__P__favicon.png" type="image/png" sizes="32x32">
+<link rel="icon" href="__P__favicon-192.png" type="image/png" sizes="192x192">
 <link rel="icon" href="__P__favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="__P__apple-touch-icon.png">
 <link rel="preload" href="__P__fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="__P__css/tokens.css">
 <link rel="stylesheet" href="__P__css/style.css">
