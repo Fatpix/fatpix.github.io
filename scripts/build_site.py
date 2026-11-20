@@ -251,7 +251,7 @@ def page(depth=0, title='', desc='', current='', body='', root=False, back=False
 <link rel="apple-touch-icon" href="__P__apple-touch-icon.png">
 <link rel="preload" href="__P__fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="__P__css/tokens.css">
-<link rel="stylesheet" href="__P__css/style.css?v=2.3">
+<link rel="stylesheet" href="__P__css/style.css?v=2.4">
 </head>
 <body__BODY_CLASS__>
 <div id="cursorBadge" class="cursor-badge" aria-hidden="true"></div>
@@ -287,26 +287,89 @@ __BODY__
     window.addEventListener('resize', updateCardHeight, { passive: true });
     window.addEventListener('load', updateCardHeight, { passive: true });
 
-    if ('IntersectionObserver' in window) {
-      var cardObserver = new IntersectionObserver(function(entries) {
-        entries.forEach(function(entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('in-view');
+    // ── Animazione Scroll Lavori Legata allo Scroll e Velocità ──
+    var cards = Array.prototype.slice.call(document.querySelectorAll('.griglia .card'));
+    if (cards.length > 0 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      var cardMetrics = [];
+      var measureCards = function() {
+        var scrollY = window.pageYOffset || document.documentElement.scrollTop;
+        var H = window.innerHeight || document.documentElement.clientHeight;
+        cardMetrics = cards.map(function(card, index) {
+          var rect = card.getBoundingClientRect();
+          var top = rect.top + scrollY;
+          return {
+            card: card,
+            isOdd: index % 2 === 0,
+            top: top,
+            height: card.offsetHeight || rect.height,
+            initInView: top < H * 0.9
+          };
+        });
+      };
+
+      measureCards();
+      window.addEventListener('resize', measureCards, { passive: true });
+      window.addEventListener('load', measureCards, { passive: true });
+
+      var ticking = false;
+      var updateCardScroll = function() {
+        var scrollY = window.pageYOffset || document.documentElement.scrollTop;
+        var H = window.innerHeight || document.documentElement.clientHeight;
+        var enterDist = Math.max(200, H * 0.55);
+        var exitDist = Math.max(150, H * 0.25);
+
+        for (var i = 0; i < cardMetrics.length; i++) {
+          var m = cardMetrics[i];
+          var relTop = m.top - scrollY;
+          var relBottom = relTop + m.height;
+
+          // 1. Uscita dall'alto
+          var pExit = 1;
+          if (relBottom <= 0) {
+            pExit = 0;
+          } else if (relBottom < exitDist) {
+            pExit = relBottom / exitDist;
+          }
+
+          // 2. Entrata dal basso
+          var pEnter = 1;
+          if (m.initInView && scrollY < enterDist) {
+            pEnter = 1;
           } else {
-            var rect = entry.target.getBoundingClientRect();
-            if (rect.top > (window.innerHeight || document.documentElement.clientHeight)) {
-              entry.target.classList.remove('in-view');
+            if (relTop >= H) {
+              pEnter = 0;
+            } else if (relTop <= H - enterDist) {
+              pEnter = 1;
+            } else {
+              pEnter = (H - relTop) / enterDist;
             }
           }
-        });
-      }, { threshold: 0, rootMargin: '0px 100% -50px 100%' });
-      document.querySelectorAll('.griglia .card').forEach(function(card) {
-        cardObserver.observe(card);
-      });
-    } else {
-      document.querySelectorAll('.griglia .card').forEach(function(card) {
-        card.classList.add('in-view');
-      });
+
+          var p = Math.min(pEnter, pExit);
+          if (p < 0) p = 0;
+          if (p > 1) p = 1;
+
+          // Easing smoothstep: 3p^2 - 2p^3
+          var eased = p * p * (3 - 2 * p);
+
+          var sign = m.isOdd ? -1 : 1;
+          var tx = (1 - eased) * 100 * sign;
+
+          m.card.style.transform = 'translate3d(' + tx.toFixed(2) + '%, 0, 0)';
+          m.card.style.opacity = eased.toFixed(3);
+        }
+        ticking = false;
+      };
+
+      var onScroll = function() {
+        if (!ticking) {
+          window.requestAnimationFrame(updateCardScroll);
+          ticking = true;
+        }
+      };
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      updateCardScroll();
     }
   }
 

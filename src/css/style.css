@@ -177,21 +177,10 @@ body.pagina-home main {
 .card a:hover h2 { color: var(--colore-hover); }
 .card p { margin: 0.25rem 0 0; color: var(--colore-testo-attenuato); font-size: var(--testo-s); }
 
-/* ── Animazione Scroll Lavori (17. CSS Scroll Animation - Entrata dal lato) ── */
+/* ── Animazione Scroll Lavori (Scrub legato a scroll e velocità) ── */
 .griglia .card {
-  opacity: 0;
-  transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
-}
-.griglia .card:nth-child(odd) {
-  transform: translateX(-100%);
-}
-.griglia .card:nth-child(even) {
-  transform: translateX(100%);
-}
-.griglia .card.in-view {
-  opacity: 1;
-  transform: translateX(0);
+  will-change: transform, opacity;
+  transition: none !important;
 }
 
 /* Cursore badge custom in hover sui progetti e immagini */
