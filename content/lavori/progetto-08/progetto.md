@@ -3,7 +3,7 @@ titolo: Progetto 8
 anno: 2023
 ruolo: Creative Direction, Exhibition
 team: Designer 01, Designer 02
-cliente: Cliente 08
+cliente: Client 08
 ordine: 8
 bozza: false
 cover: cover.svg

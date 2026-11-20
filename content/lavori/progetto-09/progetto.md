@@ -3,7 +3,7 @@ titolo: Progetto 9
 anno: 2023
 ruolo: Interactive Design, Creative Tech
 team: Designer 01, Designer 02
-cliente: Cliente 09
+cliente: Client 09
 ordine: 9
 bozza: false
 cover: cover.svg

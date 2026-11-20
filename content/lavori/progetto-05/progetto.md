@@ -3,7 +3,7 @@ titolo: Progetto 5
 anno: 2024
 ruolo: Poster Series, Graphic Design
 team: Designer 01, Designer 02
-cliente: Cliente 05
+cliente: Client 05
 ordine: 5
 bozza: false
 cover: cover.svg

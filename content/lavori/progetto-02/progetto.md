@@ -3,7 +3,7 @@ titolo: Progetto 2
 anno: 2025
 ruolo: Editorial Design, Typography
 team: Designer 01, Designer 02
-cliente: Cliente 02
+cliente: Client 02
 ordine: 2
 bozza: false
 cover: cover.svg

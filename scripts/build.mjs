@@ -472,16 +472,16 @@ lavori.forEach((l, i) => {
   const m = l.meta, prev = lavori[i - 1], next = lavori[i + 1];
   const links = list(m.link?.replace(/;/g, ',')).map(x => x.split('|').map(s => s.trim()))
     .filter(([, u]) => u).map(([t, u]) => `<a class="pulsante" href="${esc(u)}" rel="noopener">${esc(t)}</a>`).join('');
-  const nav = `<nav class="sequenza" aria-label="Altri lavori">
-  ${prev ? `<a href="../${prev.slug}/">Precedente: ${esc(prev.meta.titolo)}</a>` : '<span></span>'}
-  ${next ? `<a href="../${next.slug}/">Successivo: ${esc(next.meta.titolo)}</a>` : '<span></span>'}
+  const nav = `<nav class="sequenza" aria-label="More works">
+  ${prev ? `<a href="../${prev.slug}/">Previous: ${esc(prev.meta.titolo)}</a>` : '<span></span>'}
+  ${next ? `<a href="../${next.slug}/">Next: ${esc(next.meta.titolo)}</a>` : '<span></span>'}
 </nav>`;
 
   const metaItems = [
-    m.anno ? `<div><dt>Anno</dt><dd>${esc(m.anno)}</dd></div>` : '',
-    m.ruolo ? `<div><dt>Ruolo</dt><dd>${esc(m.ruolo)}</dd></div>` : '',
+    m.anno ? `<div><dt>Year</dt><dd>${esc(m.anno)}</dd></div>` : '',
+    m.ruolo ? `<div><dt>Role</dt><dd>${esc(m.ruolo)}</dd></div>` : '',
     m.team ? `<div><dt>Team</dt><dd>${esc(m.team)}</dd></div>` : '',
-    m.cliente ? `<div><dt>Cliente</dt><dd>${esc(m.cliente)}</dd></div>` : ''
+    m.cliente ? `<div><dt>Client</dt><dd>${esc(m.cliente)}</dd></div>` : ''
   ].filter(Boolean).join('\n');
 
   const heroHtml = m.hero ? `<div class="progetto-hero-media">${renderMedia(m.hero, `Hero di ${m.titolo}`, { priority: true, lazy: false })}</div>` : '';

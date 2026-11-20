@@ -3,7 +3,7 @@ titolo: Progetto 4
 anno: 2024
 ruolo: Visual Identity, Packaging
 team: Designer 01, Designer 02
-cliente: Cliente 04
+cliente: Client 04
 ordine: 4
 bozza: false
 cover: cover.svg

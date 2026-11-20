@@ -3,7 +3,7 @@ titolo: Progetto 7
 anno: 2024
 ruolo: Type Design, Publication
 team: Designer 01, Designer 02
-cliente: Cliente 07
+cliente: Client 07
 ordine: 7
 bozza: false
 cover: cover.svg

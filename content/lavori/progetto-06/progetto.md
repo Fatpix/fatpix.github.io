@@ -3,7 +3,7 @@ titolo: Progetto 6
 anno: 2024
 ruolo: Digital Design, Motion Graphics
 team: Designer 01, Designer 02
-cliente: Cliente 06
+cliente: Client 06
 ordine: 6
 bozza: false
 cover: cover.svg

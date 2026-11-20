@@ -21,10 +21,10 @@ collections:
       preview: false
     fields:
       - { name: "titolo", label: "Titolo Progetto (es: Progetto 1)", widget: "string" }
-      - { name: "anno", label: "Anno", widget: "string", default: "2025" }
-      - { name: "ruolo", label: "Ruolo (es: Brand Identity, Web Design)", widget: "string", default: "Brand Identity, Web Design" }
-      - { name: "team", label: "Team / Collaboratori", widget: "string", required: false }
-      - { name: "cliente", label: "Cliente", widget: "string", required: false }
+      - { name: "anno", label: "Year (Anno)", widget: "string", default: "2025" }
+      - { name: "ruolo", label: "Role / Ruolo (es: Brand Identity, Web Design)", widget: "string", default: "Brand Identity, Web Design" }
+      - { name: "team", label: "Team", widget: "string", required: false }
+      - { name: "cliente", label: "Client (Cliente)", widget: "string", required: false }
       - { name: "ordine", label: "Ordine di visualizzazione (1-9)", widget: "number", value_type: "int" }
       - { name: "bozza", label: "Nascondi / Bozza", widget: "boolean", default: false }
       - { name: "link", label: "Link esterni (es: Visita il sito | https://sito.it)", widget: "string", required: false }
@@ -60,7 +60,7 @@ collections:
         fields:
           - { name: "nome", label: "Nome Visibile", widget: "string" }
           - { name: "alias", label: "Alias (Rosso al tocco)", widget: "string" }
-          - { name: "ruolo", label: "Ruolo", widget: "string" }
+          - { name: "ruolo", label: "Role / Ruolo", widget: "string" }
           - { name: "descrizione", label: "Descrizione SEO / Meta tag", widget: "string", required: false }
           - { name: "email", label: "Email", widget: "string" }
           - { name: "etichetta_email", label: "Testo Link Email (es: Let's Talk)", widget: "string" }

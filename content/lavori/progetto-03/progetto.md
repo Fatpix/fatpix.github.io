@@ -3,7 +3,7 @@ titolo: Progetto 3
 anno: 2025
 ruolo: UI/UX Design, Web Application
 team: Designer 01, Designer 02
-cliente: Cliente 03
+cliente: Client 03
 ordine: 3
 bozza: false
 cover: cover.svg

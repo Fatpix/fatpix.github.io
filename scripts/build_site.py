@@ -495,9 +495,9 @@ for i, l in enumerate(lavori):
     links_list = [x.split('|') for x in m.get('link', '').replace(';', ',').split(',') if '|' in x]
     links_html = ''.join([f'<a class="pulsante" href="{esc(u.strip())}" rel="noopener">{esc(t.strip())}</a>' for t, u in links_list if u.strip()])
     
-    prev_link = f'<a href="../{prev_l["slug"]}/">Precedente: {esc(prev_l["meta"]["titolo"])}</a>' if prev_l else '<span></span>'
-    next_link = f'<a href="../{next_l["slug"]}/">Successivo: {esc(next_l["meta"]["titolo"])}</a>' if next_l else '<span></span>'
-    nav_html = f"""<nav class="sequenza" aria-label="Altri lavori">
+    prev_link = f'<a href="../{prev_l["slug"]}/">Previous: {esc(prev_l["meta"]["titolo"])}</a>' if prev_l else '<span></span>'
+    next_link = f'<a href="../{next_l["slug"]}/">Next: {esc(next_l["meta"]["titolo"])}</a>' if next_l else '<span></span>'
+    nav_html = f"""<nav class="sequenza" aria-label="More works">
   {prev_link}
   {next_link}
 </nav>"""
@@ -505,13 +505,13 @@ for i, l in enumerate(lavori):
     # Metadata
     meta_items = []
     if m.get('anno'):
-        meta_items.append(f'<div><dt>Anno</dt><dd>{esc(m["anno"])}</dd></div>')
+        meta_items.append(f'<div><dt>Year</dt><dd>{esc(m["anno"])}</dd></div>')
     if m.get('ruolo'):
-        meta_items.append(f'<div><dt>Ruolo</dt><dd>{esc(m["ruolo"])}</dd></div>')
+        meta_items.append(f'<div><dt>Role</dt><dd>{esc(m["ruolo"])}</dd></div>')
     if m.get('team'):
         meta_items.append(f'<div><dt>Team</dt><dd>{esc(m["team"])}</dd></div>')
     if m.get('cliente'):
-        meta_items.append(f'<div><dt>Cliente</dt><dd>{esc(m["cliente"])}</dd></div>')
+        meta_items.append(f'<div><dt>Client</dt><dd>{esc(m["cliente"])}</dd></div>')
     meta_html = '\n'.join(meta_items)
 
     # Modular media
