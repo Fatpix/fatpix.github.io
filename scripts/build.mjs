@@ -400,19 +400,22 @@ lavori.forEach((l, i) => {
   const heroHtml = m.hero ? `<div class="progetto-hero-media"><img src="${esc(m.hero)}" alt="Hero di ${esc(m.titolo)}" fetchpriority="high" decoding="async"></div>` : '';
   const conceptHtml = m.concept ? `<div class="progetto-concept-media"><img src="${esc(m.concept)}" alt="Concept di ${esc(m.titolo)}" decoding="async"></div>` : '';
 
-  const webImgs = list(m.schermi_web);
-  const webHtml = webImgs.map(f => `<div class="showcase-item showcase-full"><img src="${esc(f)}" alt="" loading="lazy" decoding="async"></div>`).join('\n');
+  const webImgs = [m.web_01, m.web_02].filter(Boolean);
+  const finalWeb = webImgs.length ? webImgs : list(m.schermi_web);
+  const webHtml = finalWeb.map(f => `<div class="showcase-item showcase-full"><img src="${esc(f)}" alt="" loading="lazy" decoding="async"></div>`).join('\n');
 
   const bannerHtml = m.banner ? `<div class="showcase-item showcase-banner"><img src="${esc(m.banner)}" alt="" loading="lazy" decoding="async"></div>` : '';
 
-  const mobileImgs = list(m.schermi_mobile);
-  const mobileHtml = mobileImgs.length ? `<div class="showcase-grid-2 showcase-mobile">${mobileImgs.map(f => `<div class="showcase-col"><img src="${esc(f)}" alt="" loading="lazy" decoding="async"></div>`).join('\n')}</div>` : '';
+  const mobImgs = [m.mobile_01, m.mobile_02].filter(Boolean);
+  const finalMob = mobImgs.length ? mobImgs : list(m.schermi_mobile);
+  const mobileHtml = finalMob.length ? `<div class="showcase-grid-2 showcase-mobile">${finalMob.map(f => `<div class="showcase-col"><img src="${esc(f)}" alt="" loading="lazy" decoding="async"></div>`).join('\n')}</div>` : '';
 
-  const merchImgs = list(m.merch);
-  const merchHtml = merchImgs.length ? `<div class="showcase-grid-2 showcase-merch">${merchImgs.map(f => `<div class="showcase-col"><img src="${esc(f)}" alt="" loading="lazy" decoding="async"></div>`).join('\n')}</div>` : '';
+  const merchList = [m.merch_01, m.merch_02].filter(Boolean);
+  const finalMerch = merchList.length ? merchList : list(m.merch);
+  const merchHtml = finalMerch.length ? `<div class="showcase-grid-2 showcase-merch">${finalMerch.map(f => `<div class="showcase-col"><img src="${esc(f)}" alt="" loading="lazy" decoding="async"></div>`).join('\n')}</div>` : '';
 
   const fallbackImgs = list(m.immagini);
-  const fallbackHtml = (!webImgs.length && !m.banner && !mobileImgs.length && !merchImgs.length)
+  const fallbackHtml = (!finalWeb.length && !m.banner && !finalMob.length && !finalMerch.length)
     ? fallbackImgs.map(f => `<div class="showcase-item"><img src="${esc(f)}" alt="" loading="lazy" decoding="async"></div>`).join('\n')
     : '';
 

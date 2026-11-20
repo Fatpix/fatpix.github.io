@@ -465,16 +465,19 @@ for i, l in enumerate(lavori):
     concept_img = m.get('concept')
     concept_html = f'<div class="progetto-concept-media"><img src="{esc(concept_img)}" alt="Concept di {esc(m.get("titolo", ""))}" decoding="async"></div>' if concept_img else ''
 
-    web_imgs = [x.strip() for x in m.get('schermi_web', '').split(',') if x.strip()]
+    raw_web = [m.get('web_01'), m.get('web_02')]
+    web_imgs = [x for x in raw_web if x] or [x.strip() for x in m.get('schermi_web', '').split(',') if x.strip()]
     web_html = '\n'.join([f'<div class="showcase-item showcase-full"><img src="{esc(img)}" alt="" loading="lazy" decoding="async"></div>' for img in web_imgs])
 
     banner_img = m.get('banner')
     banner_html = f'<div class="showcase-item showcase-banner"><img src="{esc(banner_img)}" alt="" loading="lazy" decoding="async"></div>' if banner_img else ''
 
-    mobile_imgs = [x.strip() for x in m.get('schermi_mobile', '').split(',') if x.strip()]
+    raw_mob = [m.get('mobile_01'), m.get('mobile_02')]
+    mobile_imgs = [x for x in raw_mob if x] or [x.strip() for x in m.get('schermi_mobile', '').split(',') if x.strip()]
     mobile_html = f'<div class="showcase-grid-2 showcase-mobile">' + '\n'.join([f'<div class="showcase-col"><img src="{esc(img)}" alt="" loading="lazy" decoding="async"></div>' for img in mobile_imgs]) + '</div>' if mobile_imgs else ''
 
-    merch_imgs = [x.strip() for x in m.get('merch', '').split(',') if x.strip()]
+    raw_merch = [m.get('merch_01'), m.get('merch_02')]
+    merch_imgs = [x for x in raw_merch if x] or [x.strip() for x in m.get('merch', '').split(',') if x.strip()]
     merch_html = f'<div class="showcase-grid-2 showcase-merch">' + '\n'.join([f'<div class="showcase-col"><img src="{esc(img)}" alt="" loading="lazy" decoding="async"></div>' for img in merch_imgs]) + '</div>' if merch_imgs else ''
 
     # Fallback su immagini standard se non ci sono sezioni modulari

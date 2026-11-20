@@ -464,17 +464,21 @@ body.pagina-chi-sono main {
 .about-colonna-sinistra {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  width: 100%;
+  min-height: 20rem;
 }
 .about-foto {
-  flex: 1 1 auto;
+  flex: 1 1 100%;
+  width: 100%;
   height: 100%;
-  display: flex;
+  position: relative;
+  overflow: hidden;
 }
 .about-foto img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
   border-radius: var(--raggio);
   background: var(--colore-segnaposto);
 }

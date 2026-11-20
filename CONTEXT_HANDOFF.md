@@ -52,6 +52,22 @@ Questo file riassume l'intero stato del progetto, le preferenze dell'utente, i r
 ---
 
 ## 4. Nuove Funzionalità & Regola Fondamentale Admin
+
+6. **Schema Immagini Admin 1:1 con Dimensioni Esplicite:**
+   - Tutti gli slot immagine nei progetti sono campi di upload dedicati individuali (non più stringhe separate da virgola):
+     - `cover`: 1600 × 900 px (16:9)
+     - `hero`: 1600 × 900 px (16:9)
+     - `concept`: 1200 × 900 px (4:3)
+     - `web_01`: 1600 × 1000 px (16:10)
+     - `web_02`: 1600 × 1000 px (16:10)
+     - `banner`: 1800 × 750 px (18:7.5)
+     - `mobile_01`: 900 × 1600 px (9:16)
+     - `mobile_02`: 900 × 1600 px (9:16)
+     - `merch_01`: 1000 × 1250 px (4:5)
+     - `merch_02`: 1000 × 1250 px (4:5)
+   - Pagina About Me:
+     - `foto`: 1000 × 1050 px (~1:1 o 3:4)
+
 - **Pagina About Me:** La foto del profilo si estende in altezza in modo reattivo (`align-items: stretch`, `height: 100%`, `object-fit: cover`) per avere esattamente la stessa altezza del blocco di testo al suo fianco (bio + location), allineandosi perfettamente sia in alto che in basso.
 1. **Cursor Badge in Primo Piano Assoluto:**
    - La targhetta hover ha `z-index: 2147483647 !important` ed è sempre in primo piano su card home, immagini progetto e foto About.
