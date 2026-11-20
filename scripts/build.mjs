@@ -29,10 +29,10 @@ function generateProjectPlaceholders(outDir, num, title, role) {
   mkdirSync(outDir, { recursive: true });
   const pad = String(num).padStart(2, '0');
   const files = {
-    'cover.svg': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="100%">
-  <rect width="1200" height="900" fill="#ebebeb"/>
-  <rect x="24" y="24" width="1152" height="852" fill="none" stroke="#d5d5d5" stroke-width="2"/>
-  <g transform="translate(600, 430)" text-anchor="middle">
+    'cover.svg': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%">
+  <rect width="1600" height="900" fill="#ebebeb"/>
+  <rect x="32" y="32" width="1536" height="836" fill="none" stroke="#d5d5d5" stroke-width="2"/>
+  <g transform="translate(800, 430)" text-anchor="middle">
     <circle cx="0" cy="-60" r="48" fill="none" stroke="#b0b0b0" stroke-width="3"/>
     <text x="0" y="-48" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="32" font-weight="600" fill="#888888">${pad}</text>
     <text x="0" y="30" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="44" font-weight="700" fill="#333333" letter-spacing="-0.5">${esc(title)}</text>
@@ -347,7 +347,7 @@ for (let i = 0; i < lavori.length; i++) {
 
 // Landing
 const cards = lavori.map(l => `<li class="card"><a href="lavori/${l.slug}/">
-  <img src="lavori/${l.slug}/${esc(l.meta.cover)}" alt="Anteprima di ${esc(l.meta.titolo)}" width="1200" height="900" loading="lazy">
+  <img src="lavori/${l.slug}/${esc(l.meta.cover)}" alt="Anteprima di ${esc(l.meta.titolo)}" width="1600" height="900" loading="lazy">
   <h2>${esc(l.meta.titolo)}</h2>
   <p>${esc(l.meta.ruolo)}${l.meta.anno ? ', ' + esc(l.meta.anno) : ''}</p>
 </a></li>`).join('\n');

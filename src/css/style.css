@@ -151,7 +151,14 @@ main {
 .intro p { color: var(--colore-testo-attenuato); font-size: var(--testo-l); margin: var(--spazio-m) 0 0; }
 .griglia { display: grid; gap: var(--spazio-l); grid-template-columns: 1fr; list-style: none; margin: 0; padding: 0; }
 .card a { text-decoration: none; display: block; }
-.card img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--raggio); background: var(--colore-segnaposto); }
+.card img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 65vh;
+  object-fit: cover;
+  border-radius: var(--raggio);
+  background: var(--colore-segnaposto);
+}
 .card h2 { font-size: var(--testo-l); letter-spacing: -0.01em; margin-top: var(--spazio-s); }
 .card h2 { transition: color .15s; }
 .card a:hover h2 { color: var(--colore-hover); }

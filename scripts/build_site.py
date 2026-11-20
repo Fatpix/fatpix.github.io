@@ -43,10 +43,10 @@ def copy_assets(from_dir, to_dir):
 def generate_project_placeholders(out_dir, num, title, role):
     os.makedirs(out_dir, exist_ok=True)
     files = {
-        "cover.svg": f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="100%">
-  <rect width="1200" height="900" fill="#ebebeb"/>
-  <rect x="24" y="24" width="1152" height="852" fill="none" stroke="#d5d5d5" stroke-width="2"/>
-  <g transform="translate(600, 430)" text-anchor="middle">
+        "cover.svg": f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="100%">
+  <rect width="1600" height="900" fill="#ebebeb"/>
+  <rect x="32" y="32" width="1536" height="836" fill="none" stroke="#d5d5d5" stroke-width="2"/>
+  <g transform="translate(800, 430)" text-anchor="middle">
     <circle cx="0" cy="-60" r="48" fill="none" stroke="#b0b0b0" stroke-width="3"/>
     <text x="0" y="-48" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="32" font-weight="600" fill="#888888">{num:02d}</text>
     <text x="0" y="30" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="44" font-weight="700" fill="#333333" letter-spacing="-0.5">{title}</text>
@@ -393,7 +393,7 @@ for i, l in enumerate(lavori):
 # Landing
 cards_html = '\n'.join([
     f"""<li class="card"><a href="lavori/{l['slug']}/">
-  <img src="lavori/{l['slug']}/{esc(l['meta'].get('cover', ''))}" alt="Anteprima di {esc(l['meta'].get('titolo', ''))}" width="1200" height="900" loading="lazy">
+  <img src="lavori/{l['slug']}/{esc(l['meta'].get('cover', ''))}" alt="Anteprima di {esc(l['meta'].get('titolo', ''))}" width="1600" height="900" loading="lazy">
   <h2>{esc(l['meta'].get('titolo', ''))}</h2>
   <p>{esc(l['meta'].get('ruolo', ''))}{', ' + esc(l['meta'].get('anno')) if l['meta'].get('anno') else ''}</p>
 </a></li>"""
