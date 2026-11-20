@@ -260,7 +260,7 @@ function page({ depth, title, desc, current, body, root, back }) {
 <link rel="apple-touch-icon" href="${p}apple-touch-icon.png">
 <link rel="preload" href="${p}fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${p}css/tokens.css">
-<link rel="stylesheet" href="${p}css/style.css?v=2.2">
+<link rel="stylesheet" href="${p}css/style.css?v=2.3">
 </head>
 <body${current ? ` class="pagina-${current}"` : ''}>
 <div id="cursorBadge" class="cursor-badge" aria-hidden="true"></div>
@@ -312,7 +312,7 @@ ${body}
             }
           }
         });
-      }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+      }, { threshold: 0, rootMargin: '0px 100% -50px 100%' });
       document.querySelectorAll('.griglia .card').forEach(function(card) {
         cardObserver.observe(card);
       });

@@ -251,7 +251,7 @@ def page(depth=0, title='', desc='', current='', body='', root=False, back=False
 <link rel="apple-touch-icon" href="__P__apple-touch-icon.png">
 <link rel="preload" href="__P__fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="__P__css/tokens.css">
-<link rel="stylesheet" href="__P__css/style.css?v=2.2">
+<link rel="stylesheet" href="__P__css/style.css?v=2.3">
 </head>
 <body__BODY_CLASS__>
 <div id="cursorBadge" class="cursor-badge" aria-hidden="true"></div>
@@ -299,7 +299,7 @@ __BODY__
             }
           }
         });
-      }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+      }, { threshold: 0, rootMargin: '0px 100% -50px 100%' });
       document.querySelectorAll('.griglia .card').forEach(function(card) {
         cardObserver.observe(card);
       });

@@ -8,13 +8,14 @@
   -ms-hyphens: none !important;
   hyphens: none !important;
 }
-html { -webkit-text-size-adjust: 100%; -webkit-hyphens: none !important; hyphens: none !important; }
+html { -webkit-text-size-adjust: 100%; -webkit-hyphens: none !important; hyphens: none !important; overflow-x: hidden; }
 body {
   margin: 0;
   background: var(--colore-sfondo);
   color: var(--colore-testo);
   font: var(--testo-m)/1.6 var(--font-testo);
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
   -webkit-hyphens: none !important;
   -moz-hyphens: none !important;
   -ms-hyphens: none !important;
@@ -176,16 +177,21 @@ body.pagina-home main {
 .card a:hover h2 { color: var(--colore-hover); }
 .card p { margin: 0.25rem 0 0; color: var(--colore-testo-attenuato); font-size: var(--testo-s); }
 
-/* ── Animazione Scroll Lavori (17. CSS Scroll Animation) ── */
+/* ── Animazione Scroll Lavori (17. CSS Scroll Animation - Entrata dal lato) ── */
 .griglia .card {
   opacity: 0;
-  transform: translateY(60px);
   transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1), transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
 }
+.griglia .card:nth-child(odd) {
+  transform: translateX(-100%);
+}
+.griglia .card:nth-child(even) {
+  transform: translateX(100%);
+}
 .griglia .card.in-view {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateX(0);
 }
 
 /* Cursore badge custom in hover sui progetti e immagini */
