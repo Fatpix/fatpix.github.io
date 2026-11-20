@@ -347,7 +347,7 @@ for (let i = 0; i < lavori.length; i++) {
 
 // Landing
 const cards = lavori.map(l => `<li class="card"><a href="lavori/${l.slug}/">
-  <img src="lavori/${l.slug}/${esc(l.meta.cover)}" alt="Anteprima di ${esc(l.meta.titolo)}" width="1600" height="900" loading="lazy">
+  <img src="lavori/${l.slug}/${esc(l.meta.cover)}" alt="Anteprima di ${esc(l.meta.titolo)}" width="1600" height="900" loading="lazy" decoding="async">
   <h2>${esc(l.meta.titolo)}</h2>
   <p>${esc(l.meta.ruolo)}${l.meta.anno ? ', ' + esc(l.meta.anno) : ''}</p>
 </a></li>`).join('\n');
@@ -397,23 +397,23 @@ lavori.forEach((l, i) => {
     m.cliente ? `<div><dt>Cliente</dt><dd>${esc(m.cliente)}</dd></div>` : ''
   ].filter(Boolean).join('\n');
 
-  const heroHtml = m.hero ? `<div class="progetto-hero-media"><img src="${esc(m.hero)}" alt="Hero di ${esc(m.titolo)}"></div>` : '';
-  const conceptHtml = m.concept ? `<div class="progetto-concept-media"><img src="${esc(m.concept)}" alt="Concept di ${esc(m.titolo)}"></div>` : '';
+  const heroHtml = m.hero ? `<div class="progetto-hero-media"><img src="${esc(m.hero)}" alt="Hero di ${esc(m.titolo)}" fetchpriority="high" decoding="async"></div>` : '';
+  const conceptHtml = m.concept ? `<div class="progetto-concept-media"><img src="${esc(m.concept)}" alt="Concept di ${esc(m.titolo)}" decoding="async"></div>` : '';
 
   const webImgs = list(m.schermi_web);
-  const webHtml = webImgs.map(f => `<div class="showcase-item showcase-full"><img src="${esc(f)}" alt="" loading="lazy"></div>`).join('\n');
+  const webHtml = webImgs.map(f => `<div class="showcase-item showcase-full"><img src="${esc(f)}" alt="" loading="lazy" decoding="async"></div>`).join('\n');
 
-  const bannerHtml = m.banner ? `<div class="showcase-item showcase-banner"><img src="${esc(m.banner)}" alt="" loading="lazy"></div>` : '';
+  const bannerHtml = m.banner ? `<div class="showcase-item showcase-banner"><img src="${esc(m.banner)}" alt="" loading="lazy" decoding="async"></div>` : '';
 
   const mobileImgs = list(m.schermi_mobile);
-  const mobileHtml = mobileImgs.length ? `<div class="showcase-grid-2 showcase-mobile">${mobileImgs.map(f => `<div class="showcase-col"><img src="${esc(f)}" alt="" loading="lazy"></div>`).join('\n')}</div>` : '';
+  const mobileHtml = mobileImgs.length ? `<div class="showcase-grid-2 showcase-mobile">${mobileImgs.map(f => `<div class="showcase-col"><img src="${esc(f)}" alt="" loading="lazy" decoding="async"></div>`).join('\n')}</div>` : '';
 
   const merchImgs = list(m.merch);
-  const merchHtml = merchImgs.length ? `<div class="showcase-grid-2 showcase-merch">${merchImgs.map(f => `<div class="showcase-col"><img src="${esc(f)}" alt="" loading="lazy"></div>`).join('\n')}</div>` : '';
+  const merchHtml = merchImgs.length ? `<div class="showcase-grid-2 showcase-merch">${merchImgs.map(f => `<div class="showcase-col"><img src="${esc(f)}" alt="" loading="lazy" decoding="async"></div>`).join('\n')}</div>` : '';
 
   const fallbackImgs = list(m.immagini);
   const fallbackHtml = (!webImgs.length && !m.banner && !mobileImgs.length && !merchImgs.length)
-    ? fallbackImgs.map(f => `<div class="showcase-item"><img src="${esc(f)}" alt="" loading="lazy"></div>`).join('\n')
+    ? fallbackImgs.map(f => `<div class="showcase-item"><img src="${esc(f)}" alt="" loading="lazy" decoding="async"></div>`).join('\n')
     : '';
 
   const detailBody = `<article class="progetto-dettaglio">
@@ -462,7 +462,7 @@ const location = esc(about.meta.location || 'Genova/Italy');
 const aboutBody = `<article class="about-layout">
   <div class="about-colonna-sinistra">
     <div class="about-foto">
-      <img src="${fotoSrc}" alt="Placeholder" width="1200" height="900">
+      <img src="${fotoSrc}" alt="Foto di ${esc(site.nome)}" fetchpriority="high" decoding="async">
     </div>
   </div>
   

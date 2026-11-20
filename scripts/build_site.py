@@ -393,7 +393,7 @@ for i, l in enumerate(lavori):
 # Landing
 cards_html = '\n'.join([
     f"""<li class="card"><a href="lavori/{l['slug']}/">
-  <img src="lavori/{l['slug']}/{esc(l['meta'].get('cover', ''))}" alt="Anteprima di {esc(l['meta'].get('titolo', ''))}" width="1600" height="900" loading="lazy">
+  <img src="lavori/{l['slug']}/{esc(l['meta'].get('cover', ''))}" alt="Anteprima di {esc(l['meta'].get('titolo', ''))}" width="1600" height="900" loading="lazy" decoding="async">
   <h2>{esc(l['meta'].get('titolo', ''))}</h2>
   <p>{esc(l['meta'].get('ruolo', ''))}{', ' + esc(l['meta'].get('anno')) if l['meta'].get('anno') else ''}</p>
 </a></li>"""
@@ -460,26 +460,26 @@ for i, l in enumerate(lavori):
 
     # Modular media
     hero_img = m.get('hero')
-    hero_html = f'<div class="progetto-hero-media"><img src="{esc(hero_img)}" alt="Hero di {esc(m.get("titolo", ""))}"></div>' if hero_img else ''
+    hero_html = f'<div class="progetto-hero-media"><img src="{esc(hero_img)}" alt="Hero di {esc(m.get("titolo", ""))}" fetchpriority="high" decoding="async"></div>' if hero_img else ''
 
     concept_img = m.get('concept')
-    concept_html = f'<div class="progetto-concept-media"><img src="{esc(concept_img)}" alt="Concept di {esc(m.get("titolo", ""))}"></div>' if concept_img else ''
+    concept_html = f'<div class="progetto-concept-media"><img src="{esc(concept_img)}" alt="Concept di {esc(m.get("titolo", ""))}" decoding="async"></div>' if concept_img else ''
 
     web_imgs = [x.strip() for x in m.get('schermi_web', '').split(',') if x.strip()]
-    web_html = '\n'.join([f'<div class="showcase-item showcase-full"><img src="{esc(img)}" alt="" loading="lazy"></div>' for img in web_imgs])
+    web_html = '\n'.join([f'<div class="showcase-item showcase-full"><img src="{esc(img)}" alt="" loading="lazy" decoding="async"></div>' for img in web_imgs])
 
     banner_img = m.get('banner')
-    banner_html = f'<div class="showcase-item showcase-banner"><img src="{esc(banner_img)}" alt="" loading="lazy"></div>' if banner_img else ''
+    banner_html = f'<div class="showcase-item showcase-banner"><img src="{esc(banner_img)}" alt="" loading="lazy" decoding="async"></div>' if banner_img else ''
 
     mobile_imgs = [x.strip() for x in m.get('schermi_mobile', '').split(',') if x.strip()]
-    mobile_html = f'<div class="showcase-grid-2 showcase-mobile">' + '\n'.join([f'<div class="showcase-col"><img src="{esc(img)}" alt="" loading="lazy"></div>' for img in mobile_imgs]) + '</div>' if mobile_imgs else ''
+    mobile_html = f'<div class="showcase-grid-2 showcase-mobile">' + '\n'.join([f'<div class="showcase-col"><img src="{esc(img)}" alt="" loading="lazy" decoding="async"></div>' for img in mobile_imgs]) + '</div>' if mobile_imgs else ''
 
     merch_imgs = [x.strip() for x in m.get('merch', '').split(',') if x.strip()]
-    merch_html = f'<div class="showcase-grid-2 showcase-merch">' + '\n'.join([f'<div class="showcase-col"><img src="{esc(img)}" alt="" loading="lazy"></div>' for img in merch_imgs]) + '</div>' if merch_imgs else ''
+    merch_html = f'<div class="showcase-grid-2 showcase-merch">' + '\n'.join([f'<div class="showcase-col"><img src="{esc(img)}" alt="" loading="lazy" decoding="async"></div>' for img in merch_imgs]) + '</div>' if merch_imgs else ''
 
     # Fallback su immagini standard se non ci sono sezioni modulari
     standard_imgs = [x.strip() for x in m.get('immagini', '').split(',') if x.strip()]
-    fallback_html = '\n'.join([f'<div class="showcase-item"><img src="{esc(img)}" alt="" loading="lazy"></div>' for img in standard_imgs]) if not (web_imgs or banner_img or mobile_imgs or merch_imgs) else ''
+    fallback_html = '\n'.join([f'<div class="showcase-item"><img src="{esc(img)}" alt="" loading="lazy" decoding="async"></div>' for img in standard_imgs]) if not (web_imgs or banner_img or mobile_imgs or merch_imgs) else ''
 
     detail_body = f"""<article class="progetto-dettaglio">
 <header class="progetto-testata">
@@ -522,7 +522,7 @@ location = esc(about['meta'].get('location', 'Genova/Italy'))
 about_body = f"""<article class="about-layout">
   <div class="about-colonna-sinistra">
     <div class="about-foto">
-      <img src="{foto_src}" alt="Placeholder" width="1200" height="900">
+      <img src="{foto_src}" alt="Foto di {esc(site.get('nome', ''))}" fetchpriority="high" decoding="async">
     </div>
   </div>
   
