@@ -19,11 +19,44 @@ function parse(file) {
 }
 const paras = b => b.split(/\n{2,}/).filter(Boolean).map(p => `<p>${esc(p).replace(/\n/g, '<br>')}</p>`).join('\n');
 const list = s => (s || '').split(',').map(x => x.trim()).filter(Boolean);
-const copyAssets = (from, to) => {
+
+let sharp = null;
+try {
+  sharp = (await import('sharp')).default;
+} catch (e) {}
+
+async function copyAssets(from, to) {
   mkdirSync(to, { recursive: true });
   if (!existsSync(from)) return;
-  for (const f of readdirSync(from)) if (extname(f) !== '.md') cpSync(join(from, f), join(to, f));
-};
+  for (const f of readdirSync(from)) {
+    const ext = extname(f).toLowerCase();
+    if (ext === '.md') continue;
+    const src = join(from, f);
+    const dst = join(to, f);
+    if (sharp && ['.jpg', '.jpeg', '.png', '.webp'].includes(ext)) {
+      try {
+        const metadata = await sharp(src).metadata();
+        let pipeline = sharp(src);
+        if (metadata.width > 2000 || metadata.height > 2000) {
+          pipeline = pipeline.resize(2000, 2000, { fit: 'inside', withoutEnlargement: true });
+        }
+        if (ext === '.jpg' || ext === '.jpeg') {
+          await pipeline.jpeg({ quality: 84, progressive: true, mozjpeg: true }).toFile(dst);
+        } else if (ext === '.png') {
+          await pipeline.png({ quality: 85, compressionLevel: 8 }).toFile(dst);
+        } else if (ext === '.webp') {
+          await pipeline.webp({ quality: 84 }).toFile(dst);
+        } else {
+          cpSync(src, dst);
+        }
+      } catch (err) {
+        cpSync(src, dst);
+      }
+    } else {
+      cpSync(src, dst);
+    }
+  }
+}
 
 function generateProjectPlaceholders(outDir, num, title, role) {
   mkdirSync(outDir, { recursive: true });
@@ -341,7 +374,7 @@ const lavori = readdirSync(`${C}/lavori`, { withFileTypes: true })
 for (let i = 0; i < lavori.length; i++) {
   const l = lavori[i];
   const outProj = `${OUT}/lavori/${l.slug}`;
-  copyAssets(`${C}/lavori/${l.slug}`, outProj);
+  await copyAssets(`${C}/lavori/${l.slug}`, outProj);
   generateProjectPlaceholders(outProj, i + 1, l.meta.titolo || `Progetto ${i+1}`, l.meta.ruolo || 'Design');
 }
 
@@ -457,7 +490,7 @@ ${nav}
 
 // Chi sono
 const about = parse(`${C}/chi-sono/chi-sono.md`);
-copyAssets(`${C}/chi-sono`, `${OUT}/chi-sono`);
+await copyAssets(`${C}/chi-sono`, `${OUT}/chi-sono`);
 generateAboutPlaceholder(`${OUT}/chi-sono`);
 const fotoSrc = esc(about.meta.foto || 'foto.svg');
 const location = esc(about.meta.location || 'Genova/Italy');

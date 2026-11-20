@@ -210,6 +210,112 @@
         }
       });
     })();
+
+    // ⚡ Auto-compressione intelligente immagini client-side
+    (function initImageAutoCompressor() {
+      function showToast(msg) {
+        var toast = document.getElementById('opt-toast');
+        if (!toast) {
+          toast = document.createElement('div');
+          toast.id = 'opt-toast';
+          toast.style.cssText = 'position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999999;background:#111111;color:#ffffff;border:1px solid #ef1111;padding:0.65rem 1.1rem;border-radius:4px;font-family:ui-monospace,Menlo,monospace;font-size:0.8rem;box-shadow:0 8px 24px rgba(0,0,0,0.6);opacity:0;transition:opacity 200ms ease;pointer-events:none;line-height:1.4;';
+          document.body.appendChild(toast);
+        }
+        toast.textContent = msg;
+        toast.style.opacity = '1';
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(function() {
+          toast.style.opacity = '0';
+        }, 4500);
+      }
+
+      async function compressFile(file) {
+        if (!file || !file.type.startsWith('image/') || file.type.includes('svg')) return file;
+        // Se già sotto i 350 KB, è già ottimale
+        if (file.size <= 350 * 1024) return file;
+
+        var oldMb = (file.size / (1024 * 1024)).toFixed(1);
+
+        var img = new Image();
+        var url = URL.createObjectURL(file);
+        await new Promise(function(resolve, reject) {
+          img.onload = resolve;
+          img.onerror = reject;
+          img.src = url;
+        });
+
+        var maxDim = 2000;
+        var w = img.naturalWidth || img.width;
+        var h = img.naturalHeight || img.height;
+
+        if (w > maxDim || h > maxDim) {
+          var ratio = Math.min(maxDim / w, maxDim / h);
+          w = Math.round(w * ratio);
+          h = Math.round(h * ratio);
+        }
+
+        var canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        URL.revokeObjectURL(url);
+
+        var isPngTransparent = false;
+        if (file.type === 'image/png') {
+          try {
+            var pData = ctx.getImageData(0, 0, Math.min(w, 40), Math.min(h, 40)).data;
+            for (var i = 3; i < pData.length; i += 4) {
+              if (pData[i] < 250) { isPngTransparent = true; break; }
+            }
+          } catch(e) {}
+        }
+
+        var outType = isPngTransparent ? 'image/png' : 'image/jpeg';
+        var quality = isPngTransparent ? 0.9 : 0.84;
+
+        var blob = await new Promise(function(resolve) {
+          canvas.toBlob(resolve, outType, quality);
+        });
+
+        if (!blob || blob.size >= file.size) return file;
+
+        var newExt = outType === 'image/jpeg' ? '.jpg' : '.png';
+        var newName = file.name.replace(/\.[^.]+$/, '') + newExt;
+        var newFile = new File([blob], newName, { type: outType, lastModified: Date.now() });
+
+        var newKb = Math.round(newFile.size / 1024);
+        var savedPct = Math.round((1 - newFile.size / file.size) * 100);
+        showToast('⚡ Immagine auto-compressa: ' + oldMb + ' MB → ' + newKb + ' KB (-' + savedPct + '%)');
+
+        return newFile;
+      }
+
+      document.addEventListener('change', async function(e) {
+        var target = e.target;
+        if (!target || target.type !== 'file' || !target.files || !target.files.length) return;
+        if (target._compressing) return;
+
+        var file = target.files[0];
+        if (!file || !file.type.startsWith('image/') || file.size <= 350 * 1024) return;
+
+        target._compressing = true;
+        try {
+          var compressed = await compressFile(file);
+          if (compressed !== file) {
+            var dt = new DataTransfer();
+            dt.items.add(compressed);
+            target.files = dt.files;
+            target.dispatchEvent(new Event('input', { bubbles: true }));
+            target.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+        } catch(err) {
+          console.warn('Auto-compressione bypassata:', err);
+        } finally {
+          target._compressing = false;
+        }
+      }, true);
+    })();
   </script>
 </body>
 </html>

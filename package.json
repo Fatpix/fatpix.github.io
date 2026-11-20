@@ -2,5 +2,8 @@
   "name": "portfolio",
   "private": true,
   "type": "module",
-  "scripts": { "build": "node scripts/build.mjs", "start": "node scripts/build.mjs && npx serve dist" }
+  "scripts": { "build": "node scripts/build.mjs", "start": "node scripts/build.mjs && npx serve dist" },
+  "optionalDependencies": {
+    "sharp": "^0.33.5"
+  }
 }
