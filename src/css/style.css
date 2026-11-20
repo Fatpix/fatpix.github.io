@@ -459,11 +459,21 @@ body.pagina-chi-sono main {
   display: grid;
   grid-template-columns: minmax(18rem, 26rem) 1fr;
   column-gap: clamp(2rem, 5vw, 4.5rem);
-  align-items: start;
+  align-items: stretch;
+}
+.about-colonna-sinistra {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.about-foto {
+  flex: 1 1 auto;
+  height: 100%;
+  display: flex;
 }
 .about-foto img {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  height: 100%;
   object-fit: cover;
   border-radius: var(--raggio);
   background: var(--colore-segnaposto);
@@ -504,6 +514,16 @@ body.pagina-chi-sono main {
     display: flex;
     flex-direction: column;
     gap: var(--spazio-l);
+  }
+  .about-colonna-sinistra {
+    height: auto;
+  }
+  .about-foto {
+    height: auto;
+  }
+  .about-foto img {
+    height: auto;
+    aspect-ratio: 4 / 3;
   }
 }
 

@@ -52,6 +52,7 @@ Questo file riassume l'intero stato del progetto, le preferenze dell'utente, i r
 ---
 
 ## 4. Nuove Funzionalità & Regola Fondamentale Admin
+- **Pagina About Me:** La foto del profilo si estende in altezza in modo reattivo (`align-items: stretch`, `height: 100%`, `object-fit: cover`) per avere esattamente la stessa altezza del blocco di testo al suo fianco (bio + location), allineandosi perfettamente sia in alto che in basso.
 1. **Cursor Badge in Primo Piano Assoluto:**
    - La targhetta hover ha `z-index: 2147483647 !important` ed è sempre in primo piano su card home, immagini progetto e foto About.
    - Sulle immagini progetto mostra *"Take a look"* e apre il lightbox a schermo intero con tasto di chiusura `x` in Pixelify (negativo difference, rosso `#ef1111` in hover).
