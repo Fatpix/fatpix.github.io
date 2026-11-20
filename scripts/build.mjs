@@ -260,7 +260,7 @@ function page({ depth, title, desc, current, body, root, back }) {
 <link rel="apple-touch-icon" href="${p}apple-touch-icon.png">
 <link rel="preload" href="${p}fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${p}css/tokens.css">
-<link rel="stylesheet" href="${p}css/style.css?v=2.4">
+<link rel="stylesheet" href="${p}css/style.css?v=2.5">
 </head>
 <body${current ? ` class="pagina-${current}"` : ''}>
 <div id="cursorBadge" class="cursor-badge" aria-hidden="true"></div>
@@ -329,40 +329,30 @@ ${body}
         var scrollY = window.pageYOffset || document.documentElement.scrollTop;
         var H = window.innerHeight || document.documentElement.clientHeight;
         var enterDist = Math.max(200, H * 0.55);
-        var exitDist = Math.max(150, H * 0.25);
 
         for (var i = 0; i < cardMetrics.length; i++) {
           var m = cardMetrics[i];
           var relTop = m.top - scrollY;
-          var relBottom = relTop + m.height;
 
-          // 1. Uscita dall'alto
-          var pExit = 1;
-          if (relBottom <= 0) {
-            pExit = 0;
-          } else if (relBottom < exitDist) {
-            pExit = relBottom / exitDist;
-          }
-
-          // 2. Entrata dal basso
-          var pEnter = 1;
+          // Quando si scorre verso il basso: entra dal lato e rimane fissa al centro (non esce in alto)
+          // Quando si risale verso l'alto: le card che tornano verso il basso escono lateralmente legate allo scroll
+          var p = 1;
           if (m.initInView && scrollY < enterDist) {
-            pEnter = 1;
+            p = 1;
           } else {
             if (relTop >= H) {
-              pEnter = 0;
+              p = 0;
             } else if (relTop <= H - enterDist) {
-              pEnter = 1;
+              p = 1;
             } else {
-              pEnter = (H - relTop) / enterDist;
+              p = (H - relTop) / enterDist;
             }
           }
 
-          var p = Math.min(pEnter, pExit);
           if (p < 0) p = 0;
           if (p > 1) p = 1;
 
-          // Easing smoothstep: 3p^2 - 2p^3
+          // Easing smoothstep: 3p^2 - 2p^3 legato alla velocità e posizione di scroll
           var eased = p * p * (3 - 2 * p);
 
           var sign = m.isOdd ? -1 : 1;
