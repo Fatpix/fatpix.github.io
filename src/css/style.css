@@ -176,6 +176,39 @@ body.pagina-home main {
 .card a:hover h2 { color: var(--colore-hover); }
 .card p { margin: 0.25rem 0 0; color: var(--colore-testo-attenuato); font-size: var(--testo-s); }
 
+/* ── Animazione Scroll Lavori (17. CSS Scroll Animation) ── */
+@keyframes cardScrollIn {
+  from {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .griglia .card {
+    animation: cardScrollIn linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 35%;
+  }
+}
+
+@supports not (animation-timeline: view()) {
+  .griglia .card {
+    opacity: 0;
+    transform: translateY(60px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: opacity, transform;
+  }
+  .griglia .card.in-view {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Cursore badge custom in hover sui progetti e immagini */
 .cursor-badge {
   position: fixed !important;

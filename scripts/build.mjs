@@ -299,6 +299,21 @@ ${body}
     updateCardHeight();
     window.addEventListener('resize', updateCardHeight, { passive: true });
     window.addEventListener('load', updateCardHeight, { passive: true });
+
+    if (!('animationTimeline' in document.documentElement.style) && 'IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+          } else {
+            entry.target.classList.remove('in-view');
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -5% 0px' });
+      document.querySelectorAll('.griglia .card').forEach(function(card) {
+        observer.observe(card);
+      });
+    }
   }
 
   var el = document.querySelector('.menu-nome');
