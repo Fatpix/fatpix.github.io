@@ -3,10 +3,213 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portfolio Manager | Admin</title>
-  <!-- Sveltia CMS: Modern Git-based Headless CMS (compatible with Decap/Netlify config) -->
-  <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js" type="module"></script>
+  <title>Studio Control | Admin</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #000000;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    #lockscreen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999999;
+      background: #0a0a0a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      transition: opacity 250ms ease;
+    }
+    #lockscreen.unlocked {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .lock-box {
+      width: min(100%, 22rem);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .brand-title {
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+      font-size: 0.85rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #888888;
+      margin: 0;
+    }
+    .lock-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin: 0;
+      color: #ffffff;
+    }
+    .lock-desc {
+      font-size: 0.875rem;
+      color: #777777;
+      margin: -0.5rem 0 0.5rem;
+      line-height: 1.4;
+    }
+    .pin-form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .pin-input {
+      width: 100%;
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 4px;
+      color: #ffffff;
+      font-size: 1.8rem;
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+      text-align: center;
+      padding: 0.65rem 1rem;
+      letter-spacing: 0.4em;
+      outline: none;
+      transition: border-color 150ms ease, box-shadow 150ms ease;
+    }
+    .pin-input:focus {
+      border-color: #ef1111;
+      box-shadow: 0 0 0 2px rgba(239, 17, 17, 0.2);
+    }
+    .pin-input::placeholder {
+      letter-spacing: 0.3em;
+      color: #444444;
+      font-size: 1.4rem;
+    }
+    .submit-btn {
+      width: 100%;
+      background: #ffffff;
+      color: #000000;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.85rem 1rem;
+      cursor: pointer;
+      transition: background-color 150ms ease, color 150ms ease;
+    }
+    .submit-btn:hover {
+      background: #ef1111;
+      color: #ffffff;
+    }
+    .error-msg {
+      font-size: 0.8125rem;
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+      color: #ef1111;
+      min-height: 1.2em;
+      margin: 0;
+      opacity: 0;
+      transition: opacity 150ms ease;
+    }
+    .error-msg.visible {
+      opacity: 1;
+    }
+    .shake {
+      animation: shake 300ms ease;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+  </style>
 </head>
 <body>
+  <div id="lockscreen">
+    <div class="lock-box" id="lockBox">
+      <p class="brand-title">FATPIX / FILIPPO ARPE</p>
+      <h1 class="lock-title">Studio Control</h1>
+      <p class="lock-desc">Area riservata. Inserisci il PIN per accedere al pannello di gestione.</p>
+      
+      <form class="pin-form" id="pinForm" onsubmit="event.preventDefault(); verifyPin();">
+        <input type="password" id="pinInput" class="pin-input" inputmode="numeric" maxlength="8" placeholder="••••" autofocus autocomplete="current-password">
+        <button type="submit" class="submit-btn">Sblocca</button>
+        <p class="error-msg" id="errorMsg">PIN non valido</p>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      var HASH = "17dc3303cd10e0824497a0874a4b86275e63c943e3fefba5f5760959dd525fc2";
+      var lockscreen = document.getElementById('lockscreen');
+      var pinInput = document.getElementById('pinInput');
+      var errorMsg = document.getElementById('errorMsg');
+      var lockBox = document.getElementById('lockBox');
+
+      function loadCms() {
+        if (document.getElementById('sveltia-script')) return;
+        var s = document.createElement('script');
+        s.id = 'sveltia-script';
+        s.type = 'module';
+        s.src = 'https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js';
+        document.head.appendChild(s);
+      }
+
+      function unlock() {
+        lockscreen.classList.add('unlocked');
+        setTimeout(function() {
+          lockscreen.style.display = 'none';
+        }, 300);
+        loadCms();
+      }
+
+      // Se già sbloccato in questa sessione
+      if (sessionStorage.getItem('admin_gate_unlocked') === 'true') {
+        unlock();
+        return;
+      }
+
+      // Hash SHA-256
+      async function sha256(str) {
+        var buf = new TextEncoder().encode(str);
+        var digest = await crypto.subtle.digest('SHA-256', buf);
+        return Array.from(new Uint8Array(digest)).map(function(b) {
+          return b.toString(16).padStart(2, '0');
+        }).join('');
+      }
+
+      window.verifyPin = async function() {
+        var entered = pinInput.value.trim();
+        if (!entered) return;
+        var hash = await sha256(entered);
+        if (hash === HASH) {
+          sessionStorage.setItem('admin_gate_unlocked', 'true');
+          errorMsg.classList.remove('visible');
+          unlock();
+        } else {
+          errorMsg.classList.add('visible');
+          lockBox.classList.remove('shake');
+          void lockBox.offsetWidth; // trigger reflow
+          lockBox.classList.add('shake');
+          pinInput.value = '';
+          pinInput.focus();
+        }
+      };
+
+      // Controllo automatico appena si digitano 4 cifre
+      pinInput.addEventListener('input', function() {
+        if (pinInput.value.length === 4) {
+          verifyPin();
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

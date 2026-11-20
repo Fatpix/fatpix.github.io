@@ -27,6 +27,7 @@ collections:
       - { name: "cliente", label: "Cliente", widget: "string", required: false }
       - { name: "ordine", label: "Ordine di visualizzazione (1-9)", widget: "number", value_type: "int" }
       - { name: "bozza", label: "Nascondi / Bozza", widget: "boolean", default: false }
+      - { name: "link", label: "Link esterni (es: Visita il sito | https://sito.it)", widget: "string", required: false }
       - { name: "cover", label: "Immagine di Copertina (Card Home)", widget: "image", required: false }
       - { name: "hero", label: "Hero Media (Testata Progetto)", widget: "image", required: false }
       - { name: "concept", label: "Concept / Diagramma", widget: "image", required: false }
@@ -57,6 +58,7 @@ collections:
           - { name: "nome", label: "Nome Visibile", widget: "string" }
           - { name: "alias", label: "Alias (Rosso al tocco)", widget: "string" }
           - { name: "ruolo", label: "Ruolo", widget: "string" }
+          - { name: "descrizione", label: "Descrizione SEO / Meta tag", widget: "string", required: false }
           - { name: "email", label: "Email", widget: "string" }
           - { name: "etichetta_email", label: "Testo Link Email (es: Let's Talk)", widget: "string" }
           - { name: "footer_titolo", label: "Testo Titolo Footer (es: THX)", widget: "string" }

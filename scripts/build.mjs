@@ -328,6 +328,7 @@ rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
 cpSync('src/css', `${OUT}/css`, { recursive: true });
 cpSync('src/static', OUT, { recursive: true });
+if (existsSync('admin')) cpSync('admin', `${OUT}/admin`, { recursive: true });
 cpSync('src/fonts', `${OUT}/fonts`, { recursive: true });
 
 // Lavori

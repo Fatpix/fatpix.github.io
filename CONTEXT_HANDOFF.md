@@ -51,6 +51,24 @@ Questo file riassume l'intero stato del progetto, le preferenze dell'utente, i r
 
 ---
 
+## 4. Nuove Funzionalità & Regola Fondamentale Admin
+1. **Cursor Badge in Primo Piano Assoluto:**
+   - La targhetta hover ha `z-index: 2147483647 !important` ed è sempre in primo piano su card home, immagini progetto e foto About.
+   - Sulle immagini progetto mostra *"Take a look"* e apre il lightbox a schermo intero con tasto di chiusura `x` in Pixelify (negativo difference, rosso `#ef1111` in hover).
+   - Sulla foto About mostra *"Hi, this is me!"*.
+2. **Nessuna Sillabazione:**
+   - Regola globale `hyphens: none !important` attiva su tutto il sito.
+3. **Titolo Home `*My Works`:**
+   - Riproduzione fedele con asterisco geometrico SVG a 5 bracci e scritta in Anton outline (1.2px nero, `-0.025em`), allineata a destra esattamente con le immagini sotto.
+4. **Pannello Admin (`/admin/`):**
+   - Protetto da lockscreen con PIN `2110` (SHA-256).
+   - Configurato con Sveltia CMS per modificare progetti, immagini, About e site.json.
+5. **REGOLA D'ORO / WORKFLOW CHECK ADMIN:**
+   - **Ogni volta che si modificano pagine, campi, layout o foto del sito, effettuare SEMPRE un check se è necessario aggiornare anche lo schema del pannello admin (`src/static/admin/config.yml`).**
+   - Se sì, aggiornare `src/static/admin/config.yml`, rieseguire la build del sito (`python3 scripts/build_site.py` o `node scripts/build.mjs`) per sincronizzare `dist/admin/config.yml`, e rigenerare `portfolio.zip`.
+
+---
+
 ## 4. Regole per l'Agente
 - Generare sempre in automatico lo zip aggiornato in `/Users/thedocks/Downloads/portfolio-aggiornato.zip` dopo ogni modifica significativa.
 - Mantenere la coerenza tra `scripts/build_site.py` e `scripts/build.mjs`.

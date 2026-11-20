@@ -364,6 +364,8 @@ if os.path.exists(OUT):
 os.makedirs(OUT, exist_ok=True)
 shutil.copytree('src/css', f'{OUT}/css')
 shutil.copytree('src/static', OUT, dirs_exist_ok=True)
+if os.path.exists('admin'):
+    shutil.copytree('admin', f'{OUT}/admin', dirs_exist_ok=True)
 shutil.copytree('src/fonts', f'{OUT}/fonts')
 
 # Lavori
