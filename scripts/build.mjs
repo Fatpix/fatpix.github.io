@@ -260,7 +260,7 @@ function page({ depth, title, desc, current, body, root, back }) {
 <link rel="apple-touch-icon" href="${p}apple-touch-icon.png">
 <link rel="preload" href="${p}fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${p}css/tokens.css">
-<link rel="stylesheet" href="${p}css/style.css">
+<link rel="stylesheet" href="${p}css/style.css?v=2.2">
 </head>
 <body${current ? ` class="pagina-${current}"` : ''}>
 <div id="cursorBadge" class="cursor-badge" aria-hidden="true"></div>
@@ -300,18 +300,25 @@ ${body}
     window.addEventListener('resize', updateCardHeight, { passive: true });
     window.addEventListener('load', updateCardHeight, { passive: true });
 
-    if (!('animationTimeline' in document.documentElement.style) && 'IntersectionObserver' in window) {
-      var observer = new IntersectionObserver(function(entries) {
+    if ('IntersectionObserver' in window) {
+      var cardObserver = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
           if (entry.isIntersecting) {
             entry.target.classList.add('in-view');
           } else {
-            entry.target.classList.remove('in-view');
+            var rect = entry.target.getBoundingClientRect();
+            if (rect.top > (window.innerHeight || document.documentElement.clientHeight)) {
+              entry.target.classList.remove('in-view');
+            }
           }
         });
-      }, { threshold: 0.1, rootMargin: '0px 0px -5% 0px' });
+      }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
       document.querySelectorAll('.griglia .card').forEach(function(card) {
-        observer.observe(card);
+        cardObserver.observe(card);
+      });
+    } else {
+      document.querySelectorAll('.griglia .card').forEach(function(card) {
+        card.classList.add('in-view');
       });
     }
   }
