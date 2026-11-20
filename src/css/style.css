@@ -120,6 +120,16 @@ main {
   max-width: var(--larghezza-max);
 }
 
+/* ── Layout pagina Works (Home) ────────────────────────── */
+body.pagina-home main {
+  padding-top: calc(1.5 * var(--altezza-card, calc(min(56.25vw, 65vh) + 3.8rem)));
+}
+@media (max-width: 44rem) {
+  body.pagina-home main {
+    padding-top: calc(var(--menu-h-mobile) + 1.5 * var(--altezza-card, calc((100vw - 2 * var(--spazio-m)) * 9 / 16 + 3.8rem)));
+  }
+}
+
 /* Landing */
 .landing-titolo-wrap {
   display: flex;

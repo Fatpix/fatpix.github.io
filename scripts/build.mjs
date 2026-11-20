@@ -285,6 +285,18 @@ ${body}
 </footer>
 <script>
 (function() {
+  if (document.body.classList.contains('pagina-home')) {
+    var updateCardHeight = function() {
+      var c = document.querySelector('.griglia .card');
+      if (c && c.offsetHeight > 0) {
+        document.documentElement.style.setProperty('--altezza-card', c.offsetHeight + 'px');
+      }
+    };
+    updateCardHeight();
+    window.addEventListener('resize', updateCardHeight, { passive: true });
+    window.addEventListener('load', updateCardHeight, { passive: true });
+  }
+
   var el = document.querySelector('.menu-nome');
   if (el) {
     var timer;
