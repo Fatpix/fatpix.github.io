@@ -8,14 +8,14 @@
   -ms-hyphens: none !important;
   hyphens: none !important;
 }
-html { -webkit-text-size-adjust: 100%; -webkit-hyphens: none !important; hyphens: none !important; overflow-x: hidden; }
+html { -webkit-text-size-adjust: 100%; -webkit-hyphens: none !important; hyphens: none !important; overflow-x: clip; }
 body {
   margin: 0;
   background: var(--colore-sfondo);
   color: var(--colore-testo);
   font: var(--testo-m)/1.6 var(--font-testo);
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  overflow-x: clip;
   -webkit-hyphens: none !important;
   -moz-hyphens: none !important;
   -ms-hyphens: none !important;
@@ -102,8 +102,26 @@ h1 { font-size: var(--testo-xl); }
 /* Menu voci hover & active */
 .menu-voci a:hover, .menu-voci a:focus-visible, .menu-voci a[aria-current="page"] { color: var(--colore-hover); mix-blend-mode: normal; }
 
-/* Footer */
-.footer { padding: var(--spazio-l) clamp(1rem, 2.6vw, 2.5rem) var(--spazio-m); }
+/* ── Wrapper contenuto per Footer Reveal ───────────────── */
+.corpo-pagina {
+  position: relative;
+  z-index: 2;
+  background: var(--colore-sfondo);
+  width: 100%;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.06);
+}
+
+/* Footer (Reveal sticky sul fondo) */
+.footer {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  background: var(--colore-sfondo);
+  padding: var(--spazio-l) clamp(1rem, 2.6vw, 2.5rem) var(--spazio-m);
+  box-sizing: border-box;
+}
 .footer-titolo { font: 400 clamp(4rem, 9vw, 8rem)/0.95 var(--font-display); margin: 0 0 var(--spazio-m); }
 .footer-riga { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; font: 400 var(--corpo-mono)/1.4 var(--font-mono); }
 .footer-riga a { text-decoration: none; }

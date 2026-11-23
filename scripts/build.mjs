@@ -276,9 +276,11 @@ ${extraBody}
     }
   </nav>
 </header>
-<main id="contenuto" class="contenitore">
+<div class="corpo-pagina">
+  <main id="contenuto" class="contenitore">
 ${body}
-</main>
+  </main>
+</div>
 <footer class="footer">
   <p class="footer-titolo">${esc(site.footer_titolo || '')}</p>
   <div class="footer-riga">

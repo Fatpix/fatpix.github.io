@@ -263,9 +263,11 @@ __EXTRA_BODY__
     __MENU_LINKS__
   </nav>
 </header>
-<main id="contenuto" class="contenitore">
+<div class="corpo-pagina">
+  <main id="contenuto" class="contenitore">
 __BODY__
-</main>
+  </main>
+</div>
 <footer class="footer">
   <p class="footer-titolo">__FOOTER_TITOLO__</p>
   <div class="footer-riga">
