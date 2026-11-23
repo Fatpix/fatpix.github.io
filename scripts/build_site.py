@@ -251,7 +251,7 @@ def page(depth=0, title='', desc='', current='', body='', root=False, back=False
 <link rel="apple-touch-icon" href="__P__apple-touch-icon.png">
 <link rel="preload" href="__P__fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="__P__css/tokens.css">
-<link rel="stylesheet" href="__P__css/style.css?v=2.7">
+<link rel="stylesheet" href="__P__css/style.css?v=2.9">
 </head>
 <body__BODY_CLASS__>
 <div id="cursorBadge" class="cursor-badge" aria-hidden="true"></div>
@@ -561,8 +561,7 @@ asterisk_svg = """<svg class="titolo-asterisco" viewBox="0 0 84 86" aria-hidden=
   </g>
 </svg>"""
 
-home_body = f"""<div class="landing-hero-stage" id="landingHero" aria-label="Interactive Hero Intro"></div>
-<div class="landing-titolo-wrap">
+home_body = f"""<div class="landing-titolo-wrap">
   {asterisk_svg}
   <h1 class="titolo-testo">My Works</h1>
 </div>
@@ -578,7 +577,7 @@ loader_div = '<div id="loader" aria-hidden="true"><div class="loader-inner"><div
 with open(f'{OUT}/index.html', 'r', encoding='utf-8') as f:
     home_html = f.read()
 
-home_html = home_html.replace('class="pagina-home">', 'class="pagina-home">' + anti_flicker + loader_div).replace('</body>', '<script src="three.min.js"></script><script src="hero-animation.js"></script><script src="loader.js"></script></body>')
+home_html = home_html.replace('class="pagina-home">', 'class="pagina-home">' + anti_flicker + loader_div).replace('</body>', '<script src="loader.js"></script></body>')
 with open(f'{OUT}/index.html', 'w', encoding='utf-8') as f:
     f.write(home_html)
 
