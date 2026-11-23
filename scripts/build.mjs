@@ -243,7 +243,7 @@ function page({ depth, title, desc, current, body, root, back }) {
     ...(site.social || []).map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.etichetta)}</a>`),
     `<a href="mailto:${esc(site.email)}">${esc(site.etichetta_email || 'Contattami')}</a>`
   ].join('<span class="linea linea-corta" aria-hidden="true"></span>');
-  const extraBody = current === 'progetto' ? `<div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-modal="true"><button type="button" class="lightbox-chiudi" aria-label="Chiudi visualizzazione a schermo pieno">x</button><img class="lightbox-img" src="" alt="" style="display:none;"><video class="lightbox-video" src="" autoplay loop muted playsinline controls style="display:none;"></video></div>` : '';
+  const extraBody = current === 'progetto' ? `<div id="scrollProgress" class="scroll-progress" aria-hidden="true"></div><div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-modal="true"><button type="button" class="lightbox-chiudi" aria-label="Chiudi visualizzazione a schermo pieno">x</button><img class="lightbox-img" src="" alt="" style="display:none;"><video class="lightbox-video" src="" autoplay loop muted playsinline controls style="display:none;"></video></div>` : '';
   return `<!doctype html>
 <html lang="${site.lingua || 'it'}">
 <head>
@@ -481,6 +481,18 @@ ${body}
     window.addEventListener('keydown', function(e) {
       if (e.key === 'Escape' && lb.classList.contains('aperto')) closeLb();
     });
+  }
+
+  var progress = document.getElementById('scrollProgress');
+  if (progress && (!window.CSS || !CSS.supports || !CSS.supports('animation-timeline', 'scroll()'))) {
+    var updateProgress = function() {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      var p = h > 0 ? (window.pageYOffset || document.documentElement.scrollTop) / h : 0;
+      progress.style.transform = 'scaleX(' + Math.min(Math.max(p, 0), 1) + ')';
+    };
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    window.addEventListener('resize', updateProgress, { passive: true });
+    updateProgress();
   }
 })();
 </script>

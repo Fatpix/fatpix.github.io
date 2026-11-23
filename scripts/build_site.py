@@ -233,7 +233,7 @@ def page(depth=0, title='', desc='', current='', body='', root=False, back=False
     else:
         menu_links = f'<a href="{home}"{cur_home}>Works</a>\n    <a href="{p}chi-sono/"{cur_about}>About me</a>'
 
-    extra_body = '<div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-modal="true"><button type="button" class="lightbox-chiudi" aria-label="Chiudi visualizzazione a schermo pieno">x</button><img class="lightbox-img" src="" alt="" style="display:none;"><video class="lightbox-video" src="" autoplay loop muted playsinline controls style="display:none;"></video></div>' if current == 'progetto' else ''
+    extra_body = '<div id="scrollProgress" class="scroll-progress" aria-hidden="true"></div><div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-modal="true"><button type="button" class="lightbox-chiudi" aria-label="Chiudi visualizzazione a schermo pieno">x</button><img class="lightbox-img" src="" alt="" style="display:none;"><video class="lightbox-video" src="" autoplay loop muted playsinline controls style="display:none;"></video></div>' if current == 'progetto' else ''
 
     template = """<!doctype html>
 <html lang="__LANG__">
@@ -468,6 +468,18 @@ __BODY__
     window.addEventListener('keydown', function(e) {
       if (e.key === 'Escape' && lb.classList.contains('aperto')) closeLb();
     });
+  }
+
+  var progress = document.getElementById('scrollProgress');
+  if (progress && (!window.CSS || !CSS.supports || !CSS.supports('animation-timeline', 'scroll()'))) {
+    var updateProgress = function() {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      var p = h > 0 ? (window.pageYOffset || document.documentElement.scrollTop) / h : 0;
+      progress.style.transform = 'scaleX(' + Math.min(Math.max(p, 0), 1) + ')';
+    };
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    window.addEventListener('resize', updateProgress, { passive: true });
+    updateProgress();
   }
 })();
 </script>

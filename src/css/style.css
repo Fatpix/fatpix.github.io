@@ -236,6 +236,32 @@ body.pagina-home main {
   pointer-events: none;
   transition: opacity 200ms ease;
 }
+
+/* Barra di avanzamento scroll per le pagine di dettaglio dei progetti */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: var(--colore-hover);
+  transform-origin: 0% 50%;
+  transform: scaleX(0);
+  z-index: 9999;
+  pointer-events: none;
+  will-change: transform;
+}
+
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    animation: scroll-progress-anim linear both;
+    animation-timeline: scroll();
+  }
+  @keyframes scroll-progress-anim {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+}
 .lightbox.aperto {
   opacity: 1;
   pointer-events: auto;
