@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#050505"/>
+    </linearGradient>
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#ffffff" stroke-width="0.5" stroke-opacity="0.04"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+  <rect width="1920" height="1080" fill="url(#grid)"/>
+
+  <!-- Border & Crosshairs -->
+  <rect x="24" y="24" width="1872" height="1032" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.15"/>
+  
+  <!-- Corner marks -->
+  <path d="M 24 64 L 24 24 L 64 24" fill="none" stroke="#ef1111" stroke-width="2"/>
+  <path d="M 1896 64 L 1896 24 L 1856 24" fill="none" stroke="#ef1111" stroke-width="2"/>
+  <path d="M 24 1016 L 24 1056 L 64 1056" fill="none" stroke="#ef1111" stroke-width="2"/>
+  <path d="M 1896 1016 L 1896 1056 L 1856 1056" fill="none" stroke="#ef1111" stroke-width="2"/>
+
+  <!-- Center Content -->
+  <g transform="translate(960, 540)" text-anchor="middle">
+    <!-- Play circle -->
+    <circle cx="0" cy="-40" r="54" fill="#141414" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.4"/>
+    <polygon points="-12,-62 -12,-18 24,-40" fill="#ffffff"/>
+
+    <!-- Labels -->
+    <text x="0" y="65" font-family="'Anton', 'Arial Black', sans-serif" font-size="34" letter-spacing="3" fill="#ffffff">VIDEO PLACEHOLDER</text>
+    <text x="0" y="105" font-family="'Pixelify Sans', ui-monospace, Menlo, monospace" font-size="20" letter-spacing="2" fill="#888888">1920 × 1080 · 16:9 RATIO</text>
+    <text x="0" y="140" font-family="'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="15" fill="#555555">Manage and upload via CMS (/admin) or content/home.json</text>
+  </g>
+
+  <!-- Technical badges -->
+  <text x="50" y="65" font-family="'Pixelify Sans', monospace" font-size="14" fill="#ffffff" fill-opacity="0.4">ASPECT: 16:9</text>
+  <text x="1870" y="65" text-anchor="end" font-family="'Pixelify Sans', monospace" font-size="14" fill="#ffffff" fill-opacity="0.4">REC · 1920x1080 HD</text>
+  <text x="50" y="1035" font-family="'Pixelify Sans', monospace" font-size="14" fill="#ffffff" fill-opacity="0.4">FATPIX PORTFOLIO HERO</text>
+  <text x="1870" y="1035" text-anchor="end" font-family="'Pixelify Sans', monospace" font-size="14" fill="#ef1111">STATUS: READY FOR CMS</text>
+</svg>

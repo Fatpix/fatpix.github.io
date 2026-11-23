@@ -216,7 +216,7 @@ def generate_about_placeholder(out_dir):
   </g>
 </svg>""")
 
-def page(depth=0, title='', desc='', current='', body='', root=False, back=False):
+def page(depth=0, title='', desc='', current='', body='', root=False, back=False, hero_html=''):
     p = '/' if root else '../' * depth
     home = p if p else './'
     full = f"{title} | {site['nome']}" if title else f"{site['nome']} | {site['ruolo']}"
@@ -264,6 +264,7 @@ __EXTRA_BODY__
   </nav>
 </header>
 <div class="corpo-pagina">
+  __HERO_HTML__
   <main id="contenuto" class="contenitore">
 __BODY__
   </main>
@@ -279,6 +280,72 @@ __BODY__
 <script>
 (function() {
   if (document.body.classList.contains('pagina-home')) {
+    // ── Scroll-driven Text-Clip Mask Reveal ──
+    (function() {
+      var root = document.getElementById('textClipReveal');
+      var mask = document.getElementById('textClipSticky');
+      if (!root || !mask) return;
+
+      var text = root.getAttribute('data-text') || 'PORTFOLIO';
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="280" viewBox="0 0 1600 280">' +
+        '<text x="50%" y="54%" dominant-baseline="central" text-anchor="middle" ' +
+        'font-family="Anton, Impact, sans-serif" font-weight="900" font-size="150" letter-spacing="2">' +
+        text + '</text></svg>';
+
+      var maskData = 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+      mask.style.webkitMaskImage = maskData;
+      mask.style.maskImage = maskData;
+
+      function getInitialSize() {
+        var w = window.innerWidth || document.documentElement.clientWidth || 1000;
+        return Math.min(0.78, 1100 / w);
+      }
+
+      var targetScale = 160;
+      var easing = 0.15;
+      var eased = 0;
+      var isMasked = true;
+
+      function rawProgress() {
+        var rect = root.getBoundingClientRect();
+        var vh = window.innerHeight || document.documentElement.clientHeight;
+        var distance = rect.height - vh;
+        if (distance <= 0) return 0;
+        return Math.min(1, Math.max(0, -rect.top / distance));
+      }
+
+      function loop() {
+        var p = rawProgress();
+        eased += (p - eased) * easing;
+
+        if (eased >= 0.65) {
+          if (isMasked) {
+            mask.style.webkitMaskImage = 'none';
+            mask.style.maskImage = 'none';
+            isMasked = false;
+          }
+        } else {
+          if (!isMasked) {
+            mask.style.webkitMaskImage = maskData;
+            mask.style.maskImage = maskData;
+            isMasked = true;
+          }
+          var base = getInitialSize();
+          var t = Math.min(1, Math.max(0, eased / 0.65));
+          var scaleCurve = Math.pow(t, 2.2);
+          var size = (base + targetScale * scaleCurve) * 100;
+          var sStr = size.toFixed(2) + '% auto';
+          mask.style.webkitMaskSize = sStr;
+          mask.style.maskSize = sStr;
+        }
+
+        requestAnimationFrame(loop);
+      }
+
+      loop();
+    })();
+
+    
     var updateCardHeight = function() {
       var c = document.querySelector('.griglia .card');
       if (c && c.offsetHeight > 0) {
@@ -395,7 +462,7 @@ __BODY__
     document.addEventListener('mouseover', function(e) {
       var t = e.target;
       if (!t) return;
-      if (t.closest('#landingHero') || t.closest('.landing-hero-stage')) {
+      if (t.closest('#textClipReveal') || t.closest('.text-clip-reveal-root') || t.closest('#landingHero') || t.closest('.landing-hero-stage')) {
         hideBadge();
       } else if (t.closest('.about-foto')) {
         setBadge('Hi, this is me!');
@@ -499,6 +566,7 @@ __BODY__
         .replace('__NOME__', esc(site['nome']))
         .replace('__ALIAS__', esc(site.get('alias', site['nome'])))
         .replace('__MENU_LINKS__', menu_links)
+        .replace('__HERO_HTML__', hero_html)
         .replace('__BODY__', body)
         .replace('__FOOTER_TITOLO__', esc(site.get('footer_titolo', '')))
         .replace('__CONTATTI__', contatti)
@@ -518,6 +586,13 @@ shutil.copytree('src/static', OUT, dirs_exist_ok=True)
 if os.path.exists('admin'):
     shutil.copytree('admin', f'{OUT}/admin', dirs_exist_ok=True)
 shutil.copytree('src/fonts', f'{OUT}/fonts')
+
+# Copia asset CMS (content/ e content/assets/)
+if os.path.exists(f'{C}/assets'):
+    shutil.copytree(f'{C}/assets', f'{OUT}/assets', dirs_exist_ok=True)
+for item in os.listdir(C):
+    if item.endswith(('.mp4', '.webm', '.mov', '.jpg', '.jpeg', '.png', '.webp', '.svg')):
+        shutil.copy2(os.path.join(C, item), os.path.join(OUT, item))
 
 # Lavori
 lavori = []
@@ -561,16 +636,40 @@ asterisk_svg = """<svg class="titolo-asterisco" viewBox="0 0 84 86" aria-hidden=
   </g>
 </svg>"""
 
+# Lettura configurazione Home Page dal CMS (content/home.json)
+home_conf = {}
+if os.path.exists(f'{C}/home.json'):
+    try:
+        with open(f'{C}/home.json', 'r', encoding='utf-8') as f:
+            home_conf = json.load(f)
+    except Exception:
+        pass
+
+titolo_hero = home_conf.get('titolo_hero', 'PORTFOLIO') or 'PORTFOLIO'
+video_hero = home_conf.get('video_hero', '') or 'reveal-video.mp4'
+poster_hero = home_conf.get('poster_hero', '')
+titolo_lavori = home_conf.get('titolo_lavori', 'My Works') or 'My Works'
+
+poster_attr = f' poster="{esc(poster_hero)}"' if poster_hero else ''
+
+hero_reveal_html = f"""<div class="text-clip-reveal-root" id="textClipReveal" data-text="{esc(titolo_hero)}">
+  <div class="text-clip-sticky" id="textClipSticky">
+    <video class="text-clip-video" autoplay muted loop playsinline preload="auto"{poster_attr}>
+      <source src="{esc(video_hero)}" type="video/mp4">
+    </video>
+  </div>
+</div>"""
+
 home_body = f"""<div class="landing-titolo-wrap">
   {asterisk_svg}
-  <h1 class="titolo-testo">My Works</h1>
+  <h1 class="titolo-testo">{esc(titolo_lavori)}</h1>
 </div>
 <ul class="griglia">
 {cards_html}
 </ul>"""
 
 with open(f'{OUT}/index.html', 'w', encoding='utf-8') as f:
-    f.write(page(depth=0, current='home', desc=site.get('descrizione', ''), body=home_body))
+    f.write(page(depth=0, current='home', desc=site.get('descrizione', ''), body=home_body, hero_html=hero_reveal_html))
 
 anti_flicker = "<script>try{var r=false,n=performance.getEntriesByType('navigation')[0];if(n)r=(n.type==='reload');else if(performance.navigation)r=(performance.navigation.type===1);if(document.referrer&&new URL(document.referrer).origin===window.location.origin&&sessionStorage.getItem('portfolio_loader_shown')&&!r){document.documentElement.classList.add('skip-loader');}}catch(e){}</script>"
 loader_div = '<div id="loader" aria-hidden="true"><div class="loader-inner"><div class="loader-log" id="loaderLog"></div><div class="loader-barra"><div class="loader-fill" id="loaderFill"></div></div><p class="loader-pct" id="loaderPct">0%</p></div></div>'

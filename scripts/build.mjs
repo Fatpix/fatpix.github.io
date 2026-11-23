@@ -235,7 +235,7 @@ function generateAboutPlaceholder(outDir) {
 }
 
 // Layout comune. depth = profondità della pagina (0 = radice) per costruire i percorsi relativi.
-function page({ depth, title, desc, current, body, root, back }) {
+function page({ depth, title, desc, current, body, root, back, hero_html = '' }) {
   const p = root ? '/' : '../'.repeat(depth);
   const home = p || './';
   const full = title ? `${title} | ${site.nome}` : `${site.nome} | ${site.ruolo}`;
@@ -292,6 +292,72 @@ ${body}
 <script>
 (function() {
   if (document.body.classList.contains('pagina-home')) {
+    // ── Scroll-driven Text-Clip Mask Reveal ──
+    (function() {
+      var root = document.getElementById('textClipReveal');
+      var mask = document.getElementById('textClipSticky');
+      if (!root || !mask) return;
+
+      var text = root.getAttribute('data-text') || 'PORTFOLIO';
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="280" viewBox="0 0 1600 280">' +
+        '<text x="50%" y="54%" dominant-baseline="central" text-anchor="middle" ' +
+        'font-family="Anton, Impact, sans-serif" font-weight="900" font-size="150" letter-spacing="2">' +
+        text + '</text></svg>';
+
+      var maskData = 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+      mask.style.webkitMaskImage = maskData;
+      mask.style.maskImage = maskData;
+
+      function getInitialSize() {
+        var w = window.innerWidth || document.documentElement.clientWidth || 1000;
+        return Math.min(0.78, 1100 / w);
+      }
+
+      var targetScale = 160;
+      var easing = 0.15;
+      var eased = 0;
+      var isMasked = true;
+
+      function rawProgress() {
+        var rect = root.getBoundingClientRect();
+        var vh = window.innerHeight || document.documentElement.clientHeight;
+        var distance = rect.height - vh;
+        if (distance <= 0) return 0;
+        return Math.min(1, Math.max(0, -rect.top / distance));
+      }
+
+      function loop() {
+        var p = rawProgress();
+        eased += (p - eased) * easing;
+
+        if (eased >= 0.65) {
+          if (isMasked) {
+            mask.style.webkitMaskImage = 'none';
+            mask.style.maskImage = 'none';
+            isMasked = false;
+          }
+        } else {
+          if (!isMasked) {
+            mask.style.webkitMaskImage = maskData;
+            mask.style.maskImage = maskData;
+            isMasked = true;
+          }
+          var base = getInitialSize();
+          var t = Math.min(1, Math.max(0, eased / 0.65));
+          var scaleCurve = Math.pow(t, 2.2);
+          var size = (base + targetScale * scaleCurve) * 100;
+          var sStr = size.toFixed(2) + '% auto';
+          mask.style.webkitMaskSize = sStr;
+          mask.style.maskSize = sStr;
+        }
+
+        requestAnimationFrame(loop);
+      }
+
+      loop();
+    })();
+
+    
     var updateCardHeight = function() {
       var c = document.querySelector('.griglia .card');
       if (c && c.offsetHeight > 0) {
@@ -408,7 +474,7 @@ ${body}
     document.addEventListener('mouseover', function(e) {
       var t = e.target;
       if (!t) return;
-      if (t.closest('#landingHero') || t.closest('.landing-hero-stage')) {
+      if (t.closest('#textClipReveal') || t.closest('.text-clip-reveal-root') || t.closest('#landingHero') || t.closest('.landing-hero-stage')) {
         hideBadge();
       } else if (t.closest('.about-foto')) {
         setBadge('Hi, this is me!');
@@ -513,6 +579,14 @@ cpSync('src/static', OUT, { recursive: true });
 if (existsSync('admin')) cpSync('admin', `${OUT}/admin`, { recursive: true });
 cpSync('src/fonts', `${OUT}/fonts`, { recursive: true });
 
+// Copia asset CMS (content/ e content/assets/)
+if (existsSync(`${C}/assets`)) cpSync(`${C}/assets`, `${OUT}/assets`, { recursive: true });
+for (const item of readdirSync(C)) {
+  if (/\.(mp4|webm|mov|jpg|jpeg|png|webp|svg)$/i.test(item)) {
+    cpSync(join(C, item), join(OUT, item));
+  }
+}
+
 // Lavori
 const lavori = readdirSync(`${C}/lavori`, { withFileTypes: true })
   .filter(d => d.isDirectory() && !d.name.toLowerCase().includes('esempio') && existsSync(`${C}/lavori/${d.name}/progetto.md`))
@@ -544,15 +618,39 @@ const asteriskSvg = `<svg class="titolo-asterisco" viewBox="0 0 84 86" aria-hidd
   </g>
 </svg>`;
 
-writeFileSync(`${OUT}/index.html`, page({
-  depth: 0, current: 'home', desc: site.descrizione,
-  body: `<div class="landing-titolo-wrap">
+let homeConf = {};
+if (existsSync(`${C}/home.json`)) {
+  try {
+    homeConf = JSON.parse(readFileSync(`${C}/home.json`, 'utf8'));
+  } catch (e) {}
+}
+
+const titoloHero = homeConf.titolo_hero || 'PORTFOLIO';
+const videoHero = homeConf.video_hero || 'reveal-video.mp4';
+const posterHero = homeConf.poster_hero || '';
+const titoloLavori = homeConf.titolo_lavori || 'My Works';
+const posterAttr = posterHero ? ` poster="${esc(posterHero)}"` : '';
+
+const heroRevealHtml = `<div class="text-clip-reveal-root" id="textClipReveal" data-text="${esc(titoloHero)}">
+  <div class="text-clip-sticky" id="textClipSticky">
+    <video class="text-clip-video" autoplay muted loop playsinline preload="auto"${posterAttr}>
+      <source src="${esc(videoHero)}" type="video/mp4">
+    </video>
+  </div>
+</div>`;
+
+const homeBody = `<div class="landing-titolo-wrap">
   ${asteriskSvg}
-  <h1 class="titolo-testo">My Works</h1>
+  <h1 class="titolo-testo">${esc(titoloLavori)}</h1>
 </div>
 <ul class="griglia">
 ${cards}
-</ul>`
+</ul>`;
+
+writeFileSync(`${OUT}/index.html`, page({
+  depth: 0, current: 'home', desc: site.descrizione,
+  hero_html: heroRevealHtml,
+  body: homeBody
 }));
 
 // Inietta loader nella home

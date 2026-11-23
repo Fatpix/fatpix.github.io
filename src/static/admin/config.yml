@@ -43,6 +43,17 @@ collections:
   - name: "pagine"
     label: "Pagine e Informazioni"
     files:
+      - name: "home"
+        label: "Home Page (Hero Video Cutout & Titolo)"
+        file: "content/home.json"
+        format: "json"
+        media_folder: ""
+        public_folder: ""
+        fields:
+          - { name: "titolo_hero", label: "Scritta Cutout (es: PORTFOLIO)", widget: "string", default: "PORTFOLIO" }
+          - { name: "video_hero", label: "Video Hero Cutout [1920×1080 px — 16:9] (.mp4 / .webm)", widget: "file", default: "reveal-video.mp4", hint: "Carica il file video in formato 1920×1080 px (16:9). Verrà riprodotto in loop attraverso il cutout della scritta PORTFOLIO e a tutto schermo con lo scroll." }
+          - { name: "poster_hero", label: "Copertina / Poster Video [1920×1080 px] (opzionale)", widget: "file", required: false, hint: "Immagine di copertina (1920×1080 px) per il caricamento del video." }
+          - { name: "titolo_lavori", label: "Titolo Sezione Lavori", widget: "string", default: "My Works" }
       - name: "chi-sono"
         label: "About Me (Chi Sono)"
         file: "content/chi-sono/chi-sono.md"
