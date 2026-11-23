@@ -251,7 +251,7 @@ def page(depth=0, title='', desc='', current='', body='', root=False, back=False
 <link rel="apple-touch-icon" href="__P__apple-touch-icon.png">
 <link rel="preload" href="__P__fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="__P__css/tokens.css">
-<link rel="stylesheet" href="__P__css/style.css?v=2.6">
+<link rel="stylesheet" href="__P__css/style.css?v=2.7">
 </head>
 <body__BODY_CLASS__>
 <div id="cursorBadge" class="cursor-badge" aria-hidden="true"></div>
@@ -395,8 +395,8 @@ __BODY__
     document.addEventListener('mouseover', function(e) {
       var t = e.target;
       if (!t) return;
-      if (t.closest('#landingHero')) {
-        setBadge('Touch me');
+      if (t.closest('#landingHero') || t.closest('.landing-hero-stage')) {
+        hideBadge();
       } else if (t.closest('.about-foto')) {
         setBadge('Hi, this is me!');
       } else if (t.closest('.progetto-hero-media, .progetto-concept-media, .progetto-showcase, .progetto-dettaglio img, .progetto-dettaglio video')) {

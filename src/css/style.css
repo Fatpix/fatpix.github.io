@@ -149,6 +149,7 @@ body.pagina-home main {
 }
 
 /* ── Hero Stage: Distorted Pixel Text & Floating Character ── */
+.landing-hero-stage, .landing-hero-stage * { cursor: default !important; }
 .landing-hero-stage {
   position: relative;
   width: 100%;
