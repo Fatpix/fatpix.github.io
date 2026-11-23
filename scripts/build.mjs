@@ -260,7 +260,7 @@ function page({ depth, title, desc, current, body, root, back }) {
 <link rel="apple-touch-icon" href="${p}apple-touch-icon.png">
 <link rel="preload" href="${p}fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${p}css/tokens.css">
-<link rel="stylesheet" href="${p}css/style.css?v=2.5">
+<link rel="stylesheet" href="${p}css/style.css?v=2.6">
 </head>
 <body${current ? ` class="pagina-${current}"` : ''}>
 <div id="cursorBadge" class="cursor-badge" aria-hidden="true"></div>
@@ -408,7 +408,9 @@ ${body}
     document.addEventListener('mouseover', function(e) {
       var t = e.target;
       if (!t) return;
-      if (t.closest('.about-foto')) {
+      if (t.closest('#landingHero')) {
+        setBadge('Touch me');
+      } else if (t.closest('.about-foto')) {
         setBadge('Hi, this is me!');
       } else if (t.closest('.progetto-hero-media, .progetto-concept-media, .progetto-showcase, .progetto-dettaglio img, .progetto-dettaglio video')) {
         setBadge('Take a look');
@@ -544,7 +546,8 @@ const asteriskSvg = `<svg class="titolo-asterisco" viewBox="0 0 84 86" aria-hidd
 
 writeFileSync(`${OUT}/index.html`, page({
   depth: 0, current: 'home', desc: site.descrizione,
-  body: `<div class="landing-titolo-wrap">
+  body: `<div class="landing-hero-stage" id="landingHero" aria-label="Interactive Hero Intro"></div>
+<div class="landing-titolo-wrap">
   ${asteriskSvg}
   <h1 class="titolo-testo">My Works</h1>
 </div>
@@ -557,7 +560,7 @@ ${cards}
 const antiFlicker = `<script>try{var r=false,n=performance.getEntriesByType('navigation')[0];if(n)r=(n.type==='reload');else if(performance.navigation)r=(performance.navigation.type===1);if(document.referrer&&new URL(document.referrer).origin===window.location.origin&&sessionStorage.getItem('portfolio_loader_shown')&&!r){document.documentElement.classList.add('skip-loader');}}catch(e){}</script>`;
 const loaderDiv = `<div id="loader" aria-hidden="true"><div class="loader-inner"><div class="loader-log" id="loaderLog"></div><div class="loader-barra"><div class="loader-fill" id="loaderFill"></div></div><p class="loader-pct" id="loaderPct">0%</p></div></div>`;
 let homeHtml = readFileSync(`${OUT}/index.html`, 'utf8');
-homeHtml = homeHtml.replace(/class="pagina-home">/, '$&' + antiFlicker + loaderDiv).replace('</body>', '<script src="loader.js"></script></body>');
+homeHtml = homeHtml.replace(/class="pagina-home">/, '$&' + antiFlicker + loaderDiv).replace('</body>', '<script src="three.min.js"></script><script src="hero-animation.js"></script><script src="loader.js"></script></body>');
 writeFileSync(`${OUT}/index.html`, homeHtml);
 
 // Dettaglio

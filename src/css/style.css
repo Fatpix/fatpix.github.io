@@ -140,11 +140,33 @@ main {
 
 /* ── Layout pagina Works (Home) ────────────────────────── */
 body.pagina-home main {
-  padding-top: calc(1.5 * var(--altezza-card, calc(min(56.25vw, 65vh) + 3.8rem)));
+  padding-top: var(--spazio-l);
 }
 @media (max-width: 44rem) {
   body.pagina-home main {
-    padding-top: calc(var(--menu-h-mobile) + 1.5 * var(--altezza-card, calc((100vw - 2 * var(--spazio-m)) * 9 / 16 + 3.8rem)));
+    padding-top: calc(var(--menu-h-mobile) + var(--spazio-m));
+  }
+}
+
+/* ── Hero Stage: Distorted Pixel Text & Floating Character ── */
+.landing-hero-stage {
+  position: relative;
+  width: 100%;
+  height: calc(1.5 * var(--altezza-card, calc(min(56.25vw, 65vh) + 3.8rem)));
+  min-height: 480px;
+  max-height: 85vh;
+  margin-bottom: clamp(1.5rem, 3.5vw, 3rem);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  user-select: none;
+}
+@media (max-width: 44rem) {
+  .landing-hero-stage {
+    height: calc(1.3 * var(--altezza-card, calc((100vw - 2 * var(--spazio-m)) * 9 / 16 + 3.8rem)));
+    min-height: 380px;
   }
 }
 
