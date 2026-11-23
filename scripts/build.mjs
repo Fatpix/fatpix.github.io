@@ -277,6 +277,7 @@ ${extraBody}
   </nav>
 </header>
 <div class="corpo-pagina">
+  ${hero_html}
   <main id="contenuto" class="contenitore">
 ${body}
   </main>
