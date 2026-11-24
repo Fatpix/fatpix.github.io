@@ -645,43 +645,93 @@ body.pagina-chi-sono main {
   }
 }
 
-/* ── Loading screen (solo home) ─────────────────────────── */
-html.skip-loader #loader { display: none !important; }
-#loader { position: fixed; inset: 0; z-index: 999; background: var(--colore-sfondo); display: flex; align-items: center; justify-content: center; transition: opacity 400ms ease; }
-#loader.nascosto { opacity: 0; pointer-events: none; }
-.loader-inner { width: min(22rem, calc(100vw - 3rem)); display: flex; flex-direction: column; gap: var(--spazio-s); }
-.loader-log {
-  font: 400 var(--corpo-mono)/1.8 var(--font-mono);
-  color: var(--colore-testo-attenuato);
-  height: calc(5 * 1.8em);
+/* ── Loading Screen Fullscreen (FlipTileWave) ───────────── */
+.page-loader {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999999;
+  background: #000000 !important;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  box-sizing: content-box;
-}
-.loader-riga {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  height: 1.8em;
-  opacity: 0;
-  transition: opacity 120ms ease;
+  justify-content: center;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  pointer-events: auto;
 }
-.loader-riga.visibile { opacity: 1; }
-.loader-riga .step-status {
-  min-width: 2.5ch;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
+
+.page-loader.nascosto {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
-.loader-riga .step-status.ok { color: var(--colore-hover); font-weight: 700; }
-.loader-barra { height: 1px; background: rgba(0,0,0,0.12); width: 100%; overflow: hidden; }
-.loader-fill { height: 1px; background: var(--colore-testo); width: 0%; transition: width 200ms ease; }
-.loader-pct {
-  font: 400 var(--corpo-mono)/1 var(--font-mono);
-  color: var(--colore-testo-attenuato);
-  text-align: right;
-  margin: 0.4rem 0 0;
-  font-variant-numeric: tabular-nums;
+
+.flip-tile-wave {
+  perspective: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flip-tile-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 30px);
+  gap: 6px;
+  transform-style: preserve-3d;
+}
+
+.flip-tile {
+  width: 30px;
+  height: 30px;
+  position: relative;
+  transform-style: preserve-3d;
+  animation: flipTileWave 3.8s ease-in-out infinite;
+  animation-delay: calc((var(--r) + var(--c)) * 0.12s);
+}
+
+@keyframes flipTileWave {
+  0%, 100% {
+    transform: rotateY(0deg);
+  }
+  18.42% {
+    transform: rotateY(180deg);
+  }
+  50.00% {
+    transform: rotateY(180deg);
+  }
+  68.42% {
+    transform: rotateY(0deg);
+  }
+}
+
+.flip-tile-front {
+  position: absolute;
+  inset: 0;
+  border-radius: 3px;
+  border: 1px solid rgba(245, 245, 245, 0.22);
+  background: rgba(245, 245, 245, 0.05);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.flip-tile-back {
+  position: absolute;
+  inset: 0;
+  border-radius: 3px;
+  background: #ef1111;
+  border: 1px solid #ef1111;
+  box-shadow: 0 0 10px rgba(239, 17, 17, 0.45);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: rotateY(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flip-tile {
+    animation: none !important;
+  }
 }
 
 /* ── Mobile: menu orizzontale fisso in alto con blending diretto sul body ──────────────── */

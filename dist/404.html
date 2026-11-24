@@ -17,6 +17,28 @@
 <link rel="stylesheet" href="/css/style.css?v=3.2">
 </head>
 <body>
+<div id="pageLoader" class="page-loader" aria-hidden="true">
+  <div class="flip-tile-wave">
+    <div class="flip-tile-grid">
+      <div class="flip-tile" style="--r:0;--c:0;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:0;--c:1;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:0;--c:2;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:0;--c:3;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:1;--c:0;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:1;--c:1;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:1;--c:2;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:1;--c:3;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:2;--c:0;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:2;--c:1;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:2;--c:2;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:2;--c:3;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:3;--c:0;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:3;--c:1;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:3;--c:2;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:3;--c:3;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+    </div>
+  </div>
+</div>
 <div id="cursorBadge" class="cursor-badge" aria-hidden="true"></div>
 
 <a class="salta" href="#contenuto">Vai al contenuto</a>
@@ -545,6 +567,29 @@
     initPixelVideoPlayers();
   }
 
+})();
+</script>
+<script>
+(function() {
+  var loader = document.getElementById('pageLoader');
+  if (!loader) return;
+  function dismiss() {
+    if (!loader || loader.dataset.dismissed) return;
+    loader.dataset.dismissed = 'true';
+    loader.classList.add('nascosto');
+    setTimeout(function() {
+      try { loader.remove(); } catch(e) {}
+    }, 450);
+  }
+  if (document.readyState === 'complete') {
+    setTimeout(dismiss, 100);
+  } else {
+    window.addEventListener('load', function() {
+      setTimeout(dismiss, 120);
+    });
+    setTimeout(dismiss, 3500);
+  }
+  window.__dismissPageLoader = dismiss;
 })();
 </script>
 </body>

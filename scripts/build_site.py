@@ -239,6 +239,29 @@ def generate_about_placeholder(out_dir):
   </g>
 </svg>""")
 
+page_loader_html = """<div id="pageLoader" class="page-loader" aria-hidden="true">
+  <div class="flip-tile-wave">
+    <div class="flip-tile-grid">
+      <div class="flip-tile" style="--r:0;--c:0;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:0;--c:1;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:0;--c:2;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:0;--c:3;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:1;--c:0;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:1;--c:1;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:1;--c:2;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:1;--c:3;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:2;--c:0;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:2;--c:1;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:2;--c:2;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:2;--c:3;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:3;--c:0;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:3;--c:1;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:3;--c:2;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:3;--c:3;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+    </div>
+  </div>
+</div>"""
+
 def page(depth=0, title='', desc='', current='', body='', root=False, back=False, hero_html=''):
     p = '/' if root else '../' * depth
     home = p if p else './'
@@ -277,6 +300,7 @@ def page(depth=0, title='', desc='', current='', body='', root=False, back=False
 <link rel="stylesheet" href="__P__css/style.css?v=3.2">
 </head>
 <body__BODY_CLASS__>
+__PAGE_LOADER_HTML__
 <div id="cursorBadge" class="cursor-badge" aria-hidden="true"></div>
 __EXTRA_BODY__
 <a class="salta" href="#contenuto">Vai al contenuto</a>
@@ -806,6 +830,29 @@ __BODY__
 
 })();
 </script>
+<script>
+(function() {
+  var loader = document.getElementById('pageLoader');
+  if (!loader) return;
+  function dismiss() {
+    if (!loader || loader.dataset.dismissed) return;
+    loader.dataset.dismissed = 'true';
+    loader.classList.add('nascosto');
+    setTimeout(function() {
+      try { loader.remove(); } catch(e) {}
+    }, 450);
+  }
+  if (document.readyState === 'complete') {
+    setTimeout(dismiss, 100);
+  } else {
+    window.addEventListener('load', function() {
+      setTimeout(dismiss, 120);
+    });
+    setTimeout(dismiss, 3500);
+  }
+  window.__dismissPageLoader = dismiss;
+})();
+</script>
 </body>
 </html>"""
     return (template
@@ -814,6 +861,7 @@ __BODY__
         .replace('__DESC__', esc(desc or site.get('descrizione', '')))
         .replace('__P__', p)
         .replace('__BODY_CLASS__', f' class="pagina-{current}"' if current else '')
+        .replace('__PAGE_LOADER_HTML__', page_loader_html)
         .replace('__EXTRA_BODY__', extra_body)
         .replace('__NOME__', esc(site['nome']))
         .replace('__ALIAS__', esc(site.get('alias', site['nome'])))
@@ -922,15 +970,6 @@ home_body = f"""<div class="landing-titolo-wrap">
 
 with open(f'{OUT}/index.html', 'w', encoding='utf-8') as f:
     f.write(page(depth=0, current='home', desc=site.get('descrizione', ''), body=home_body, hero_html=hero_reveal_html))
-
-anti_flicker = "<script>try{var r=false,n=performance.getEntriesByType('navigation')[0];if(n)r=(n.type==='reload');else if(performance.navigation)r=(performance.navigation.type===1);if(document.referrer&&new URL(document.referrer).origin===window.location.origin&&sessionStorage.getItem('portfolio_loader_shown')&&!r){document.documentElement.classList.add('skip-loader');}}catch(e){}</script>"
-loader_div = '<div id="loader" aria-hidden="true"><div class="loader-inner"><div class="loader-log" id="loaderLog"></div><div class="loader-barra"><div class="loader-fill" id="loaderFill"></div></div><p class="loader-pct" id="loaderPct">0%</p></div></div>'
-with open(f'{OUT}/index.html', 'r', encoding='utf-8') as f:
-    home_html = f.read()
-
-home_html = home_html.replace('class="pagina-home">', 'class="pagina-home">' + anti_flicker + loader_div).replace('</body>', '<script src="loader.js?v=3.2"></script></body>')
-with open(f'{OUT}/index.html', 'w', encoding='utf-8') as f:
-    f.write(home_html)
 
 # Dettagli
 for i, l in enumerate(lavori):
@@ -1156,10 +1195,12 @@ coin_3d_script = """<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js
         group.add(mesh);
         if (loading) loading.style.opacity = '0';
         updateSize();
+        if (window.__dismissPageLoader) window.__dismissPageLoader();
       })
       .catch(function(err) {
         console.error('3D loading error:', err);
         if (loading) loading.textContent = '[ 3D NON DISPONIBILE ]';
+        if (window.__dismissPageLoader) window.__dismissPageLoader();
       });
 
     var isDragging = false;

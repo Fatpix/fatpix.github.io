@@ -261,6 +261,29 @@ function generateAboutPlaceholder(outDir) {
   }
 }
 
+const pageLoaderHtml = `<div id="pageLoader" class="page-loader" aria-hidden="true">
+  <div class="flip-tile-wave">
+    <div class="flip-tile-grid">
+      <div class="flip-tile" style="--r:0;--c:0;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:0;--c:1;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:0;--c:2;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:0;--c:3;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:1;--c:0;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:1;--c:1;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:1;--c:2;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:1;--c:3;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:2;--c:0;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:2;--c:1;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:2;--c:2;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:2;--c:3;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:3;--c:0;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:3;--c:1;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:3;--c:2;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+      <div class="flip-tile" style="--r:3;--c:3;"><div class="flip-tile-front"></div><div class="flip-tile-back"></div></div>
+    </div>
+  </div>
+</div>`;
+
 // Layout comune. depth = profondità della pagina (0 = radice) per costruire i percorsi relativi.
 function page({ depth, title, desc, current, body, root, back, hero_html = '' }) {
   const p = root ? '/' : '../'.repeat(depth);
@@ -290,6 +313,7 @@ function page({ depth, title, desc, current, body, root, back, hero_html = '' })
 <link rel="stylesheet" href="${p}css/style.css?v=3.2">
 </head>
 <body${current ? ` class="pagina-${current}"` : ''}>
+${pageLoaderHtml}
 <div id="cursorBadge" class="cursor-badge" aria-hidden="true"></div>
 ${extraBody}
 <a class="salta" href="#contenuto">Vai al contenuto</a>
@@ -823,6 +847,29 @@ ${body}
 
 })();
 </script>
+<script>
+(function() {
+  var loader = document.getElementById('pageLoader');
+  if (!loader) return;
+  function dismiss() {
+    if (!loader || loader.dataset.dismissed) return;
+    loader.dataset.dismissed = 'true';
+    loader.classList.add('nascosto');
+    setTimeout(function() {
+      try { loader.remove(); } catch(e) {}
+    }, 450);
+  }
+  if (document.readyState === 'complete') {
+    setTimeout(dismiss, 100);
+  } else {
+    window.addEventListener('load', function() {
+      setTimeout(dismiss, 120);
+    });
+    setTimeout(dismiss, 3500);
+  }
+  window.__dismissPageLoader = dismiss;
+})();
+</script>
 </body>
 </html>
 `;
@@ -909,13 +956,6 @@ writeFileSync(`${OUT}/index.html`, page({
   hero_html: heroRevealHtml,
   body: homeBody
 }));
-
-// Inietta loader nella home
-const antiFlicker = `<script>try{var r=false,n=performance.getEntriesByType('navigation')[0];if(n)r=(n.type==='reload');else if(performance.navigation)r=(performance.navigation.type===1);if(document.referrer&&new URL(document.referrer).origin===window.location.origin&&sessionStorage.getItem('portfolio_loader_shown')&&!r){document.documentElement.classList.add('skip-loader');}}catch(e){}</script>`;
-const loaderDiv = `<div id="loader" aria-hidden="true"><div class="loader-inner"><div class="loader-log" id="loaderLog"></div><div class="loader-barra"><div class="loader-fill" id="loaderFill"></div></div><p class="loader-pct" id="loaderPct">0%</p></div></div>`;
-let homeHtml = readFileSync(`${OUT}/index.html`, 'utf8');
-homeHtml = homeHtml.replace(/class="pagina-home">/, '$&' + antiFlicker + loaderDiv).replace('</body>', '<script src="loader.js?v=3.2"></script></body>');
-writeFileSync(`${OUT}/index.html`, homeHtml);
 
 // Dettaglio
 lavori.forEach((l, i) => {
@@ -1184,10 +1224,12 @@ const aboutBody = `<article class="about-sezione">
         group.add(mesh);
         if (loading) loading.style.opacity = '0';
         updateSize();
+        if (window.__dismissPageLoader) window.__dismissPageLoader();
       })
       .catch(function(err) {
         console.error('3D loading error:', err);
         if (loading) loading.textContent = '[ 3D NON DISPONIBILE ]';
+        if (window.__dismissPageLoader) window.__dismissPageLoader();
       });
 
     var isDragging = false;
