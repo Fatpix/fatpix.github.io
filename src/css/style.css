@@ -968,8 +968,8 @@ body.pagina-chi-sono a:hover {
   line-height: 0.95;
   letter-spacing: -0.025em;
   color: transparent;
-  -webkit-text-stroke: 1.2px var(--colore-sfondo);
-  text-stroke: 1.2px var(--colore-sfondo);
+  -webkit-text-stroke: 0.8px var(--colore-sfondo);
+  text-stroke: 0.8px var(--colore-sfondo);
   font-weight: 400;
   text-transform: none;
   user-select: none;
@@ -1025,8 +1025,8 @@ body.pagina-chi-sono a:hover {
 
 body.pagina-chi-sono .about-titolo-marquee {
   color: transparent !important;
-  -webkit-text-stroke: 1.2px var(--colore-sfondo) !important;
-  text-stroke: 1.2px var(--colore-sfondo) !important;
+  -webkit-text-stroke: 0.8px var(--colore-sfondo) !important;
+  text-stroke: 0.8px var(--colore-sfondo) !important;
 }
 
 body.pagina-chi-sono .about-titolo-marquee .about-marquee-star {
