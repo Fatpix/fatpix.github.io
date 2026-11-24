@@ -251,7 +251,7 @@ def page(depth=0, title='', desc='', current='', body='', root=False, back=False
 <link rel="apple-touch-icon" href="__P__apple-touch-icon.png">
 <link rel="preload" href="__P__fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="__P__css/tokens.css?v=3.0">
-<link rel="stylesheet" href="__P__css/style.css?v=3.1">
+<link rel="stylesheet" href="__P__css/style.css?v=3.2">
 </head>
 <body__BODY_CLASS__>
 <div id="cursorBadge" class="cursor-badge" aria-hidden="true"></div>
@@ -890,7 +890,7 @@ loader_div = '<div id="loader" aria-hidden="true"><div class="loader-inner"><div
 with open(f'{OUT}/index.html', 'r', encoding='utf-8') as f:
     home_html = f.read()
 
-home_html = home_html.replace('class="pagina-home">', 'class="pagina-home">' + anti_flicker + loader_div).replace('</body>', '<script src="loader.js?v=3.1"></script></body>')
+home_html = home_html.replace('class="pagina-home">', 'class="pagina-home">' + anti_flicker + loader_div).replace('</body>', '<script src="loader.js?v=3.2"></script></body>')
 with open(f'{OUT}/index.html', 'w', encoding='utf-8') as f:
     f.write(home_html)
 

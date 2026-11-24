@@ -906,3 +906,38 @@ html.skip-loader #loader { display: none !important; }
   width: min(22rem, calc(100vw - 2rem));
   z-index: 30;
 }
+
+
+/* ── About Me (Chi sono) Dark Theme ─────────────────────── */
+body.pagina-chi-sono {
+  background: #000000 !important;
+  color: var(--colore-sfondo) !important;
+}
+
+body.pagina-chi-sono .corpo-pagina {
+  background: #000000 !important;
+}
+
+body.pagina-chi-sono .about-bio,
+body.pagina-chi-sono .about-bio p,
+body.pagina-chi-sono .about-location,
+body.pagina-chi-sono .footer,
+body.pagina-chi-sono .footer-titolo,
+body.pagina-chi-sono .footer-riga,
+body.pagina-chi-sono .footer-riga a,
+body.pagina-chi-sono .footer-contatti a {
+  color: var(--colore-sfondo) !important;
+}
+
+body.pagina-chi-sono .footer {
+  background: #000000 !important;
+}
+
+body.pagina-chi-sono .about-foto img,
+body.pagina-chi-sono .about-foto video {
+  background: #111111;
+}
+
+body.pagina-chi-sono a:hover {
+  color: var(--colore-hover) !important;
+}
