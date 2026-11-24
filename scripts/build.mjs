@@ -260,7 +260,7 @@ function page({ depth, title, desc, current, body, root, back, hero_html = '' })
 <link rel="apple-touch-icon" href="${p}apple-touch-icon.png">
 <link rel="preload" href="${p}fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${p}css/tokens.css?v=3.0">
-<link rel="stylesheet" href="${p}css/style.css?v=3.0">
+<link rel="stylesheet" href="${p}css/style.css?v=3.1">
 </head>
 <body${current ? ` class="pagina-${current}"` : ''}>
 <div id="cursorBadge" class="cursor-badge" aria-hidden="true"></div>
@@ -300,9 +300,9 @@ ${body}
       if (!root || !mask) return;
 
       var text = root.getAttribute('data-text') || 'PORTFOLIO';
-      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="280" viewBox="0 0 1600 280">' +
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="260" viewBox="0 0 1400 260">' +
         '<text x="50%" y="54%" dominant-baseline="central" text-anchor="middle" ' +
-        'font-family="Anton, Impact, sans-serif" font-weight="900" font-size="150" letter-spacing="2">' +
+        'font-family="Anton, Impact, sans-serif" font-weight="900" font-size="220" letter-spacing="1">' +
         text + '</text></svg>';
 
       var maskData = 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
@@ -311,7 +311,10 @@ ${body}
 
       function getInitialSize() {
         var w = window.innerWidth || document.documentElement.clientWidth || 1000;
-        return Math.min(0.78, 1100 / w);
+        if (w <= 640) {
+          return 0.96;
+        }
+        return Math.min(0.92, 1400 / w);
       }
 
       var targetScale = 160;
@@ -350,6 +353,16 @@ ${body}
           var sStr = size.toFixed(2) + '% auto';
           mask.style.webkitMaskSize = sStr;
           mask.style.maskSize = sStr;
+        }
+
+        var hHud = root.querySelector('.pixel-player-hud');
+        if (hHud) {
+          var rRect = root.getBoundingClientRect();
+          if (rRect.bottom <= 40) {
+            hHud.style.display = 'none';
+          } else {
+            hHud.style.display = 'flex';
+          }
         }
 
         requestAnimationFrame(loop);
@@ -565,6 +578,207 @@ ${body}
     window.addEventListener('resize', updateProgress, { passive: true });
     updateProgress();
   }
+
+  // ── Custom Pixel Video Player (Fatpix Style) ──
+  function initPixelVideoPlayers() {
+    var videos = document.querySelectorAll('video');
+    videos.forEach(function(video) {
+      if (video.getAttribute('data-pixel-player-init')) return;
+      video.setAttribute('data-pixel-player-init', 'true');
+
+      video.muted = true;
+      video.setAttribute('playsinline', '');
+
+      var hud = document.createElement('div');
+      hud.className = 'pixel-player-hud';
+      hud.setAttribute('role', 'toolbar');
+      hud.setAttribute('aria-label', 'Pixel Video Player');
+
+      var playBtn = document.createElement('button');
+      playBtn.type = 'button';
+      playBtn.className = 'pixel-btn pixel-btn-play' + (!video.paused ? ' attivo' : '');
+      playBtn.innerHTML = '<span class="pixel-icon">' + (!video.paused ? '❚❚' : '▶') + '</span><span class="pixel-lbl">' + (!video.paused ? 'PAUSE' : 'PLAY') + '</span>';
+
+      var timeline = document.createElement('div');
+      timeline.className = 'pixel-timeline';
+      timeline.setAttribute('role', 'slider');
+      timeline.setAttribute('aria-label', 'Avanzamento video');
+      timeline.tabIndex = 0;
+
+      var track = document.createElement('div');
+      track.className = 'pixel-timeline-track';
+      var fill = document.createElement('div');
+      fill.className = 'pixel-timeline-fill';
+      var thumb = document.createElement('div');
+      thumb.className = 'pixel-timeline-thumb';
+
+      track.appendChild(fill);
+      track.appendChild(thumb);
+      timeline.appendChild(track);
+
+      var timeDisplay = document.createElement('span');
+      timeDisplay.className = 'pixel-time';
+      timeDisplay.textContent = '00:00 / 00:00';
+
+      var muteBtn = document.createElement('button');
+      muteBtn.type = 'button';
+      muteBtn.className = 'pixel-btn pixel-btn-mute' + (!video.muted ? ' attivo' : '');
+      muteBtn.innerHTML = '<span class="pixel-icon">' + (!video.muted ? '🔊' : '🔇') + '</span><span class="pixel-lbl">' + (!video.muted ? 'SOUND' : 'MUTE') + '</span>';
+
+      hud.appendChild(playBtn);
+      hud.appendChild(timeline);
+      hud.appendChild(timeDisplay);
+      hud.appendChild(muteBtn);
+
+      var parent = video.parentElement;
+      var rootHero = document.getElementById('textClipReveal');
+      if (parent.classList.contains('text-clip-sticky') && rootHero) {
+        rootHero.appendChild(hud);
+      } else if (parent.classList.contains('text-clip-sticky')) {
+        parent.appendChild(hud);
+      } else if (parent.classList.contains('lightbox')) {
+        parent.appendChild(hud);
+      } else {
+        if (!parent.classList.contains('pixel-video-wrap')) {
+          var wrap = document.createElement('div');
+          wrap.className = 'pixel-video-wrap';
+          parent.insertBefore(wrap, video);
+          wrap.appendChild(video);
+          wrap.appendChild(hud);
+        } else {
+          parent.appendChild(hud);
+        }
+      }
+
+      playBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (video.paused) {
+          video.play().catch(function() {});
+        } else {
+          video.pause();
+        }
+      });
+
+      muteBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (video.muted) {
+          document.querySelectorAll('video').forEach(function(v) {
+            if (v !== video) {
+              v.muted = true;
+              v.dispatchEvent(new Event('volumechange'));
+            }
+          });
+          video.muted = false;
+        } else {
+          video.muted = true;
+        }
+        video.dispatchEvent(new Event('volumechange'));
+      });
+
+      video.addEventListener('play', function() {
+        var ic = playBtn.querySelector('.pixel-icon');
+        var lb = playBtn.querySelector('.pixel-lbl');
+        if (ic) ic.textContent = '❚❚';
+        if (lb) lb.textContent = 'PAUSE';
+        playBtn.classList.add('attivo');
+      });
+
+      video.addEventListener('pause', function() {
+        var ic = playBtn.querySelector('.pixel-icon');
+        var lb = playBtn.querySelector('.pixel-lbl');
+        if (ic) ic.textContent = '▶';
+        if (lb) lb.textContent = 'PLAY';
+        playBtn.classList.remove('attivo');
+        var w = video.closest('.pixel-video-wrap');
+        if (w) w.classList.add('mostra-hud');
+      });
+
+      video.addEventListener('volumechange', function() {
+        var ic = muteBtn.querySelector('.pixel-icon');
+        var lb = muteBtn.querySelector('.pixel-lbl');
+        if (video.muted) {
+          if (ic) ic.textContent = '🔇';
+          if (lb) lb.textContent = 'MUTE';
+          muteBtn.classList.remove('attivo');
+        } else {
+          if (ic) ic.textContent = '🔊';
+          if (lb) lb.textContent = 'SOUND';
+          muteBtn.classList.add('attivo');
+        }
+      });
+
+      function formatTime(s) {
+        if (isNaN(s) || !isFinite(s) || s < 0) return '00:00';
+        var m = Math.floor(s / 60);
+        var sec = Math.floor(s % 60);
+        return (m < 10 ? '0' + m : m) + ':' + (sec < 10 ? '0' + sec : sec);
+      }
+
+      function updateProgress() {
+        var cur = video.currentTime || 0;
+        var dur = video.duration || 0;
+        var pct = dur > 0 ? (cur / dur) * 100 : 0;
+        fill.style.width = pct + '%';
+        thumb.style.left = pct + '%';
+        timeDisplay.textContent = formatTime(cur) + ' / ' + formatTime(dur);
+      }
+
+      video.addEventListener('timeupdate', updateProgress);
+      video.addEventListener('loadedmetadata', updateProgress);
+      video.addEventListener('durationchange', updateProgress);
+      updateProgress();
+
+      var isDragging = false;
+      function seek(e) {
+        var rect = track.getBoundingClientRect();
+        var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        var pos = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+        if (video.duration) {
+          video.currentTime = pos * video.duration;
+        }
+        updateProgress();
+      }
+
+      timeline.addEventListener('mousedown', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        isDragging = true;
+        seek(e);
+      });
+      window.addEventListener('mousemove', function(e) {
+        if (isDragging) {
+          e.preventDefault();
+          seek(e);
+        }
+      });
+      window.addEventListener('mouseup', function() {
+        isDragging = false;
+      });
+
+      timeline.addEventListener('touchstart', function(e) {
+        e.stopPropagation();
+        isDragging = true;
+        seek(e);
+      }, { passive: false });
+      window.addEventListener('touchmove', function(e) {
+        if (isDragging) {
+          seek(e);
+        }
+      });
+      window.addEventListener('touchend', function() {
+        isDragging = false;
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPixelVideoPlayers);
+  } else {
+    initPixelVideoPlayers();
+  }
+
 })();
 </script>
 </body>
@@ -658,7 +872,7 @@ writeFileSync(`${OUT}/index.html`, page({
 const antiFlicker = `<script>try{var r=false,n=performance.getEntriesByType('navigation')[0];if(n)r=(n.type==='reload');else if(performance.navigation)r=(performance.navigation.type===1);if(document.referrer&&new URL(document.referrer).origin===window.location.origin&&sessionStorage.getItem('portfolio_loader_shown')&&!r){document.documentElement.classList.add('skip-loader');}}catch(e){}</script>`;
 const loaderDiv = `<div id="loader" aria-hidden="true"><div class="loader-inner"><div class="loader-log" id="loaderLog"></div><div class="loader-barra"><div class="loader-fill" id="loaderFill"></div></div><p class="loader-pct" id="loaderPct">0%</p></div></div>`;
 let homeHtml = readFileSync(`${OUT}/index.html`, 'utf8');
-homeHtml = homeHtml.replace(/class="pagina-home">/, '$&' + antiFlicker + loaderDiv).replace('</body>', '<script src="loader.js?v=3.0"></script></body>');
+homeHtml = homeHtml.replace(/class="pagina-home">/, '$&' + antiFlicker + loaderDiv).replace('</body>', '<script src="loader.js?v=3.1"></script></body>');
 writeFileSync(`${OUT}/index.html`, homeHtml);
 
 // Dettaglio
