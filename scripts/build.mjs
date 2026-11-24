@@ -1098,12 +1098,14 @@ const aboutBody = `<article class="about-sezione">
     var prevX = 0, prevY = 0;
     var velX = 0, velY = 0;
     var rotX = 0, rotY = 0;
-    var autoSpeed = 0.008;
+    var autoSpeed = 0.004;
 
     container.addEventListener('pointerdown', function(e) {
       isDragging = true;
       prevX = e.clientX;
       prevY = e.clientY;
+      velX = 0;
+      velY = 0;
       container.setPointerCapture(e.pointerId);
     });
 
@@ -1111,8 +1113,11 @@ const aboutBody = `<article class="about-sezione">
       if (isDragging) {
         var dx = e.clientX - prevX;
         var dy = e.clientY - prevY;
-        velY += dx * 0.005;
-        velX += dy * 0.005;
+        rotY += dx * 0.0028;
+        rotX += dy * 0.0024;
+        rotX = Math.max(-0.6, Math.min(0.6, rotX));
+        velY = dx * 0.0012;
+        velX = dy * 0.0012;
         prevX = e.clientX;
         prevY = e.clientY;
       }
@@ -1145,14 +1150,12 @@ const aboutBody = `<article class="about-sezione">
       requestAnimationFrame(animate);
 
       if (!isDragging) {
-        velY += (autoSpeed - velY) * 0.03;
-        velX *= 0.92;
+        velY += (autoSpeed - velY) * 0.04;
+        velX *= 0.88;
+        rotY += velY;
+        rotX += velX;
+        rotX = Math.max(-0.6, Math.min(0.6, rotX));
       }
-
-      rotY += velY;
-      rotX += velX;
-
-      rotX = Math.max(-0.8, Math.min(0.8, rotX));
 
       group.rotation.y = rotY;
       group.rotation.x = rotX;
