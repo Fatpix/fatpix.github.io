@@ -998,6 +998,7 @@ await copyAssets(`${C}/chi-sono`, `${OUT}/chi-sono`);
 generateAboutPlaceholder(`${OUT}/chi-sono`);
 const fotoSrc = esc(about.meta.foto || 'foto.svg');
 const location = esc(about.meta.location || 'Genova/Italy');
+const titoloSkills = esc(about.meta.titolo_skills || 'Skills');
 
 const extractWords = (val, defaultList) => {
   if (!val) return defaultList;
@@ -1064,14 +1065,29 @@ const aboutBody = `<article class="about-sezione">
   </div>
 </div>
 
-<div class="about-3d-wrap" id="about3dWrap">
-  <div class="circle-credits-stage" id="creditsStage">
-    <div class="about-3d-canvas-container" id="about3dContainer" role="img" aria-label="Oggetto 3D interattivo Fatpix">
-      <div class="about-3d-loading" id="about3dLoading">[ CARICAMENTO 3D... ]</div>
+  <section class="about-skills-sezione">
+    <div class="landing-titolo-wrap skills-titolo-wrap">
+      <svg class="titolo-asterisco" viewBox="0 0 84 86" aria-hidden="true">
+        <g transform="translate(42, 43)">
+          <rect x="-9.5" y="-43" width="19" height="43" fill="currentColor"/>
+          <rect x="-9.5" y="-43" width="19" height="43" fill="currentColor" transform="rotate(72)"/>
+          <rect x="-9.5" y="-43" width="19" height="43" fill="currentColor" transform="rotate(144)"/>
+          <rect x="-9.5" y="-43" width="19" height="43" fill="currentColor" transform="rotate(216)"/>
+          <rect x="-9.5" y="-43" width="19" height="43" fill="currentColor" transform="rotate(288)"/>
+        </g>
+      </svg>
+      <h2 class="titolo-testo">${titoloSkills}</h2>
     </div>
-  </div>
-  <div class="about-3d-hint" aria-hidden="true">[ ✦ TRASCINA PER RUOTARE ]</div>
-</div>
+
+    <div class="about-3d-wrap" id="about3dWrap">
+      <div class="circle-credits-stage" id="creditsStage">
+        <div class="about-3d-canvas-container" id="about3dContainer" role="img" aria-label="Oggetto 3D interattivo Fatpix">
+          <div class="about-3d-loading" id="about3dLoading">[ CARICAMENTO 3D... ]</div>
+        </div>
+      </div>
+      <div class="about-3d-hint" aria-hidden="true">[ ✦ TRASCINA PER RUOTARE ]</div>
+    </div>
+  </section>
 </article>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>

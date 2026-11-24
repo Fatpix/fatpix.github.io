@@ -1035,9 +1035,29 @@ body.pagina-chi-sono .about-titolo-marquee .about-marquee-star {
   text-stroke: 0 !important;
 }
 
-/* ── About Me 3D Coin Viewer & CircleCredits ─────────────── */
+body.pagina-chi-sono .titolo-testo {
+  color: transparent !important;
+  -webkit-text-stroke: 1.2px var(--colore-sfondo) !important;
+  text-stroke: 1.2px var(--colore-sfondo) !important;
+}
+
+body.pagina-chi-sono .titolo-asterisco,
+body.pagina-chi-sono .titolo-asterisco rect {
+  fill: var(--colore-sfondo) !important;
+}
+
+/* ── About Me Skills Section & 3D Coin Viewer ─────────────── */
+.about-skills-sezione {
+  margin-top: clamp(8rem, 15vw, 15rem);
+  width: 100%;
+}
+
+.skills-titolo-wrap {
+  margin-bottom: clamp(3.5rem, 7vw, 6.5rem);
+}
+
 .about-3d-wrap {
-  margin: clamp(11rem, 20vw, 18rem) auto clamp(7rem, 12vw, 12rem) auto;
+  margin: 0 auto clamp(7rem, 12vw, 12rem) auto;
   margin-inline: auto;
   width: 100%;
   max-width: 68rem;

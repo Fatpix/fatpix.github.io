@@ -1,6 +1,7 @@
 ---
 foto: foto.svg
 location: Genova/Italy
+titolo_skills: Skills
 parole_sinistra:
   - "Web Design"
   - "Motion Graphics"
