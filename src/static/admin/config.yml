@@ -62,6 +62,16 @@ collections:
         fields:
           - { name: "location", label: "Posizione / Città (es: Genova/Italy)", widget: "string" }
           - { name: "foto", label: "Media Profilo [1000×1050 px — Quadrata o Verticale] (Foto / Video / GIF)", widget: "file", default: "foto.svg", hint: "Media del profilo (foto, video o GIF). Si adatta all'altezza del testo della bio al suo fianco. Risoluzione consigliata: 1000x1050 px (~1:1 o 3:4)." }
+          - label: "Parole Animate Sinistra (Discipline / Skill)"
+            name: "parole_sinistra"
+            widget: "list"
+            required: false
+            hint: "Elenco delle parole che salgono sul lato sinistro della testa 3D"
+          - label: "Parole Animate Destra (Strumenti / Dettagli)"
+            name: "parole_destra"
+            widget: "list"
+            required: false
+            hint: "Elenco delle parole che scendono sul lato destro della testa 3D"
           - { name: "body", label: "Biografia / Presentazione", widget: "markdown" }
 
       - name: "sito"

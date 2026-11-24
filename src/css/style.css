@@ -1035,12 +1035,12 @@ body.pagina-chi-sono .about-titolo-marquee .about-marquee-star {
   text-stroke: 0 !important;
 }
 
-/* ── About Me 3D Coin Viewer ─────────────────────────────── */
+/* ── About Me 3D Coin Viewer & CircleCredits ─────────────── */
 .about-3d-wrap {
-  margin: clamp(6.5rem, 12vw, 11rem) auto clamp(4rem, 6vw, 6rem) auto;
+  margin: clamp(11rem, 20vw, 18rem) auto clamp(7rem, 12vw, 12rem) auto;
   margin-inline: auto;
   width: 100%;
-  max-width: 52rem;
+  max-width: 68rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1048,16 +1048,60 @@ body.pagina-chi-sono .about-titolo-marquee .about-marquee-star {
   position: relative;
 }
 
-.about-3d-canvas-container {
-  width: 100%;
-  height: clamp(280px, 38vw, 420px);
+.circle-credits-stage {
   position: relative;
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: clamp(0.85rem, 1.1vw, 1.05rem);
+  user-select: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .circle-credits-stage {
+    font-size: clamp(0.72rem, 2.2vw, 0.85rem);
+  }
+}
+
+.circle-credit-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: default;
+  color: rgba(245, 245, 245, 0.65);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: color 0.15s ease;
+  pointer-events: auto;
+}
+
+.circle-credit-item:hover {
+  color: var(--colore-hover) !important;
+}
+
+.circle-credit-char {
+  display: inline-block;
+  text-align: center;
+}
+
+.about-3d-canvas-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 17em;
+  height: 17em;
+  max-width: 78vw;
+  max-height: 78vw;
+  border-radius: 50%;
   cursor: grab;
   touch-action: pan-y;
   user-select: none;
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 10;
+  pointer-events: auto;
 }
 
 .about-3d-canvas-container:active {
@@ -1087,7 +1131,8 @@ body.pagina-chi-sono .about-titolo-marquee .about-marquee-star {
   font-size: 0.72rem;
   color: var(--colore-sfondo);
   opacity: 0.45;
-  margin-top: 0.5rem;
+  margin-top: 1.5rem;
   letter-spacing: 0.05em;
   user-select: none;
+  text-align: center;
 }

@@ -1,6 +1,44 @@
 ---
 foto: foto.svg
 location: Genova/Italy
+parole_sinistra:
+  - "Web Design"
+  - "Motion Graphics"
+  - "3D Modeling"
+  - "Video Making"
+  - "Brand Identity"
+  - "Creative Direction"
+  - "Interaction Design"
+  - "Visual Storytelling"
+  - "Typography & Layout"
+  - "UI & UX Craft"
+  - "Generative Art"
+  - "Stop Motion"
+  - "Analog Experiments"
+  - "Prototyping"
+  - "Sound & Atmosphere"
+  - "Editorial Design"
+  - "Digital Experiences"
+  - "Creative Coding"
+parole_destra:
+  - "Three.js & WebGL"
+  - "Blender 3D"
+  - "After Effects"
+  - "Figma"
+  - "Premiere Pro"
+  - "Cinema 4D"
+  - "Illustrator"
+  - "Photoshop"
+  - "Modern JavaScript"
+  - "CSS Animation"
+  - "DaVinci Resolve"
+  - "35mm Photography"
+  - "Hand-made Craft"
+  - "Rapid Iteration"
+  - "Problem Solving"
+  - "Swiss Army Knife"
+  - "Genova / Italy"
+  - "Fatpix Studio"
 ---
 I'm a young German/Italian web designer, motion designer, and video maker with an incurable passion for anything creative or techy. I'm not one to stick to a single lane: if there's something new to try, I'm already halfway there – whether it's designing a website, animating a video, or getting my hands dirty with a hands-on project (literally, I don't mind a bit of mess).
 

@@ -4,15 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pagina non trovata | Filippo Arpe</title>
-<meta name="description" content="Portfolio di Il Tuo Nome: progetti di design.">
+<meta name="description" content="Portfolio di Filippo Arpe: visual designer e creative.">
 <meta property="og:title" content="Pagina non trovata | Filippo Arpe">
-<meta property="og:description" content="Portfolio di Il Tuo Nome: progetti di design.">
+<meta property="og:description" content="Portfolio di Filippo Arpe: visual designer e creative.">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="32x32">
+<link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preload" href="/fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/css/tokens.css">
-<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/tokens.css?v=3.0">
+<link rel="stylesheet" href="/css/style.css?v=3.2">
 </head>
 <body>
+<div id="cursorBadge" class="cursor-badge" aria-hidden="true"></div>
+
 <a class="salta" href="#contenuto">Vai al contenuto</a>
 <header class="menu">
   <button type="button" class="menu-nome" aria-label="Filippo Arpe"><span class="nome-esteso">Filippo Arpe</span><span class="nome-alias" aria-hidden="true">Fatpix</span></button>
@@ -21,9 +27,12 @@
     <a href="/chi-sono/">About me</a>
   </nav>
 </header>
-<main id="contenuto" class="contenitore">
+<div class="corpo-pagina">
+  
+  <main id="contenuto" class="contenitore">
 <div class="testo"><h1>Pagina non trovata</h1><p>Questo indirizzo non esiste. Torna alla <a href="/">home</a> per vedere i lavori.</p></div>
-</main>
+  </main>
+</div>
 <footer class="footer">
   <p class="footer-titolo">THX</p>
   <div class="footer-riga">
@@ -34,17 +43,508 @@
 </footer>
 <script>
 (function() {
+  if (document.body.classList.contains('pagina-home')) {
+    // ── Scroll-driven Text-Clip Mask Reveal ──
+    (function() {
+      var root = document.getElementById('textClipReveal');
+      var mask = document.getElementById('textClipSticky');
+      if (!root || !mask) return;
+
+      var text = root.getAttribute('data-text') || 'PORTFOLIO';
+      var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="260" viewBox="0 0 1400 260">' +
+        '<text x="50%" y="54%" dominant-baseline="central" text-anchor="middle" ' +
+        'font-family="Anton, Impact, sans-serif" font-weight="900" font-size="220" letter-spacing="1">' +
+        text + '</text></svg>';
+
+      var maskData = 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+      mask.style.webkitMaskImage = maskData;
+      mask.style.maskImage = maskData;
+
+      function getInitialSize() {
+        var w = window.innerWidth || document.documentElement.clientWidth || 1000;
+        if (w <= 640) {
+          return 0.96;
+        }
+        return Math.min(0.92, 1400 / w);
+      }
+
+      var targetScale = 25;
+      var easing = 0.22;
+      var eased = 0;
+      var isMasked = true;
+      var exitThreshold = 0.46;
+
+      function rawProgress() {
+        var rect = root.getBoundingClientRect();
+        var vh = window.innerHeight || document.documentElement.clientHeight;
+        var distance = rect.height - vh;
+        if (distance <= 0) return 0;
+        return Math.min(1, Math.max(0, -rect.top / distance));
+      }
+
+      function loop() {
+        var p = rawProgress();
+        eased += (p - eased) * easing;
+
+        if (eased >= exitThreshold) {
+          if (isMasked) {
+            mask.style.webkitMaskImage = 'none';
+            mask.style.maskImage = 'none';
+            isMasked = false;
+          }
+        } else {
+          var base = getInitialSize();
+          var t = Math.min(1, Math.max(0, eased / exitThreshold));
+          var scaleCurve = Math.pow(t, 2.8);
+          var size = (base + targetScale * scaleCurve) * 100;
+          var sStr = size.toFixed(2) + '% auto, 100% 100%';
+
+          var alpha = 0;
+          if (t > 0.25) {
+            var aT = (t - 0.25) / (1 - 0.25);
+            alpha = Math.pow(aT, 2.0);
+          }
+
+          var combinedMask;
+          if (alpha <= 0.001) {
+            combinedMask = maskData;
+            sStr = size.toFixed(2) + '% auto';
+          } else {
+            var flatAlphaLayer = 'linear-gradient(rgba(0,0,0,' + alpha.toFixed(3) + '), rgba(0,0,0,' + alpha.toFixed(3) + '))';
+            combinedMask = maskData + ', ' + flatAlphaLayer;
+          }
+
+          mask.style.webkitMaskImage = combinedMask;
+          mask.style.maskImage = combinedMask;
+          mask.style.webkitMaskSize = sStr;
+          mask.style.maskSize = sStr;
+          isMasked = true;
+        }
+
+        var hHud = root.querySelector('.pixel-player-hud');
+        if (hHud) {
+          var rRect = root.getBoundingClientRect();
+          if (rRect.bottom <= 40) {
+            hHud.style.display = 'none';
+          } else {
+            hHud.style.display = 'flex';
+          }
+        }
+
+        requestAnimationFrame(loop);
+      }
+
+      loop();
+    })();
+
+    
+    var updateCardHeight = function() {
+      var c = document.querySelector('.griglia .card');
+      if (c && c.offsetHeight > 0) {
+        document.documentElement.style.setProperty('--altezza-card', c.offsetHeight + 'px');
+      }
+    };
+    updateCardHeight();
+    window.addEventListener('resize', updateCardHeight, { passive: true });
+    window.addEventListener('load', updateCardHeight, { passive: true });
+
+    // ── Animazione Scroll Lavori Legata allo Scroll e Velocità ──
+    var cards = Array.prototype.slice.call(document.querySelectorAll('.griglia .card'));
+    if (cards.length > 0 && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      var cardMetrics = [];
+      var measureCards = function() {
+        var scrollY = window.pageYOffset || document.documentElement.scrollTop;
+        var H = window.innerHeight || document.documentElement.clientHeight;
+        cardMetrics = cards.map(function(card, index) {
+          var rect = card.getBoundingClientRect();
+          var top = rect.top + scrollY;
+          return {
+            card: card,
+            isOdd: index % 2 === 0,
+            top: top,
+            height: card.offsetHeight || rect.height,
+            initInView: top < H * 0.9
+          };
+        });
+      };
+
+      measureCards();
+      window.addEventListener('resize', measureCards, { passive: true });
+      window.addEventListener('load', measureCards, { passive: true });
+
+      var ticking = false;
+      var updateCardScroll = function() {
+        var scrollY = window.pageYOffset || document.documentElement.scrollTop;
+        var H = window.innerHeight || document.documentElement.clientHeight;
+        var enterDist = Math.max(200, H * 0.55);
+
+        for (var i = 0; i < cardMetrics.length; i++) {
+          var m = cardMetrics[i];
+          var relTop = m.top - scrollY;
+
+          // Quando si scorre verso il basso: entra dal lato e rimane fissa al centro (non esce in alto)
+          // Quando si risale verso l'alto: le card che tornano verso il basso escono lateralmente legate allo scroll
+          var p = 1;
+          if (m.initInView && scrollY < enterDist) {
+            p = 1;
+          } else {
+            if (relTop >= H) {
+              p = 0;
+            } else if (relTop <= H - enterDist) {
+              p = 1;
+            } else {
+              p = (H - relTop) / enterDist;
+            }
+          }
+
+          if (p < 0) p = 0;
+          if (p > 1) p = 1;
+
+          // Easing smoothstep: 3p^2 - 2p^3 legato alla velocità e posizione di scroll
+          var eased = p * p * (3 - 2 * p);
+
+          var sign = m.isOdd ? -1 : 1;
+          var tx = (1 - eased) * 100 * sign;
+
+          m.card.style.transform = 'translate3d(' + tx.toFixed(2) + '%, 0, 0)';
+          m.card.style.opacity = eased.toFixed(3);
+        }
+        ticking = false;
+      };
+
+      var onScroll = function() {
+        if (!ticking) {
+          window.requestAnimationFrame(updateCardScroll);
+          ticking = true;
+        }
+      };
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      updateCardScroll();
+    }
+  }
+
   var el = document.querySelector('.menu-nome');
-  if (!el) return;
-  var timer;
-  el.addEventListener('click', function() {
-    el.classList.add('mostra-alias');
-    clearTimeout(timer);
-    timer = setTimeout(function() {
-      el.classList.remove('mostra-alias');
-      el.blur();
-    }, 1500);
-  });
+  if (el) {
+    var timer;
+    el.addEventListener('click', function() {
+      el.classList.add('mostra-alias');
+      clearTimeout(timer);
+      timer = setTimeout(function() {
+        el.classList.remove('mostra-alias');
+        el.blur();
+      }, 1500);
+    });
+  }
+
+  var badge = document.getElementById('cursorBadge');
+  if (badge && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    var setBadge = function(text) {
+      badge.textContent = text;
+      badge.classList.add('visibile');
+    };
+    var hideBadge = function() {
+      badge.classList.remove('visibile');
+    };
+
+    window.addEventListener('mousemove', function(e) {
+      badge.style.transform = 'translate3d(' + e.clientX + 'px,' + e.clientY + 'px,0) translate(-50%,-50%)';
+    }, { passive: true });
+
+    document.addEventListener('mouseover', function(e) {
+      var t = e.target;
+      if (!t) return;
+      if (t.closest('#textClipReveal') || t.closest('.text-clip-reveal-root') || t.closest('#landingHero') || t.closest('.landing-hero-stage')) {
+        hideBadge();
+      } else if (t.closest('.about-foto')) {
+        setBadge('Hi, this is me!');
+      } else if (t.closest('.progetto-hero-media, .progetto-concept-media, .progetto-showcase, .progetto-dettaglio img, .progetto-dettaglio video')) {
+        setBadge('Take a look');
+      } else if (t.closest('.griglia .card')) {
+        setBadge('Learn More');
+      } else {
+        hideBadge();
+      }
+    });
+
+    document.addEventListener('mouseleave', function() {
+      hideBadge();
+    });
+  }
+
+  var lb = document.getElementById('lightbox');
+  if (lb) {
+    var lbImg = lb.querySelector('.lightbox-img');
+    var lbVideo = lb.querySelector('.lightbox-video');
+    var btnChiudi = lb.querySelector('.lightbox-chiudi');
+    var openLb = function(mediaEl) {
+      var isVid = mediaEl.tagName.toLowerCase() === 'video' || /\.(mp4|webm|mov|ogg)$/i.test(mediaEl.currentSrc || mediaEl.src || '');
+      if (isVid) {
+        if (lbImg) { lbImg.style.display = 'none'; lbImg.src = ''; }
+        if (lbVideo) {
+          lbVideo.src = mediaEl.currentSrc || mediaEl.src;
+          lbVideo.style.display = 'block';
+          lbVideo.play().catch(function() {});
+        }
+      } else {
+        if (lbVideo) {
+          lbVideo.pause();
+          lbVideo.src = '';
+          lbVideo.style.display = 'none';
+        }
+        if (lbImg) {
+          lbImg.src = mediaEl.currentSrc || mediaEl.src;
+          lbImg.alt = mediaEl.alt || '';
+          lbImg.style.display = 'block';
+        }
+      }
+      lb.classList.add('aperto');
+      lb.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      if (badge) badge.classList.remove('visibile');
+    };
+    var closeLb = function() {
+      lb.classList.remove('aperto');
+      lb.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      if (lbVideo) {
+        lbVideo.pause();
+        lbVideo.src = '';
+        lbVideo.style.display = 'none';
+      }
+      if (lbImg) {
+        lbImg.src = '';
+        lbImg.style.display = 'none';
+      }
+    };
+
+    document.querySelectorAll('.progetto-hero-media img, .progetto-hero-media video, .progetto-concept-media img, .progetto-concept-media video, .progetto-showcase img, .progetto-showcase video').forEach(function(el) {
+      el.addEventListener('click', function() {
+        openLb(el);
+      });
+    });
+
+    if (btnChiudi) btnChiudi.addEventListener('click', closeLb);
+    lb.addEventListener('click', function(e) {
+      if (e.target === lb) closeLb();
+    });
+    window.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && lb.classList.contains('aperto')) closeLb();
+    });
+  }
+
+  var progress = document.getElementById('scrollProgress');
+  if (progress && (!window.CSS || !CSS.supports || !CSS.supports('animation-timeline', 'scroll()'))) {
+    var updateProgress = function() {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      var p = h > 0 ? (window.pageYOffset || document.documentElement.scrollTop) / h : 0;
+      progress.style.transform = 'scaleX(' + Math.min(Math.max(p, 0), 1) + ')';
+    };
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    window.addEventListener('resize', updateProgress, { passive: true });
+    updateProgress();
+  }
+
+  // ── Custom Pixel Video Player (Fatpix Style) ──
+  function initPixelVideoPlayers() {
+    var videos = document.querySelectorAll('video');
+    videos.forEach(function(video) {
+      if (video.getAttribute('data-pixel-player-init')) return;
+      video.setAttribute('data-pixel-player-init', 'true');
+
+      video.muted = true;
+      video.setAttribute('playsinline', '');
+
+      var hud = document.createElement('div');
+      hud.className = 'pixel-player-hud';
+      hud.setAttribute('role', 'toolbar');
+      hud.setAttribute('aria-label', 'Pixel Video Player');
+
+      var playBtn = document.createElement('button');
+      playBtn.type = 'button';
+      playBtn.className = 'pixel-btn pixel-btn-play' + (!video.paused ? ' attivo' : '');
+      playBtn.innerHTML = '<span class="pixel-icon">' + (!video.paused ? '❚❚' : '▶') + '</span><span class="pixel-lbl">' + (!video.paused ? 'PAUSE' : 'PLAY') + '</span>';
+
+      var timeline = document.createElement('div');
+      timeline.className = 'pixel-timeline';
+      timeline.setAttribute('role', 'slider');
+      timeline.setAttribute('aria-label', 'Avanzamento video');
+      timeline.tabIndex = 0;
+
+      var track = document.createElement('div');
+      track.className = 'pixel-timeline-track';
+      var fill = document.createElement('div');
+      fill.className = 'pixel-timeline-fill';
+      var thumb = document.createElement('div');
+      thumb.className = 'pixel-timeline-thumb';
+
+      track.appendChild(fill);
+      track.appendChild(thumb);
+      timeline.appendChild(track);
+
+      var timeDisplay = document.createElement('span');
+      timeDisplay.className = 'pixel-time';
+      timeDisplay.textContent = '00:00 / 00:00';
+
+      var muteBtn = document.createElement('button');
+      muteBtn.type = 'button';
+      muteBtn.className = 'pixel-btn pixel-btn-mute' + (!video.muted ? ' attivo' : '');
+      muteBtn.innerHTML = '<span class="pixel-icon">' + (!video.muted ? '🔊' : '🔇') + '</span><span class="pixel-lbl">' + (!video.muted ? 'SOUND' : 'MUTE') + '</span>';
+
+      hud.appendChild(playBtn);
+      hud.appendChild(timeline);
+      hud.appendChild(timeDisplay);
+      hud.appendChild(muteBtn);
+
+      var parent = video.parentElement;
+      var rootHero = document.getElementById('textClipReveal');
+      if (parent.classList.contains('text-clip-sticky') && rootHero) {
+        rootHero.appendChild(hud);
+      } else if (parent.classList.contains('text-clip-sticky')) {
+        parent.appendChild(hud);
+      } else if (parent.classList.contains('lightbox')) {
+        parent.appendChild(hud);
+      } else {
+        if (!parent.classList.contains('pixel-video-wrap')) {
+          var wrap = document.createElement('div');
+          wrap.className = 'pixel-video-wrap';
+          parent.insertBefore(wrap, video);
+          wrap.appendChild(video);
+          wrap.appendChild(hud);
+        } else {
+          parent.appendChild(hud);
+        }
+      }
+
+      playBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (video.paused) {
+          video.play().catch(function() {});
+        } else {
+          video.pause();
+        }
+      });
+
+      muteBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (video.muted) {
+          document.querySelectorAll('video').forEach(function(v) {
+            if (v !== video) {
+              v.muted = true;
+              v.dispatchEvent(new Event('volumechange'));
+            }
+          });
+          video.muted = false;
+        } else {
+          video.muted = true;
+        }
+        video.dispatchEvent(new Event('volumechange'));
+      });
+
+      video.addEventListener('play', function() {
+        var ic = playBtn.querySelector('.pixel-icon');
+        var lb = playBtn.querySelector('.pixel-lbl');
+        if (ic) ic.textContent = '❚❚';
+        if (lb) lb.textContent = 'PAUSE';
+        playBtn.classList.add('attivo');
+      });
+
+      video.addEventListener('pause', function() {
+        var ic = playBtn.querySelector('.pixel-icon');
+        var lb = playBtn.querySelector('.pixel-lbl');
+        if (ic) ic.textContent = '▶';
+        if (lb) lb.textContent = 'PLAY';
+        playBtn.classList.remove('attivo');
+        var w = video.closest('.pixel-video-wrap');
+        if (w) w.classList.add('mostra-hud');
+      });
+
+      video.addEventListener('volumechange', function() {
+        var ic = muteBtn.querySelector('.pixel-icon');
+        var lb = muteBtn.querySelector('.pixel-lbl');
+        if (video.muted) {
+          if (ic) ic.textContent = '🔇';
+          if (lb) lb.textContent = 'MUTE';
+          muteBtn.classList.remove('attivo');
+        } else {
+          if (ic) ic.textContent = '🔊';
+          if (lb) lb.textContent = 'SOUND';
+          muteBtn.classList.add('attivo');
+        }
+      });
+
+      function formatTime(s) {
+        if (isNaN(s) || !isFinite(s) || s < 0) return '00:00';
+        var m = Math.floor(s / 60);
+        var sec = Math.floor(s % 60);
+        return (m < 10 ? '0' + m : m) + ':' + (sec < 10 ? '0' + sec : sec);
+      }
+
+      function updateProgress() {
+        var cur = video.currentTime || 0;
+        var dur = video.duration || 0;
+        var pct = dur > 0 ? (cur / dur) * 100 : 0;
+        fill.style.width = pct + '%';
+        thumb.style.left = pct + '%';
+        timeDisplay.textContent = formatTime(cur) + ' / ' + formatTime(dur);
+      }
+
+      video.addEventListener('timeupdate', updateProgress);
+      video.addEventListener('loadedmetadata', updateProgress);
+      video.addEventListener('durationchange', updateProgress);
+      updateProgress();
+
+      var isDragging = false;
+      function seek(e) {
+        var rect = track.getBoundingClientRect();
+        var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        var pos = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+        if (video.duration) {
+          video.currentTime = pos * video.duration;
+        }
+        updateProgress();
+      }
+
+      timeline.addEventListener('mousedown', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        isDragging = true;
+        seek(e);
+      });
+      window.addEventListener('mousemove', function(e) {
+        if (isDragging) {
+          e.preventDefault();
+          seek(e);
+        }
+      });
+      window.addEventListener('mouseup', function() {
+        isDragging = false;
+      });
+
+      timeline.addEventListener('touchstart', function(e) {
+        e.stopPropagation();
+        isDragging = true;
+        seek(e);
+      }, { passive: false });
+      window.addEventListener('touchmove', function(e) {
+        if (isDragging) {
+          seek(e);
+        }
+      });
+      window.addEventListener('touchend', function() {
+        isDragging = false;
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPixelVideoPlayers);
+  } else {
+    initPixelVideoPlayers();
+  }
+
 })();
 </script>
 </body>

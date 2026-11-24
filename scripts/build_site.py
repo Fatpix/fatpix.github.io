@@ -17,10 +17,33 @@ def parse(file_path):
     meta = {}
     if not m:
         return {'meta': meta, 'body': raw.strip()}
+    current_key = None
     for line in m.group(1).split('\n'):
-        if ':' in line:
+        stripped = line.strip()
+        if stripped.startswith('- ') and current_key:
+            item = stripped[2:].strip().strip('"\'')
+            if not isinstance(meta.get(current_key), list):
+                meta[current_key] = []
+            meta[current_key].append(item)
+        elif ':' in line:
             idx = line.index(':')
-            meta[line[:idx].strip()] = line[idx+1:].strip()
+            key = line[:idx].strip()
+            val = line[idx+1:].strip()
+            current_key = key
+            if val in ('|', '|-', '|+', '>'):
+                meta[key] = ""
+            elif val:
+                meta[key] = val.strip('"\'')
+            else:
+                meta[key] = []
+        elif current_key and line.startswith('  '):
+            if isinstance(meta[current_key], str):
+                meta[current_key] = (meta[current_key] + '\n' + stripped).strip()
+            elif isinstance(meta[current_key], list):
+                if stripped.startswith('- '):
+                    meta[current_key].append(stripped[2:].strip().strip('"\''))
+                elif stripped:
+                    meta[current_key].append(stripped.strip('"\''))
     return {'meta': meta, 'body': m.group(2).strip()}
 
 def paras(b):
@@ -1002,7 +1025,43 @@ generate_about_placeholder(f'{OUT}/chi-sono')
 foto_src = esc(about['meta'].get('foto', 'foto.svg'))
 location = esc(about['meta'].get('location', 'Genova/Italy'))
 
+def extract_words(val, default_list):
+    if not val:
+        return default_list
+    if isinstance(val, list):
+        items = [str(x).strip() for x in val if str(x).strip()]
+        return items if items else default_list
+    if isinstance(val, str):
+        if '\n' in val:
+            items = [x.strip() for x in val.split('\n') if x.strip()]
+        else:
+            items = [x.strip() for x in val.split(',') if x.strip()]
+        return items if items else default_list
+    return default_list
+
+default_left = [
+  "Web Design", "Motion Graphics", "3D Modeling", "Video Making",
+  "Brand Identity", "Creative Direction", "Interaction Design",
+  "Visual Storytelling", "Typography & Layout", "UI & UX Craft",
+  "Generative Art", "Stop Motion", "Analog Experiments", "Prototyping",
+  "Sound & Atmosphere", "Editorial Design", "Digital Experiences", "Creative Coding"
+]
+
+default_right = [
+  "Three.js & WebGL", "Blender 3D", "After Effects", "Figma",
+  "Premiere Pro", "Cinema 4D", "Illustrator", "Photoshop",
+  "Modern JavaScript", "CSS Animation", "DaVinci Resolve",
+  "35mm Photography", "Hand-made Craft", "Rapid Iteration",
+  "Problem Solving", "Swiss Army Knife", "Genova / Italy", "Fatpix Studio"
+]
+
+words_left = extract_words(about['meta'].get('parole_sinistra'), default_left)
+words_right = extract_words(about['meta'].get('parole_destra'), default_right)
+words_left_json = json.dumps(words_left, ensure_ascii=False)
+words_right_json = json.dumps(words_right, ensure_ascii=False)
+
 coin_3d_script = """<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>
 (function() {
   function parseBinarySTL(buffer) {
@@ -1050,7 +1109,7 @@ coin_3d_script = """<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js
 
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(40, w / h, 1, 1000);
-    camera.position.set(0, 0, 160);
+    camera.position.set(0, 0, 165);
 
     var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -1077,6 +1136,10 @@ coin_3d_script = """<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js
     scene.add(group);
 
     fetch('moneta_testa.stl')
+      .then(function(res) {
+        if (!res.ok) return fetch('chi-sono/moneta_testa.stl');
+        return res;
+      })
       .then(function(res) {
         if (!res.ok) throw new Error('HTTP ' + res.status);
         return res.arrayBuffer();
@@ -1169,9 +1232,192 @@ coin_3d_script = """<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js
     animate();
   }
 
+  function initCircleCredits() {
+    var LEFT = __WORDS_LEFT__;
+    var RIGHT = __WORDS_RIGHT__;
+
+    var LINE = 1.65;
+    var GUTTER = 0.65;
+    var RADIUS = 9.0;
+    var DURATION = 26;
+    var GLYPHS = "abcdefghijklmnopqrstuvwxyz!@#$%^&*-_+=;:<>,".split("");
+    var randomGlyph = function() { return GLYPHS[Math.floor(Math.random() * GLYPHS.length)]; };
+    var SCRAMBLE = { repeat: 3, repeatDelay: 0.04, delayStep: 0.025 };
+
+    var stage = document.getElementById('creditsStage');
+    if (!stage) return;
+
+    var rows = Math.max(LEFT.length, RIGHT.length);
+    var middle = (rows - 1) / 2;
+    stage.style.height = ((rows + 1) * LINE) + 'em';
+
+    var leftSlot = function(row) { return rows - 1 - row; };
+    var rightSlot = function(row) { return rows + row; };
+
+    function createNameEl(text, slot, row) {
+      if (!text) return null;
+      var span = document.createElement('span');
+      span.className = 'circle-credit-item';
+      span.style.lineHeight = LINE;
+      span.dataset.name = 'true';
+      span.dataset.slot = slot;
+
+      var inner = document.createElement('span');
+      inner.dataset.inner = 'true';
+      inner.dataset.row = row;
+      inner.style.display = 'inline-block';
+
+      for (var i = 0; i < text.length; i++) {
+        var ch = text[i];
+        if (ch === ' ') {
+          inner.appendChild(document.createTextNode(' '));
+        } else {
+          var charSpan = document.createElement('span');
+          charSpan.className = 'circle-credit-char';
+          charSpan.dataset.char = 'true';
+          charSpan.textContent = ch;
+          inner.appendChild(charSpan);
+        }
+      }
+      span.appendChild(inner);
+      return span;
+    }
+
+    for (var r = 0; r < rows; r++) {
+      var lEl = createNameEl(LEFT[r], leftSlot(r), r);
+      if (lEl) stage.appendChild(lEl);
+      var rEl = createNameEl(RIGHT[r], rightSlot(r), r);
+      if (rEl) stage.appendChild(rEl);
+    }
+
+    var names = Array.prototype.slice.call(stage.querySelectorAll('[data-name]'));
+    var slots = names.map(function(el) { return Number(el.dataset.slot); });
+    var total = rows * 2;
+
+    var em = 12;
+    var cx = 0, cy = 0;
+    var widths = [];
+
+    function measure() {
+      em = parseFloat(getComputedStyle(stage).fontSize) || 12;
+      cx = stage.clientWidth / 2;
+      cy = stage.clientHeight / 2;
+      widths = names.map(function(el) { return el.offsetWidth; });
+    }
+
+    function insetAt(row) {
+      var d = row - middle;
+      var reach = Math.sqrt(Math.max(0, RADIUS * RADIUS - d * d));
+      return Math.max(GUTTER, reach * LINE) * em;
+    }
+
+    var lap = { progress: 0 };
+    function layout() {
+      for (var i = 0; i < names.length; i++) {
+        var el = names[i];
+        var s = (slots[i] + lap.progress * total) % total;
+        var k = Math.floor(s);
+        var f = s - k;
+        var w = widths[i];
+        var row, x, opacity = 1;
+
+        if (k < rows - 1) {
+          row = rows - 1 - k - f;
+          x = -insetAt(row) - w;
+        } else if (k === rows - 1) {
+          var out = f < 0.5;
+          row = out ? -f : f - 1;
+          x = out ? -insetAt(row) - w : insetAt(row);
+          opacity = Math.abs(1 - 2 * f);
+        } else if (k < total - 1) {
+          row = k - rows + f;
+          x = insetAt(row);
+        } else {
+          var out = f < 0.5;
+          row = out ? rows - 1 + f : rows - f;
+          x = out ? insetAt(row) : -insetAt(row) - w;
+          opacity = Math.abs(1 - 2 * f);
+        }
+
+        var posX = cx + x;
+        var posY = cy + ((row - middle) * LINE - LINE / 2) * em;
+        el.style.transform = 'translate3d(' + posX.toFixed(1) + 'px,' + posY.toFixed(1) + 'px,0)';
+        el.style.opacity = opacity.toFixed(3);
+      }
+    }
+
+    measure();
+    layout();
+
+    window.addEventListener('resize', function() {
+      measure();
+      layout();
+    });
+
+    if (window.gsap) {
+      gsap.to(lap, {
+        progress: 1,
+        duration: DURATION,
+        ease: 'none',
+        repeat: -1,
+        onUpdate: layout
+      });
+
+      gsap.from(stage.querySelectorAll('[data-inner]'), {
+        opacity: 0,
+        filter: 'blur(4px)',
+        duration: 1.1,
+        ease: 'power2.inOut',
+        delay: function(i, el) {
+          return 0.15 + Math.abs(Number(el.dataset.row) - middle) * 0.05;
+        },
+        clearProps: 'filter'
+      });
+    }
+
+    names.forEach(function(name) {
+      var chars = Array.prototype.slice.call(name.querySelectorAll('[data-char]')).map(function(el) {
+        return { el: el, original: el.textContent };
+      });
+
+      name.addEventListener('mouseenter', function() {
+        chars.forEach(function(item, idx) {
+          if (!window.gsap) return;
+          gsap.killTweensOf(item.el);
+          item.el.textContent = item.original;
+          item.el.style.width = item.el.getBoundingClientRect().width + 'px';
+
+          gsap.fromTo(item.el,
+            { opacity: 0 },
+            {
+              opacity: 1,
+              duration: 0.03,
+              repeat: SCRAMBLE.repeat,
+              repeatRefresh: true,
+              repeatDelay: SCRAMBLE.repeatDelay,
+              delay: idx * SCRAMBLE.delayStep,
+              ease: 'power1.out',
+              textContent: randomGlyph,
+              onComplete: function() {
+                item.el.textContent = item.original;
+                item.el.style.width = '';
+              }
+            }
+          );
+        });
+      });
+    });
+  }
+
   function startWhenReady() {
-    if (typeof THREE !== 'undefined' && document.getElementById('about3dContainer')) {
-      init3D();
+    var hasThree = typeof THREE !== 'undefined';
+    var hasGsap = typeof gsap !== 'undefined';
+    var has3D = document.getElementById('about3dContainer');
+    var hasStage = document.getElementById('creditsStage');
+
+    if (hasThree && hasGsap && (has3D || hasStage)) {
+      if (has3D) init3D();
+      if (hasStage) initCircleCredits();
     } else {
       setTimeout(startWhenReady, 50);
     }
@@ -1219,13 +1465,15 @@ about_body = f"""<article class="about-sezione">
   </div>
 
   <div class="about-3d-wrap" id="about3dWrap">
-    <div class="about-3d-canvas-container" id="about3dContainer" role="img" aria-label="Oggetto 3D interattivo Fatpix">
-      <div class="about-3d-loading" id="about3dLoading">[ CARICAMENTO 3D... ]</div>
+    <div class="circle-credits-stage" id="creditsStage">
+      <div class="about-3d-canvas-container" id="about3dContainer" role="img" aria-label="Oggetto 3D interattivo Fatpix">
+        <div class="about-3d-loading" id="about3dLoading">[ CARICAMENTO 3D... ]</div>
+      </div>
     </div>
     <div class="about-3d-hint" aria-hidden="true">[ ✦ TRASCINA PER RUOTARE ]</div>
   </div>
 </article>
-{coin_3d_script}"""
+{coin_3d_script.replace('__WORDS_LEFT__', words_left_json).replace('__WORDS_RIGHT__', words_right_json)}"""
 write('chi-sono', page(depth=1, current='chi-sono', title='About me', desc=about['body'].split('\n')[0], body=about_body))
 
 # 404

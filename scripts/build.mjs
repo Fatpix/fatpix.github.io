@@ -11,9 +11,36 @@ function parse(file) {
   const m = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
   const meta = {};
   if (!m) return { meta, body: raw.trim() };
+  let currentKey = null;
   for (const l of m[1].split('\n')) {
-    const i = l.indexOf(':');
-    if (i > 0) meta[l.slice(0, i).trim()] = l.slice(i + 1).trim();
+    const stripped = l.trim();
+    if (stripped.startsWith('- ') && currentKey) {
+      const item = stripped.slice(2).trim().replace(/^["']|["']$/g, '');
+      if (!Array.isArray(meta[currentKey])) meta[currentKey] = [];
+      meta[currentKey].push(item);
+    } else if (l.includes(':')) {
+      const idx = l.indexOf(':');
+      const key = l.slice(0, idx).trim();
+      const val = l.slice(idx + 1).trim();
+      currentKey = key;
+      if (['|', '|-', '|+', '>'].includes(val)) {
+        meta[key] = '';
+      } else if (val) {
+        meta[key] = val.replace(/^["']|["']$/g, '');
+      } else {
+        meta[key] = [];
+      }
+    } else if (currentKey && l.startsWith('  ')) {
+      if (typeof meta[currentKey] === 'string') {
+        meta[currentKey] = (meta[currentKey] + '\n' + stripped).trim();
+      } else if (Array.isArray(meta[currentKey])) {
+        if (stripped.startsWith('- ')) {
+          meta[currentKey].push(stripped.slice(2).trim().replace(/^["']|["']$/g, ''));
+        } else if (stripped) {
+          meta[currentKey].push(stripped.replace(/^["']|["']$/g, ''));
+        }
+      }
+    }
   }
   return { meta, body: m[2].trim() };
 }
@@ -972,6 +999,38 @@ generateAboutPlaceholder(`${OUT}/chi-sono`);
 const fotoSrc = esc(about.meta.foto || 'foto.svg');
 const location = esc(about.meta.location || 'Genova/Italy');
 
+const extractWords = (val, defaultList) => {
+  if (!val) return defaultList;
+  if (Array.isArray(val)) {
+    const items = val.map(x => String(x).trim()).filter(Boolean);
+    return items.length ? items : defaultList;
+  }
+  if (typeof val === 'string') {
+    const items = (val.includes('\n') ? val.split('\n') : val.split(',')).map(x => x.trim()).filter(Boolean);
+    return items.length ? items : defaultList;
+  }
+  return defaultList;
+};
+
+const defaultLeft = [
+  "Web Design", "Motion Graphics", "3D Modeling", "Video Making",
+  "Brand Identity", "Creative Direction", "Interaction Design",
+  "Visual Storytelling", "Typography & Layout", "UI & UX Craft",
+  "Generative Art", "Stop Motion", "Analog Experiments", "Prototyping",
+  "Sound & Atmosphere", "Editorial Design", "Digital Experiences", "Creative Coding"
+];
+
+const defaultRight = [
+  "Three.js & WebGL", "Blender 3D", "After Effects", "Figma",
+  "Premiere Pro", "Cinema 4D", "Illustrator", "Photoshop",
+  "Modern JavaScript", "CSS Animation", "DaVinci Resolve",
+  "35mm Photography", "Hand-made Craft", "Rapid Iteration",
+  "Problem Solving", "Swiss Army Knife", "Genova / Italy", "Fatpix Studio"
+];
+
+const wordsLeft = extractWords(about.meta.parole_sinistra, defaultLeft);
+const wordsRight = extractWords(about.meta.parole_destra, defaultRight);
+
 const aboutBody = `<article class="about-sezione">
   <div class="about-layout">
   <div class="about-colonna-sinistra">
@@ -1006,13 +1065,16 @@ const aboutBody = `<article class="about-sezione">
 </div>
 
 <div class="about-3d-wrap" id="about3dWrap">
-  <div class="about-3d-canvas-container" id="about3dContainer" role="img" aria-label="Oggetto 3D interattivo Fatpix">
-    <div class="about-3d-loading" id="about3dLoading">[ CARICAMENTO 3D... ]</div>
+  <div class="circle-credits-stage" id="creditsStage">
+    <div class="about-3d-canvas-container" id="about3dContainer" role="img" aria-label="Oggetto 3D interattivo Fatpix">
+      <div class="about-3d-loading" id="about3dLoading">[ CARICAMENTO 3D... ]</div>
+    </div>
   </div>
   <div class="about-3d-hint" aria-hidden="true">[ ✦ TRASCINA PER RUOTARE ]</div>
 </div>
 </article>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>
 (function() {
   function parseBinarySTL(buffer) {
@@ -1060,7 +1122,7 @@ const aboutBody = `<article class="about-sezione">
 
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera(40, w / h, 1, 1000);
-    camera.position.set(0, 0, 160);
+    camera.position.set(0, 0, 165);
 
     var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
@@ -1087,6 +1149,10 @@ const aboutBody = `<article class="about-sezione">
     scene.add(group);
 
     fetch('moneta_testa.stl')
+      .then(function(res) {
+        if (!res.ok) return fetch('chi-sono/moneta_testa.stl');
+        return res;
+      })
       .then(function(res) {
         if (!res.ok) throw new Error('HTTP ' + res.status);
         return res.arrayBuffer();
@@ -1179,9 +1245,192 @@ const aboutBody = `<article class="about-sezione">
     animate();
   }
 
+  function initCircleCredits() {
+    var LEFT = ${JSON.stringify(wordsLeft)};
+    var RIGHT = ${JSON.stringify(wordsRight)};
+
+    var LINE = 1.65;
+    var GUTTER = 0.65;
+    var RADIUS = 9.0;
+    var DURATION = 26;
+    var GLYPHS = "abcdefghijklmnopqrstuvwxyz!@#$%^&*-_+=;:<>,".split("");
+    var randomGlyph = function() { return GLYPHS[Math.floor(Math.random() * GLYPHS.length)]; };
+    var SCRAMBLE = { repeat: 3, repeatDelay: 0.04, delayStep: 0.025 };
+
+    var stage = document.getElementById('creditsStage');
+    if (!stage) return;
+
+    var rows = Math.max(LEFT.length, RIGHT.length);
+    var middle = (rows - 1) / 2;
+    stage.style.height = ((rows + 1) * LINE) + 'em';
+
+    var leftSlot = function(row) { return rows - 1 - row; };
+    var rightSlot = function(row) { return rows + row; };
+
+    function createNameEl(text, slot, row) {
+      if (!text) return null;
+      var span = document.createElement('span');
+      span.className = 'circle-credit-item';
+      span.style.lineHeight = LINE;
+      span.dataset.name = 'true';
+      span.dataset.slot = slot;
+
+      var inner = document.createElement('span');
+      inner.dataset.inner = 'true';
+      inner.dataset.row = row;
+      inner.style.display = 'inline-block';
+
+      for (var i = 0; i < text.length; i++) {
+        var ch = text[i];
+        if (ch === ' ') {
+          inner.appendChild(document.createTextNode(' '));
+        } else {
+          var charSpan = document.createElement('span');
+          charSpan.className = 'circle-credit-char';
+          charSpan.dataset.char = 'true';
+          charSpan.textContent = ch;
+          inner.appendChild(charSpan);
+        }
+      }
+      span.appendChild(inner);
+      return span;
+    }
+
+    for (var r = 0; r < rows; r++) {
+      var lEl = createNameEl(LEFT[r], leftSlot(r), r);
+      if (lEl) stage.appendChild(lEl);
+      var rEl = createNameEl(RIGHT[r], rightSlot(r), r);
+      if (rEl) stage.appendChild(rEl);
+    }
+
+    var names = Array.prototype.slice.call(stage.querySelectorAll('[data-name]'));
+    var slots = names.map(function(el) { return Number(el.dataset.slot); });
+    var total = rows * 2;
+
+    var em = 12;
+    var cx = 0, cy = 0;
+    var widths = [];
+
+    function measure() {
+      em = parseFloat(getComputedStyle(stage).fontSize) || 12;
+      cx = stage.clientWidth / 2;
+      cy = stage.clientHeight / 2;
+      widths = names.map(function(el) { return el.offsetWidth; });
+    }
+
+    function insetAt(row) {
+      var d = row - middle;
+      var reach = Math.sqrt(Math.max(0, RADIUS * RADIUS - d * d));
+      return Math.max(GUTTER, reach * LINE) * em;
+    }
+
+    var lap = { progress: 0 };
+    function layout() {
+      for (var i = 0; i < names.length; i++) {
+        var el = names[i];
+        var s = (slots[i] + lap.progress * total) % total;
+        var k = Math.floor(s);
+        var f = s - k;
+        var w = widths[i];
+        var row, x, opacity = 1;
+
+        if (k < rows - 1) {
+          row = rows - 1 - k - f;
+          x = -insetAt(row) - w;
+        } else if (k === rows - 1) {
+          var out = f < 0.5;
+          row = out ? -f : f - 1;
+          x = out ? -insetAt(row) - w : insetAt(row);
+          opacity = Math.abs(1 - 2 * f);
+        } else if (k < total - 1) {
+          row = k - rows + f;
+          x = insetAt(row);
+        } else {
+          var out = f < 0.5;
+          row = out ? rows - 1 + f : rows - f;
+          x = out ? insetAt(row) : -insetAt(row) - w;
+          opacity = Math.abs(1 - 2 * f);
+        }
+
+        var posX = cx + x;
+        var posY = cy + ((row - middle) * LINE - LINE / 2) * em;
+        el.style.transform = 'translate3d(' + posX.toFixed(1) + 'px,' + posY.toFixed(1) + 'px,0)';
+        el.style.opacity = opacity.toFixed(3);
+      }
+    }
+
+    measure();
+    layout();
+
+    window.addEventListener('resize', function() {
+      measure();
+      layout();
+    });
+
+    if (window.gsap) {
+      gsap.to(lap, {
+        progress: 1,
+        duration: DURATION,
+        ease: 'none',
+        repeat: -1,
+        onUpdate: layout
+      });
+
+      gsap.from(stage.querySelectorAll('[data-inner]'), {
+        opacity: 0,
+        filter: 'blur(4px)',
+        duration: 1.1,
+        ease: 'power2.inOut',
+        delay: function(i, el) {
+          return 0.15 + Math.abs(Number(el.dataset.row) - middle) * 0.05;
+        },
+        clearProps: 'filter'
+      });
+    }
+
+    names.forEach(function(name) {
+      var chars = Array.prototype.slice.call(name.querySelectorAll('[data-char]')).map(function(el) {
+        return { el: el, original: el.textContent };
+      });
+
+      name.addEventListener('mouseenter', function() {
+        chars.forEach(function(item, idx) {
+          if (!window.gsap) return;
+          gsap.killTweensOf(item.el);
+          item.el.textContent = item.original;
+          item.el.style.width = item.el.getBoundingClientRect().width + 'px';
+
+          gsap.fromTo(item.el,
+            { opacity: 0 },
+            {
+              opacity: 1,
+              duration: 0.03,
+              repeat: SCRAMBLE.repeat,
+              repeatRefresh: true,
+              repeatDelay: SCRAMBLE.repeatDelay,
+              delay: idx * SCRAMBLE.delayStep,
+              ease: 'power1.out',
+              textContent: randomGlyph,
+              onComplete: function() {
+                item.el.textContent = item.original;
+                item.el.style.width = '';
+              }
+            }
+          );
+        });
+      });
+    });
+  }
+
   function startWhenReady() {
-    if (typeof THREE !== 'undefined' && document.getElementById('about3dContainer')) {
-      init3D();
+    var hasThree = typeof THREE !== 'undefined';
+    var hasGsap = typeof gsap !== 'undefined';
+    var has3D = document.getElementById('about3dContainer');
+    var hasStage = document.getElementById('creditsStage');
+
+    if (hasThree && hasGsap && (has3D || hasStage)) {
+      if (has3D) init3D();
+      if (hasStage) initCircleCredits();
     } else {
       setTimeout(startWhenReady, 50);
     }

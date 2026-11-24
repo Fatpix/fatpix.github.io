@@ -1,0 +1,94 @@
+backend:
+  name: github
+  repo: fatpix/fatpix.github.io
+  branch: main
+
+# Modalità salvataggio
+media_folder: "content/assets"
+public_folder: ""
+
+collections:
+  - name: "lavori"
+    label: "Progetti"
+    label_singular: "Progetto"
+    folder: "content/lavori"
+    path: "{{slug}}/progetto"
+    media_folder: ""
+    public_folder: ""
+    create: true
+    slug: "progetto-{{ordine}}"
+    editor:
+      preview: false
+    fields:
+      - { name: "titolo", label: "Titolo Progetto (es: Progetto 1)", widget: "string" }
+      - { name: "anno", label: "Year (Anno)", widget: "string", default: "2025" }
+      - { name: "ruolo", label: "Role / Ruolo (es: Brand Identity, Web Design)", widget: "string", default: "Brand Identity, Web Design" }
+      - { name: "team", label: "Team", widget: "string", required: false }
+      - { name: "cliente", label: "Client (Cliente)", widget: "string", required: false }
+      - { name: "ordine", label: "Ordine di visualizzazione (1-9)", widget: "number", value_type: "int" }
+      - { name: "bozza", label: "Nascondi / Bozza", widget: "boolean", default: false }
+      - { name: "link", label: "Link esterni (es: Visita il sito | https://sito.it)", widget: "string", required: false }
+      - { name: "cover", label: "01. Copertina Home [1600×900 px — 16:9] (Foto / Video / GIF)", widget: "file", required: false, hint: "Media della card nella Home. Supporta foto, video (.mp4, .webm) o GIF. Formato panoramico 16:9 (es: 1600x900 px)." }
+      - { name: "hero", label: "02. Hero Media Testata [1600×900 px — 16:9] (Foto / Video / GIF)", widget: "file", required: false, hint: "Media principale accanto al titolo nella pagina del progetto. Supporta foto, video o GIF (16:9)." }
+      - { name: "concept", label: "03. Concept / Griglia [1200×900 px — 4:3] (Foto / Video / GIF)", widget: "file", required: false, hint: "Foto, video o diagramma concettuale a sinistra della descrizione (4:3)." }
+      - { name: "web_01", label: "04. Schermo Web Desktop 1 [1600×1000 px — 16:10] (Foto / Video / GIF)", widget: "file", required: false, hint: "Prima schermata orizzontale a tutta larghezza (16:10). Supporta foto, video o GIF." }
+      - { name: "web_02", label: "05. Schermo Web Desktop 2 [1600×1000 px — 16:10] (Foto / Video / GIF)", widget: "file", required: false, hint: "Seconda schermata orizzontale a tutta larghezza (16:10). Supporta foto, video o GIF." }
+      - { name: "banner", label: "06. Banner Outdoor [1800×750 px — 18:7.5] (Foto / Video / GIF)", widget: "file", required: false, hint: "Banner panoramico orizzontale per billboard o manifesti (18:7.5). Supporta foto, video o GIF." }
+      - { name: "mobile_01", label: "07. Schermo Mobile 1 Sinistra [900×1600 px — 9:16] (Foto / Video / GIF)", widget: "file", required: false, hint: "Media smartphone verticale a sinistra nella coppia (9:16). Supporta foto, video o GIF." }
+      - { name: "mobile_02", label: "08. Schermo Mobile 2 Destra [900×1600 px — 9:16] (Foto / Video / GIF)", widget: "file", required: false, hint: "Media smartphone verticale a destra nella coppia (9:16). Supporta foto, video o GIF." }
+      - { name: "merch_01", label: "09. Merchandising 1 Sinistra [1000×1250 px — 4:5] (Foto / Video / GIF)", widget: "file", required: false, hint: "Media prodotto/packaging a sinistra nella coppia (4:5). Supporta foto, video o GIF." }
+      - { name: "merch_02", label: "10. Merchandising 2 Destra [1000×1250 px — 4:5] (Foto / Video / GIF)", widget: "file", required: false, hint: "Media prodotto/packaging a destra nella coppia (4:5). Supporta foto, video o GIF." }
+      - { name: "body", label: "Descrizione / Testo narrativo del progetto", widget: "markdown" }
+
+  - name: "pagine"
+    label: "Pagine e Informazioni"
+    files:
+      - name: "home"
+        label: "Home Page (Hero Video Cutout & Titolo)"
+        file: "content/home.json"
+        format: "json"
+        media_folder: ""
+        public_folder: ""
+        fields:
+          - { name: "titolo_hero", label: "Scritta Cutout (es: PORTFOLIO)", widget: "string", default: "PORTFOLIO" }
+          - { name: "video_hero", label: "Video Hero Cutout [1920×1080 px — 16:9] (.mp4 / .webm)", widget: "file", default: "reveal-video.mp4", hint: "Carica il file video in formato 1920×1080 px (16:9). Verrà riprodotto in loop attraverso il cutout della scritta PORTFOLIO e a tutto schermo con lo scroll." }
+          - { name: "poster_hero", label: "Copertina / Poster Video [1920×1080 px] (opzionale)", widget: "file", required: false, hint: "Immagine di copertina (1920×1080 px) per il caricamento del video." }
+          - { name: "titolo_lavori", label: "Titolo Sezione Lavori", widget: "string", default: "My Works" }
+      - name: "chi-sono"
+        label: "About Me (Chi Sono)"
+        file: "content/chi-sono/chi-sono.md"
+        media_folder: ""
+        public_folder: ""
+        fields:
+          - { name: "location", label: "Posizione / Città (es: Genova/Italy)", widget: "string" }
+          - { name: "foto", label: "Media Profilo [1000×1050 px — Quadrata o Verticale] (Foto / Video / GIF)", widget: "file", default: "foto.svg", hint: "Media del profilo (foto, video o GIF). Si adatta all'altezza del testo della bio al suo fianco. Risoluzione consigliata: 1000x1050 px (~1:1 o 3:4)." }
+          - label: "Parole Animate Sinistra (Discipline / Skill)"
+            name: "parole_sinistra"
+            widget: "list"
+            required: false
+            hint: "Elenco delle parole che salgono sul lato sinistro della testa 3D"
+          - label: "Parole Animate Destra (Strumenti / Dettagli)"
+            name: "parole_destra"
+            widget: "list"
+            required: false
+            hint: "Elenco delle parole che scendono sul lato destro della testa 3D"
+          - { name: "body", label: "Biografia / Presentazione", widget: "markdown" }
+
+      - name: "sito"
+        label: "Dati Sito & Social"
+        file: "content/site.json"
+        format: "json"
+        fields:
+          - { name: "nome", label: "Nome Visibile", widget: "string" }
+          - { name: "alias", label: "Alias (Rosso al tocco)", widget: "string" }
+          - { name: "ruolo", label: "Role / Ruolo", widget: "string" }
+          - { name: "descrizione", label: "Descrizione SEO / Meta tag", widget: "string", required: false }
+          - { name: "email", label: "Email", widget: "string" }
+          - { name: "etichetta_email", label: "Testo Link Email (es: Let's Talk)", widget: "string" }
+          - { name: "footer_titolo", label: "Testo Titolo Footer (es: THX)", widget: "string" }
+          - label: "Social Links"
+            name: "social"
+            widget: "list"
+            fields:
+              - { name: "etichetta", label: "Nome Social", widget: "string" }
+              - { name: "url", label: "URL Profilo", widget: "string" }
