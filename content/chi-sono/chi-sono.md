@@ -1,6 +1,6 @@
 ---
 location: Genova/Italy
-foto: foto.png
+foto: DSCN6393.jpg
 ---
 
 I'm a young German/Italian web designer, motion designer, and video maker with an incurable passion for anything creative or techy. I'm not one to stick to a single lane: if there's something new to try, I'm already halfway there – whether it's designing a website, animating a video, or getting my hands dirty with a hands-on project (literally, I don't mind a bit of mess).
