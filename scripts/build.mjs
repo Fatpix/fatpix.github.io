@@ -12,35 +12,102 @@ function parse(file) {
   const meta = {};
   if (!m) return { meta, body: raw.trim() };
   let currentKey = null;
-  for (const l of m[1].split('\n')) {
-    const stripped = l.trim();
-    if (stripped.startsWith('- ') && currentKey) {
-      const item = stripped.slice(2).trim().replace(/^["']|["']$/g, '');
-      if (!Array.isArray(meta[currentKey])) meta[currentKey] = [];
-      meta[currentKey].push(item);
-    } else if (l.includes(':')) {
-      const idx = l.indexOf(':');
-      const key = l.slice(0, idx).trim();
-      const val = l.slice(idx + 1).trim();
-      currentKey = key;
-      if (['|', '|-', '|+', '>'].includes(val)) {
-        meta[key] = '';
-      } else if (val) {
-        meta[key] = val.replace(/^["']|["']$/g, '');
+  let currentList = null;
+  let currentDict = null;
+  let multilineKey = null;
+  let multilineTarget = null;
+
+  const lines = m[1].split('\n');
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    const stripped = line.trim();
+    const indent = line.length - line.trimStart().length;
+
+    if (!stripped || stripped.startsWith('#')) {
+      i++;
+      continue;
+    }
+
+    if (multilineKey !== null) {
+      if (indent > multilineTarget.indent) {
+        multilineTarget.dict[multilineKey] = (multilineTarget.dict[multilineKey] + ' ' + stripped).trim();
+        i++;
+        continue;
       } else {
-        meta[key] = [];
-      }
-    } else if (currentKey && l.startsWith('  ')) {
-      if (typeof meta[currentKey] === 'string') {
-        meta[currentKey] = (meta[currentKey] + '\n' + stripped).trim();
-      } else if (Array.isArray(meta[currentKey])) {
-        if (stripped.startsWith('- ')) {
-          meta[currentKey].push(stripped.slice(2).trim().replace(/^["']|["']$/g, ''));
-        } else if (stripped) {
-          meta[currentKey].push(stripped.replace(/^["']|["']$/g, ''));
-        }
+        multilineKey = null;
+        multilineTarget = null;
       }
     }
+
+    if (indent === 0 && line.includes(':')) {
+      const idx = line.indexOf(':');
+      const key = line.slice(0, idx).trim();
+      const val = line.slice(idx + 1).trim().replace(/^["']|["']$/g, '');
+      currentKey = key;
+      currentList = null;
+      currentDict = null;
+      if (['>', '>-', '|', '|-'].includes(val)) {
+        meta[key] = '';
+        multilineKey = key;
+        multilineTarget = { dict: meta, indent: 0 };
+      } else {
+        meta[key] = val;
+      }
+      i++;
+      continue;
+    }
+
+    if (stripped.startsWith('- ')) {
+      const rest = stripped.slice(2).trim();
+      if (currentKey && !Array.isArray(meta[currentKey])) {
+        meta[currentKey] = [];
+      }
+      currentList = meta[currentKey];
+
+      if (rest.includes(':')) {
+        const cIdx = rest.indexOf(':');
+        const k = rest.slice(0, cIdx).trim();
+        const v = rest.slice(cIdx + 1).trim().replace(/^["']|["']$/g, '');
+        currentDict = { [k]: v };
+        if (currentList) currentList.push(currentDict);
+        if (['>', '>-', '|', '|-'].includes(v)) {
+          currentDict[k] = '';
+          multilineKey = k;
+          multilineTarget = { dict: currentDict, indent: indent };
+        }
+      } else {
+        const itemVal = rest.replace(/^["']|["']$/g, '');
+        if (currentList) currentList.push(itemVal);
+        currentDict = null;
+      }
+      i++;
+      continue;
+    }
+
+    if (currentDict !== null && stripped.includes(':')) {
+      const cIdx = stripped.indexOf(':');
+      const k = stripped.slice(0, cIdx).trim();
+      const v = stripped.slice(cIdx + 1).trim().replace(/^["']|["']$/g, '');
+      if (['>', '>-', '|', '|-'].includes(v)) {
+        currentDict[k] = '';
+        multilineKey = k;
+        multilineTarget = { dict: currentDict, indent: indent };
+      } else {
+        currentDict[k] = v;
+      }
+      i++;
+      continue;
+    }
+
+    if (currentKey) {
+      if (typeof meta[currentKey] === 'string') {
+        meta[currentKey] = (meta[currentKey] + ' ' + stripped).trim();
+      } else if (Array.isArray(meta[currentKey]) && currentDict === null) {
+        meta[currentKey].push(stripped.replace(/^["']|["']$/g, ''));
+      }
+    }
+    i++;
   }
   return { meta, body: m[2].trim() };
 }
@@ -1084,6 +1151,113 @@ const defaultRight = [
 const wordsLeft = extractWords(about.meta.parole_sinistra, defaultLeft);
 const wordsRight = extractWords(about.meta.parole_destra, defaultRight);
 
+const titoloExperience = esc(about.meta.titolo_experience || 'Experience');
+let esperienzeRaw = about.meta.esperienze;
+if (!esperienzeRaw || !Array.isArray(esperienzeRaw) || !esperienzeRaw.length) {
+  esperienzeRaw = [
+    {
+      azienda: "Fatpix Studio",
+      ruolo: "Founder · Creative Technologist · Motion Designer",
+      periodo: "2023 — NOW",
+      stato: "active",
+      descrizione: "Studio indipendente di visual design e creative technology con sede a Genova. Progettazione di identità visive dinamiche, modellazione e animazione 3D, creative coding e sviluppo di interfacce web interattive ad alto impatto emotivo.",
+      ref: "FP-019",
+      durata: "±28 MO",
+      link: ""
+    },
+    {
+      azienda: "Visual & Web Designer Freelance",
+      ruolo: "UI/UX Designer · Creative Frontend Craft",
+      periodo: "2021 — 2023",
+      stato: "archive",
+      descrizione: "Progettazione e realizzazione di prodotti digitali end-to-end: wireframing e prototipazione avanzata in Figma, design systems modulari, animazioni CSS e micro-interazioni curate per startup e brand contemporanei.",
+      ref: "0AD7ED0",
+      durata: "±24 MO",
+      link: ""
+    },
+    {
+      azienda: "Motion Graphics & 3D Specialist",
+      ruolo: "3D Artist · Video Editor · Visual Storytelling",
+      periodo: "2020 — 2022",
+      stato: "archive",
+      descrizione: "Produzione di teaser animati, render volumetrici e simulazioni visive con Blender, Cinema 4D e After Effects. Post-produzione, sound design e color grading per video promozionali e campagne digitali.",
+      ref: "576602E",
+      durata: "±18 MO",
+      link: ""
+    },
+    {
+      azienda: "Digital Art & Creative Coding Labs",
+      ruolo: "Experimental Design · Self-Initiated Projects",
+      periodo: "2019 — 2020",
+      stato: "archive",
+      descrizione: "Esplorazioni visive analogiche e digitali, stop-motion, generative art, poster design e prototipi interattivi orientati all'innovazione visuale.",
+      ref: "LAB-001",
+      durata: "±12 MO",
+      link: ""
+    }
+  ];
+}
+
+const expItemsHtml = esperienzeRaw.map(exp => {
+  if (typeof exp !== 'object' || !exp) return '';
+  const azienda = esc(String(exp.azienda || '').trim());
+  const ruolo = esc(String(exp.ruolo || '').trim());
+  const periodo = esc(String(exp.periodo || '').trim());
+  const stato = esc(String(exp.stato || 'active').trim().toLowerCase());
+  const descrizione = esc(String(exp.descrizione || '').trim());
+  const link = esc(String(exp.link || '').trim());
+
+  const isActive = (stato === 'active');
+  const dotHtml = isActive ? '<span class="timeline-dot-active" title="In corso" aria-hidden="true"></span>' : '';
+
+  const companyHtml = link
+    ? `<a class="timeline-title-link" href="${link}" target="_blank" rel="noopener">${azienda} <span class="timeline-arrow-icon" aria-hidden="true">↗</span></a>`
+    : `<span class="timeline-title-text">${azienda}</span>`;
+
+  return `        <div class="timeline-row timeline-row--${stato}" role="row">
+          <div class="timeline-col col-time" role="cell">
+            <span class="timeline-time-val">${periodo}</span>
+            ${dotHtml}
+          </div>
+          <div class="timeline-col col-title" role="cell">
+            <h3 class="timeline-title">${companyHtml}</h3>
+          </div>
+          <div class="timeline-col col-details" role="cell">
+            <div class="timeline-role">${ruolo}</div>
+            <div class="timeline-desc">${descrizione}</div>
+          </div>
+        </div>`;
+}).filter(Boolean).join('\n');
+
+const expSectionHtml = `  <section class="about-experience-sezione" id="experienceSection">
+    <div class="landing-titolo-wrap experience-titolo-wrap">
+      <svg class="titolo-asterisco" viewBox="0 0 84 86" aria-hidden="true">
+        <g transform="translate(42, 43)">
+          <rect x="-9.5" y="-43" width="19" height="43" fill="currentColor"/>
+          <rect x="-9.5" y="-43" width="19" height="43" fill="currentColor" transform="rotate(72)"/>
+          <rect x="-9.5" y="-43" width="19" height="43" fill="currentColor" transform="rotate(144)"/>
+          <rect x="-9.5" y="-43" width="19" height="43" fill="currentColor" transform="rotate(216)"/>
+          <rect x="-9.5" y="-43" width="19" height="43" fill="currentColor" transform="rotate(288)"/>
+        </g>
+      </svg>
+      <h2 class="titolo-testo">${titoloExperience}</h2>
+    </div>
+
+    <div class="timeline-container">
+      <div class="timeline-table" role="table" aria-label="Cronologia esperienze e ruoli">
+        <div class="timeline-header-row" role="row" aria-hidden="true">
+          <div class="timeline-th th-time" role="columnheader">TIME (YEARS)</div>
+          <div class="timeline-th th-title" role="columnheader">TITLE</div>
+          <div class="timeline-th th-details" role="columnheader">ROLES &amp; FOCUS</div>
+        </div>
+
+        <div class="timeline-body" role="rowgroup">
+${expItemsHtml}
+        </div>
+      </div>
+    </div>
+  </section>`;
+
 const aboutBody = `<article class="about-sezione">
   <div class="about-layout">
   <div class="about-colonna-sinistra">
@@ -1140,6 +1314,8 @@ const aboutBody = `<article class="about-sezione">
       <div class="about-3d-hint" aria-hidden="true">[ ✦ TRASCINA PER RUOTARE ]</div>
     </div>
   </section>
+
+${expSectionHtml}
 </article>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
