@@ -1034,3 +1034,58 @@ body.pagina-chi-sono .about-titolo-marquee .about-marquee-star {
   -webkit-text-stroke: 0 !important;
   text-stroke: 0 !important;
 }
+
+/* ── About Me 3D Coin Viewer ─────────────────────────────── */
+.about-3d-wrap {
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  width: 100%;
+  max-width: 52rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.about-3d-canvas-container {
+  width: 100%;
+  height: clamp(280px, 38vw, 420px);
+  position: relative;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-3d-canvas-container:active {
+  cursor: grabbing;
+}
+
+.about-3d-canvas-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  outline: none;
+}
+
+.about-3d-loading {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--colore-sfondo);
+  opacity: 0.6;
+  letter-spacing: 0.05em;
+  position: absolute;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.about-3d-hint {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--colore-sfondo);
+  opacity: 0.45;
+  margin-top: 0.5rem;
+  letter-spacing: 0.05em;
+  user-select: none;
+}

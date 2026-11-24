@@ -987,8 +987,194 @@ const aboutBody = `<article class="about-layout">
       <span class="linea-rossa-flex" aria-hidden="true"></span>
       <span>${location}</span>
     </div>
+
+    <div class="about-3d-wrap" id="about3dWrap">
+      <div class="about-3d-canvas-container" id="about3dContainer" role="img" aria-label="Oggetto 3D interattivo Fatpix">
+        <div class="about-3d-loading" id="about3dLoading">[ CARICAMENTO 3D... ]</div>
+      </div>
+      <div class="about-3d-hint" aria-hidden="true">[ ✦ TRASCINA PER RUOTARE ]</div>
+    </div>
   </div>
-</article>`;
+</article>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function() {
+  function parseBinarySTL(buffer) {
+    var reader = new DataView(buffer);
+    var faces = reader.getUint32(80, true);
+    var positions = new Float32Array(faces * 3 * 3);
+    var normals = new Float32Array(faces * 3 * 3);
+    var posOffset = 0;
+    var offset = 84;
+
+    for (var face = 0; face < faces; face++) {
+      var nx = reader.getFloat32(offset, true);
+      var ny = reader.getFloat32(offset + 4, true);
+      var nz = reader.getFloat32(offset + 8, true);
+
+      for (var i = 1; i <= 3; i++) {
+        var vo = offset + i * 12;
+        positions[posOffset] = reader.getFloat32(vo, true);
+        positions[posOffset + 1] = reader.getFloat32(vo + 4, true);
+        positions[posOffset + 2] = reader.getFloat32(vo + 8, true);
+
+        normals[posOffset] = nx;
+        normals[posOffset + 1] = ny;
+        normals[posOffset + 2] = nz;
+        posOffset += 3;
+      }
+      offset += 50;
+    }
+
+    var geom = new THREE.BufferGeometry();
+    geom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geom.setAttribute('normal', new THREE.BufferAttribute(normals, 3));
+    geom.center();
+    geom.computeVertexNormals();
+    return geom;
+  }
+
+  function init3D() {
+    var container = document.getElementById('about3dContainer');
+    var loading = document.getElementById('about3dLoading');
+    if (!container) return;
+
+    var w = container.clientWidth || 500;
+    var h = container.clientHeight || 360;
+
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(40, w / h, 1, 1000);
+    camera.position.set(0, 0, 160);
+
+    var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(w, h);
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.25;
+    container.appendChild(renderer.domElement);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+
+    var key = new THREE.DirectionalLight(0xffffff, 1.8);
+    key.position.set(60, 80, 100);
+    scene.add(key);
+
+    var rim = new THREE.DirectionalLight(0xddeeff, 1.5);
+    rim.position.set(-60, -40, -80);
+    scene.add(rim);
+
+    var redRim = new THREE.PointLight(0xef1111, 1.2, 300);
+    redRim.position.set(-80, 20, 40);
+    scene.add(redRim);
+
+    var group = new THREE.Group();
+    scene.add(group);
+
+    fetch('moneta_testa.stl')
+      .then(function(res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.arrayBuffer();
+      })
+      .then(function(buffer) {
+        var geometry = parseBinarySTL(buffer);
+        var material = new THREE.MeshStandardMaterial({
+          color: 0xdedede,
+          metalness: 0.88,
+          roughness: 0.22
+        });
+        var mesh = new THREE.Mesh(geometry, material);
+        group.add(mesh);
+        if (loading) loading.style.opacity = '0';
+        updateSize();
+      })
+      .catch(function(err) {
+        console.error('3D loading error:', err);
+        if (loading) loading.textContent = '[ 3D NON DISPONIBILE ]';
+      });
+
+    var isDragging = false;
+    var prevX = 0, prevY = 0;
+    var velX = 0, velY = 0;
+    var rotX = 0, rotY = 0;
+    var autoSpeed = 0.008;
+
+    container.addEventListener('pointerdown', function(e) {
+      isDragging = true;
+      prevX = e.clientX;
+      prevY = e.clientY;
+      container.setPointerCapture(e.pointerId);
+    });
+
+    container.addEventListener('pointermove', function(e) {
+      if (isDragging) {
+        var dx = e.clientX - prevX;
+        var dy = e.clientY - prevY;
+        velY += dx * 0.005;
+        velX += dy * 0.005;
+        prevX = e.clientX;
+        prevY = e.clientY;
+      }
+    });
+
+    function endDrag(e) {
+      if (isDragging) {
+        isDragging = false;
+        try { container.releasePointerCapture(e.pointerId); } catch(_) {}
+      }
+    }
+    container.addEventListener('pointerup', endDrag);
+    container.addEventListener('pointercancel', endDrag);
+
+    function updateSize() {
+      if (!container || !renderer || !camera) return;
+      var curW = container.clientWidth;
+      var curH = container.clientHeight;
+      if (curW > 0 && curH > 0) {
+        camera.aspect = curW / curH;
+        camera.updateProjectionMatrix();
+        renderer.setSize(curW, curH);
+      }
+    }
+    window.addEventListener('resize', updateSize);
+    setTimeout(updateSize, 300);
+    setTimeout(updateSize, 1000);
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      if (!isDragging) {
+        velY += (autoSpeed - velY) * 0.03;
+        velX *= 0.92;
+      }
+
+      rotY += velY;
+      rotX += velX;
+
+      rotX = Math.max(-0.8, Math.min(0.8, rotX));
+
+      group.rotation.y = rotY;
+      group.rotation.x = rotX;
+
+      renderer.render(scene, camera);
+    }
+    animate();
+  }
+
+  function startWhenReady() {
+    if (typeof THREE !== 'undefined' && document.getElementById('about3dContainer')) {
+      init3D();
+    } else {
+      setTimeout(startWhenReady, 50);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startWhenReady);
+  } else {
+    startWhenReady();
+  }
+})();
+</script>`;
 
 write('chi-sono', page({
   depth: 1, current: 'chi-sono', title: 'About me', desc: about.body.split('\n')[0],
