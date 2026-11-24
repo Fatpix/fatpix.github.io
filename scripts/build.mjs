@@ -1469,6 +1469,9 @@ ${expSectionHtml}
       }
     }
     window.addEventListener('resize', updateSize);
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(updateSize).observe(container);
+    }
     setTimeout(updateSize, 300);
     setTimeout(updateSize, 1000);
 
@@ -1556,18 +1559,38 @@ ${expSectionHtml}
     var em = 12;
     var cx = 0, cy = 0;
     var widths = [];
+    var orbitScale = 1;
+    var coinContainer = document.getElementById('about3dContainer');
 
     function measure() {
       em = parseFloat(getComputedStyle(stage).fontSize) || 12;
       cx = stage.clientWidth / 2;
       cy = stage.clientHeight / 2;
       widths = names.map(function(el) { return el.offsetWidth; });
+      var maxW = widths.length ? Math.max.apply(null, widths) : 0;
+      var nominalEquatorialInset = RADIUS * LINE * em;
+      var availableHalf = Math.max(36, cx - maxW - 4);
+      orbitScale = nominalEquatorialInset > 0 ? Math.min(1, availableHalf / nominalEquatorialInset) : 1;
+      if (coinContainer) {
+        if (orbitScale < 1) {
+          var targetDiameter = Math.max(88, Math.min(17 * em, nominalEquatorialInset * orbitScale * 1.8));
+          coinContainer.style.width = targetDiameter.toFixed(1) + 'px';
+          coinContainer.style.height = targetDiameter.toFixed(1) + 'px';
+        } else {
+          coinContainer.style.width = '';
+          coinContainer.style.height = '';
+        }
+      }
     }
 
-    function insetAt(row) {
+    function insetAt(row, wordWidth) {
       var d = row - middle;
       var reach = Math.sqrt(Math.max(0, RADIUS * RADIUS - d * d));
-      return Math.max(GUTTER, reach * LINE) * em;
+      var inset = Math.max(GUTTER, reach * LINE) * em * orbitScale;
+      if (typeof wordWidth === 'number' && cx > 0) {
+        inset = Math.min(inset, Math.max(4, cx - wordWidth - 4));
+      }
+      return inset;
     }
 
     var lap = { progress: 0 };
@@ -1582,19 +1605,19 @@ ${expSectionHtml}
 
         if (k < rows - 1) {
           row = rows - 1 - k - f;
-          x = -insetAt(row) - w;
+          x = -insetAt(row, w) - w;
         } else if (k === rows - 1) {
           var out = f < 0.5;
           row = out ? -f : f - 1;
-          x = out ? -insetAt(row) - w : insetAt(row);
+          x = out ? -insetAt(row, w) - w : insetAt(row, w);
           opacity = Math.abs(1 - 2 * f);
         } else if (k < total - 1) {
           row = k - rows + f;
-          x = insetAt(row);
+          x = insetAt(row, w);
         } else {
           var out = f < 0.5;
           row = out ? rows - 1 + f : rows - f;
-          x = out ? insetAt(row) : -insetAt(row) - w;
+          x = out ? insetAt(row, w) : -insetAt(row, w) - w;
           opacity = Math.abs(1 - 2 * f);
         }
 
