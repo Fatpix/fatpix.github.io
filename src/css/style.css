@@ -142,7 +142,7 @@ main {
 .text-clip-reveal-root {
   position: relative;
   width: 100%;
-  height: 300vh;
+  height: 200vh;
   background: #000000;
   z-index: 5;
 }

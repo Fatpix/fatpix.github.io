@@ -305,9 +305,10 @@ __BODY__
       }
 
       var targetScale = 160;
-      var easing = 0.15;
+      var easing = 0.22;
       var eased = 0;
       var isMasked = true;
+      var unmaskThreshold = 0.50;
 
       function rawProgress() {
         var rect = root.getBoundingClientRect();
@@ -321,7 +322,7 @@ __BODY__
         var p = rawProgress();
         eased += (p - eased) * easing;
 
-        if (eased >= 0.65) {
+        if (eased >= unmaskThreshold) {
           if (isMasked) {
             mask.style.webkitMaskImage = 'none';
             mask.style.maskImage = 'none';
@@ -334,8 +335,8 @@ __BODY__
             isMasked = true;
           }
           var base = getInitialSize();
-          var t = Math.min(1, Math.max(0, eased / 0.65));
-          var scaleCurve = Math.pow(t, 2.2);
+          var t = Math.min(1, Math.max(0, eased / unmaskThreshold));
+          var scaleCurve = Math.pow(t, 1.6);
           var size = (base + targetScale * scaleCurve) * 100;
           var sStr = size.toFixed(2) + '% auto';
           mask.style.webkitMaskSize = sStr;
