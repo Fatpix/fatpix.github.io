@@ -958,7 +958,8 @@ generateAboutPlaceholder(`${OUT}/chi-sono`);
 const fotoSrc = esc(about.meta.foto || 'foto.svg');
 const location = esc(about.meta.location || 'Genova/Italy');
 
-const aboutBody = `<article class="about-layout">
+const aboutBody = `<article class="about-sezione">
+  <div class="about-layout">
   <div class="about-colonna-sinistra">
     <div class="about-foto">
       ${renderMedia(fotoSrc, `Foto di ${site.nome}`, { priority: true, lazy: false })}
@@ -987,14 +988,15 @@ const aboutBody = `<article class="about-layout">
       <span class="linea-rossa-flex" aria-hidden="true"></span>
       <span>${location}</span>
     </div>
-
-    <div class="about-3d-wrap" id="about3dWrap">
-      <div class="about-3d-canvas-container" id="about3dContainer" role="img" aria-label="Oggetto 3D interattivo Fatpix">
-        <div class="about-3d-loading" id="about3dLoading">[ CARICAMENTO 3D... ]</div>
-      </div>
-      <div class="about-3d-hint" aria-hidden="true">[ ✦ TRASCINA PER RUOTARE ]</div>
-    </div>
   </div>
+</div>
+
+<div class="about-3d-wrap" id="about3dWrap">
+  <div class="about-3d-canvas-container" id="about3dContainer" role="img" aria-label="Oggetto 3D interattivo Fatpix">
+    <div class="about-3d-loading" id="about3dLoading">[ CARICAMENTO 3D... ]</div>
+  </div>
+  <div class="about-3d-hint" aria-hidden="true">[ ✦ TRASCINA PER RUOTARE ]</div>
+</div>
 </article>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>

@@ -2331,42 +2331,44 @@ coin_3d_script = """<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js
 })();
 </script>"""
 
-about_body = f"""<article class="about-layout">
-  <div class="about-colonna-sinistra">
-    <div class="about-foto">
-      {render_media(foto_src, f"Foto di {site.get('nome', '')}", priority=True, lazy=False)}
-    </div>
-  </div>
-  
-  <div class="about-colonna-destra">
-    <h1 class="about-titolo-marquee" aria-label="Chi Sono? Who Am I?">
-      <span class="sr-only">Chi Sono? Who Am I?</span>
-      <span class="about-marquee-track" aria-hidden="true">
-        <span class="about-marquee-group">
-          <span>Chi Sono?</span> <span class="about-marquee-star">*</span> <span>Who Am I?</span> <span class="about-marquee-star">*</span> <span>Chi Sono?</span> <span class="about-marquee-star">*</span> <span>Who Am I?</span> <span class="about-marquee-star">*</span>
-        </span>
-        <span class="about-marquee-group" aria-hidden="true">
-          <span>Chi Sono?</span> <span class="about-marquee-star">*</span> <span>Who Am I?</span> <span class="about-marquee-star">*</span> <span>Chi Sono?</span> <span class="about-marquee-star">*</span> <span>Who Am I?</span> <span class="about-marquee-star">*</span>
-        </span>
-      </span>
-    </h1>
-
-    <div class="testo about-bio">
-      {paras(about['body'])}
+about_body = f"""<article class="about-sezione">
+  <div class="about-layout">
+    <div class="about-colonna-sinistra">
+      <div class="about-foto">
+        {render_media(foto_src, f"Foto di {site.get('nome', '')}", priority=True, lazy=False)}
+      </div>
     </div>
     
-    <div class="about-location">
-      <span>Located</span>
-      <span class="linea-rossa-flex" aria-hidden="true"></span>
-      <span>{location}</span>
-    </div>
+    <div class="about-colonna-destra">
+      <h1 class="about-titolo-marquee" aria-label="Chi Sono? Who Am I?">
+        <span class="sr-only">Chi Sono? Who Am I?</span>
+        <span class="about-marquee-track" aria-hidden="true">
+          <span class="about-marquee-group">
+            <span>Chi Sono?</span> <span class="about-marquee-star">*</span> <span>Who Am I?</span> <span class="about-marquee-star">*</span> <span>Chi Sono?</span> <span class="about-marquee-star">*</span> <span>Who Am I?</span> <span class="about-marquee-star">*</span>
+          </span>
+          <span class="about-marquee-group" aria-hidden="true">
+            <span>Chi Sono?</span> <span class="about-marquee-star">*</span> <span>Who Am I?</span> <span class="about-marquee-star">*</span> <span>Chi Sono?</span> <span class="about-marquee-star">*</span> <span>Who Am I?</span> <span class="about-marquee-star">*</span>
+          </span>
+        </span>
+      </h1>
 
-    <div class="about-3d-wrap" id="about3dWrap">
-      <div class="about-3d-canvas-container" id="about3dContainer" role="img" aria-label="Oggetto 3D interattivo Fatpix">
-        <div class="about-3d-loading" id="about3dLoading">[ CARICAMENTO 3D... ]</div>
+      <div class="testo about-bio">
+        {paras(about['body'])}
       </div>
-      <div class="about-3d-hint" aria-hidden="true">[ ✦ TRASCINA PER RUOTARE ]</div>
+      
+      <div class="about-location">
+        <span>Located</span>
+        <span class="linea-rossa-flex" aria-hidden="true"></span>
+        <span>{location}</span>
+      </div>
     </div>
+  </div>
+
+  <div class="about-3d-wrap" id="about3dWrap">
+    <div class="about-3d-canvas-container" id="about3dContainer" role="img" aria-label="Oggetto 3D interattivo Fatpix">
+      <div class="about-3d-loading" id="about3dLoading">[ CARICAMENTO 3D... ]</div>
+    </div>
+    <div class="about-3d-hint" aria-hidden="true">[ ✦ TRASCINA PER RUOTARE ]</div>
   </div>
 </article>
 {coin_3d_script}"""
