@@ -834,21 +834,26 @@ __BODY__
 (function() {
   var loader = document.getElementById('pageLoader');
   if (!loader) return;
+  var isLoaded = false;
+  var showTimer = setTimeout(function() {
+    if (!isLoaded) {
+      loader.classList.add('attivo');
+    }
+  }, 250);
+
   function dismiss() {
-    if (!loader || loader.dataset.dismissed) return;
-    loader.dataset.dismissed = 'true';
-    loader.classList.add('nascosto');
-    setTimeout(function() {
-      try { loader.remove(); } catch(e) {}
-    }, 450);
+    isLoaded = true;
+    clearTimeout(showTimer);
+    loader.classList.remove('attivo');
   }
+
   if (document.readyState === 'complete') {
-    setTimeout(dismiss, 100);
+    dismiss();
   } else {
     window.addEventListener('load', function() {
-      setTimeout(dismiss, 120);
+      setTimeout(dismiss, 100);
     });
-    setTimeout(dismiss, 3500);
+    setTimeout(dismiss, 6000);
   }
   window.__dismissPageLoader = dismiss;
 })();
@@ -970,6 +975,15 @@ home_body = f"""<div class="landing-titolo-wrap">
 
 with open(f'{OUT}/index.html', 'w', encoding='utf-8') as f:
     f.write(page(depth=0, current='home', desc=site.get('descrizione', ''), body=home_body, hero_html=hero_reveal_html))
+
+anti_flicker = "<script>try{var r=false,n=performance.getEntriesByType('navigation')[0];if(n)r=(n.type==='reload');else if(performance.navigation)r=(performance.navigation.type===1);if(document.referrer&&new URL(document.referrer).origin===window.location.origin&&sessionStorage.getItem('portfolio_loader_shown')&&!r){document.documentElement.classList.add('skip-loader');}}catch(e){}</script>"
+loader_div = '<div id="loader" aria-hidden="true"><div class="loader-inner"><div class="loader-log" id="loaderLog"></div><div class="loader-barra"><div class="loader-fill" id="loaderFill"></div></div><p class="loader-pct" id="loaderPct">0%</p></div></div>'
+with open(f'{OUT}/index.html', 'r', encoding='utf-8') as f:
+    home_html = f.read()
+
+home_html = home_html.replace('class="pagina-home">', 'class="pagina-home">' + anti_flicker + loader_div).replace('</body>', '<script src="loader.js?v=3.2"></script></body>')
+with open(f'{OUT}/index.html', 'w', encoding='utf-8') as f:
+    f.write(home_html)
 
 # Dettagli
 for i, l in enumerate(lavori):

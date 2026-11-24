@@ -573,21 +573,26 @@
 (function() {
   var loader = document.getElementById('pageLoader');
   if (!loader) return;
+  var isLoaded = false;
+  var showTimer = setTimeout(function() {
+    if (!isLoaded) {
+      loader.classList.add('attivo');
+    }
+  }, 250);
+
   function dismiss() {
-    if (!loader || loader.dataset.dismissed) return;
-    loader.dataset.dismissed = 'true';
-    loader.classList.add('nascosto');
-    setTimeout(function() {
-      try { loader.remove(); } catch(e) {}
-    }, 450);
+    isLoaded = true;
+    clearTimeout(showTimer);
+    loader.classList.remove('attivo');
   }
+
   if (document.readyState === 'complete') {
-    setTimeout(dismiss, 100);
+    dismiss();
   } else {
     window.addEventListener('load', function() {
-      setTimeout(dismiss, 120);
+      setTimeout(dismiss, 100);
     });
-    setTimeout(dismiss, 3500);
+    setTimeout(dismiss, 6000);
   }
   window.__dismissPageLoader = dismiss;
 })();
