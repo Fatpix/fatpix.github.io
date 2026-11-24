@@ -597,6 +597,7 @@ body.pagina-chi-sono main {
 .about-colonna-destra {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 .about-bio {
   font-family: var(--font-mono);
@@ -940,4 +941,96 @@ body.pagina-chi-sono .about-foto video {
 
 body.pagina-chi-sono a:hover {
   color: var(--colore-hover) !important;
+}
+
+/* ── About Me Infinite Marquee Title ─────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.about-titolo-marquee {
+  width: 100%;
+  max-width: 52rem;
+  overflow: hidden;
+  position: relative;
+  margin: 0 0 clamp(1.2rem, 2.5vw, 2.2rem) 0;
+  padding: 0.2rem 0;
+  font-family: var(--font-display);
+  font-size: clamp(3.4rem, 8vw, 7.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+  color: transparent;
+  -webkit-text-stroke: 1.2px var(--colore-sfondo);
+  text-stroke: 1.2px var(--colore-sfondo);
+  font-weight: 400;
+  text-transform: none;
+  user-select: none;
+  display: block;
+}
+
+.about-titolo-marquee .about-marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: about-marquee-scroll 24s linear infinite;
+}
+
+.about-titolo-marquee .about-marquee-group {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.about-titolo-marquee .about-marquee-star {
+  color: var(--colore-sfondo);
+  -webkit-text-stroke: 0;
+  text-stroke: 0;
+  margin: 0 0.35em;
+  display: inline-block;
+  font-size: 0.9em;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+@keyframes about-marquee-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-titolo-marquee .about-marquee-track {
+    animation-play-state: paused;
+  }
+}
+
+@media (max-width: 768px) {
+  .about-titolo-marquee {
+    font-size: clamp(2.6rem, 11vw, 4.5rem);
+    margin-bottom: 1.25rem;
+  }
+}
+
+body.pagina-chi-sono .about-titolo-marquee {
+  color: transparent !important;
+  -webkit-text-stroke: 1.2px var(--colore-sfondo) !important;
+  text-stroke: 1.2px var(--colore-sfondo) !important;
+}
+
+body.pagina-chi-sono .about-titolo-marquee .about-marquee-star {
+  color: var(--colore-sfondo) !important;
+  -webkit-text-stroke: 0 !important;
+  text-stroke: 0 !important;
 }

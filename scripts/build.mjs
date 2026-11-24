@@ -965,6 +965,18 @@ const aboutBody = `<article class="about-layout">
   </div>
   
   <div class="about-colonna-destra">
+    <h1 class="about-titolo-marquee" aria-label="Chi Sono? Who Am I?">
+      <span class="sr-only">Chi Sono? Who Am I?</span>
+      <span class="about-marquee-track" aria-hidden="true">
+        <span class="about-marquee-group">
+          <span>Chi Sono?</span> <span class="about-marquee-star">*</span> <span>Who Am I?</span> <span class="about-marquee-star">*</span> <span>Chi Sono?</span> <span class="about-marquee-star">*</span> <span>Who Am I?</span> <span class="about-marquee-star">*</span>
+        </span>
+        <span class="about-marquee-group" aria-hidden="true">
+          <span>Chi Sono?</span> <span class="about-marquee-star">*</span> <span>Who Am I?</span> <span class="about-marquee-star">*</span> <span>Chi Sono?</span> <span class="about-marquee-star">*</span> <span>Who Am I?</span> <span class="about-marquee-star">*</span>
+        </span>
+      </span>
+    </h1>
+
     <div class="testo about-bio">
       ${paras(about.body)}
     </div>
