@@ -317,11 +317,11 @@ ${body}
         return Math.min(0.92, 1400 / w);
       }
 
-      var targetScale = 160;
+      var targetScale = 25;
       var easing = 0.22;
       var eased = 0;
       var isMasked = true;
-      var unmaskThreshold = 0.50;
+      var exitThreshold = 0.46;
 
       function rawProgress() {
         var rect = root.getBoundingClientRect();
@@ -335,25 +335,39 @@ ${body}
         var p = rawProgress();
         eased += (p - eased) * easing;
 
-        if (eased >= unmaskThreshold) {
+        if (eased >= exitThreshold) {
           if (isMasked) {
             mask.style.webkitMaskImage = 'none';
             mask.style.maskImage = 'none';
             isMasked = false;
           }
         } else {
-          if (!isMasked) {
-            mask.style.webkitMaskImage = maskData;
-            mask.style.maskImage = maskData;
-            isMasked = true;
-          }
           var base = getInitialSize();
-          var t = Math.min(1, Math.max(0, eased / unmaskThreshold));
-          var scaleCurve = Math.pow(t, 1.6);
+          var t = Math.min(1, Math.max(0, eased / exitThreshold));
+          var scaleCurve = Math.pow(t, 2.8);
           var size = (base + targetScale * scaleCurve) * 100;
-          var sStr = size.toFixed(2) + '% auto';
+          var sStr = size.toFixed(2) + '% auto, 100% 100%';
+
+          var alpha = 0;
+          if (t > 0.25) {
+            var aT = (t - 0.25) / (1 - 0.25);
+            alpha = Math.pow(aT, 2.0);
+          }
+
+          var combinedMask;
+          if (alpha <= 0.001) {
+            combinedMask = maskData;
+            sStr = size.toFixed(2) + '% auto';
+          } else {
+            var flatAlphaLayer = 'linear-gradient(rgba(0,0,0,' + alpha.toFixed(3) + '), rgba(0,0,0,' + alpha.toFixed(3) + '))';
+            combinedMask = maskData + ', ' + flatAlphaLayer;
+          }
+
+          mask.style.webkitMaskImage = combinedMask;
+          mask.style.maskImage = combinedMask;
           mask.style.webkitMaskSize = sStr;
           mask.style.maskSize = sStr;
+          isMasked = true;
         }
 
         var hHud = root.querySelector('.pixel-player-hud');
