@@ -17,33 +17,94 @@ def parse(file_path):
     meta = {}
     if not m:
         return {'meta': meta, 'body': raw.strip()}
+    
+    lines = m.group(1).split('\n')
     current_key = None
-    for line in m.group(1).split('\n'):
+    current_list = None
+    current_dict = None
+    multiline_key = None
+    multiline_target = None
+    
+    i = 0
+    while i < len(lines):
+        line = lines[i]
         stripped = line.strip()
-        if stripped.startswith('- ') and current_key:
-            item = stripped[2:].strip().strip('"\'')
-            if not isinstance(meta.get(current_key), list):
-                meta[current_key] = []
-            meta[current_key].append(item)
-        elif ':' in line:
+        indent = len(line) - len(line.lstrip(' '))
+        
+        if not stripped or stripped.startswith('#'):
+            i += 1
+            continue
+            
+        if multiline_key is not None:
+            if indent > multiline_target['indent']:
+                multiline_target['dict'][multiline_key] = (multiline_target['dict'][multiline_key] + ' ' + stripped).strip()
+                i += 1
+                continue
+            else:
+                multiline_key = None
+                multiline_target = None
+                
+        if indent == 0 and ':' in line:
             idx = line.index(':')
             key = line[:idx].strip()
-            val = line[idx+1:].strip()
+            val = line[idx+1:].strip().strip('"\'')
             current_key = key
-            if val in ('|', '|-', '|+', '>'):
+            current_list = None
+            current_dict = None
+            if val in ('>', '>-', '|', '|-'):
                 meta[key] = ""
-            elif val:
-                meta[key] = val.strip('"\'')
+                multiline_key = key
+                multiline_target = {'dict': meta, 'indent': 0}
             else:
-                meta[key] = []
-        elif current_key and line.startswith('  '):
-            if isinstance(meta[current_key], str):
-                meta[current_key] = (meta[current_key] + '\n' + stripped).strip()
-            elif isinstance(meta[current_key], list):
-                if stripped.startswith('- '):
-                    meta[current_key].append(stripped[2:].strip().strip('"\''))
-                elif stripped:
-                    meta[current_key].append(stripped.strip('"\''))
+                meta[key] = val
+            i += 1
+            continue
+            
+        if stripped.startswith('- '):
+            rest = stripped[2:].strip()
+            if current_key and not isinstance(meta.get(current_key), list):
+                meta[current_key] = []
+                current_list = meta[current_key]
+                
+            if ':' in rest:
+                k, v = rest.split(':', 1)
+                k = k.strip()
+                v = v.strip().strip('"\'')
+                current_dict = {k: v}
+                if current_list is not None:
+                    current_list.append(current_dict)
+                if v in ('>', '>-', '|', '|-'):
+                    current_dict[k] = ""
+                    multiline_key = k
+                    multiline_target = {'dict': current_dict, 'indent': indent}
+            else:
+                item_val = rest.strip('"\'')
+                if current_list is not None:
+                    current_list.append(item_val)
+                current_dict = None
+            i += 1
+            continue
+            
+        if current_dict is not None and ':' in stripped:
+            k, v = stripped.split(':', 1)
+            k = k.strip()
+            v = v.strip().strip('"\'')
+            if v in ('>', '>-', '|', '|-'):
+                current_dict[k] = ""
+                multiline_key = k
+                multiline_target = {'dict': current_dict, 'indent': indent}
+            else:
+                current_dict[k] = v
+            i += 1
+            continue
+            
+        if current_key:
+            if isinstance(meta.get(current_key), str):
+                meta[current_key] = (meta[current_key] + ' ' + stripped).strip()
+            elif isinstance(meta.get(current_key), list) and current_dict is None:
+                meta[current_key].append(stripped.strip('"\''))
+        i += 1
+        
     return {'meta': meta, 'body': m.group(2).strip()}
 
 def paras(b):
@@ -1078,6 +1139,108 @@ generate_about_placeholder(f'{OUT}/chi-sono')
 foto_src = esc(about['meta'].get('foto', 'foto.svg'))
 location = esc(about['meta'].get('location', 'Genova/Italy'))
 titolo_skills = esc(about['meta'].get('titolo_skills', 'Skills') or 'Skills')
+titolo_experience = esc(about['meta'].get('titolo_experience', 'Experience') or 'Experience')
+breadcrumb_exp = esc(about['meta'].get('breadcrumb_experience', '~ / WORK / ROLES.MD') or '~ / WORK / ROLES.MD')
+section_id_exp = esc(about['meta'].get('section_id_experience', '§ 02.B') or '§ 02.B')
+esperienze_raw = about['meta'].get('esperienze', [])
+if not esperienze_raw or not isinstance(esperienze_raw, list):
+    esperienze_raw = [
+        {
+            "azienda": "Fatpix Studio",
+            "ruolo": "Founder · Creative Technologist · Motion Designer",
+            "periodo": "2023-···",
+            "stato": "active",
+            "descrizione": "Studio indipendente di visual design e creative technology con sede a Genova. Progettazione di identità visive dinamiche, modellazione e animazione 3D, creative coding e sviluppo di interfacce web interattive ad alto impatto emotivo.",
+            "ref": "FP-019",
+            "durata": "±28 MO",
+            "link": ""
+        },
+        {
+            "azienda": "Visual & Web Designer Freelance",
+            "ruolo": "UI/UX Designer · Creative Frontend Craft",
+            "periodo": "2021-2023",
+            "stato": "archive",
+            "descrizione": "Progettazione e realizzazione di prodotti digitali end-to-end: wireframing e prototipazione avanzata in Figma, design systems modulari, animazioni CSS e micro-interazioni curate per startup e brand contemporanei.",
+            "ref": "0AD7ED0",
+            "durata": "±24 MO",
+            "link": ""
+        },
+        {
+            "azienda": "Motion Graphics & 3D Specialist",
+            "ruolo": "3D Artist · Video Editor · Visual Storytelling",
+            "periodo": "2020-2022",
+            "stato": "archive",
+            "descrizione": "Produzione di teaser animati, render volumetrici e simulazioni visive con Blender, Cinema 4D e After Effects. Post-produzione, sound design e color grading per video promozionali e campagne digitali.",
+            "ref": "576602E",
+            "durata": "±18 MO",
+            "link": ""
+        }
+    ]
+
+exp_items_html = []
+for idx, exp in enumerate(esperienze_raw):
+    if not isinstance(exp, dict):
+        continue
+    azienda = esc(str(exp.get('azienda', '')).strip())
+    ruolo = esc(str(exp.get('ruolo', '')).strip())
+    periodo = esc(str(exp.get('periodo', '')).strip())
+    stato = esc(str(exp.get('stato', 'active')).strip().lower())
+    descrizione = esc(str(exp.get('descrizione', '')).strip())
+    ref_code = esc(str(exp.get('ref', '')).strip())
+    durata = esc(str(exp.get('durata', '')).strip())
+    link = esc(str(exp.get('link', '')).strip())
+
+    is_active = (stato == 'active')
+    dot_html = '<span class="timeline-dot-active" title="In corso" aria-hidden="true"></span>' if is_active else ''
+
+    if link:
+        company_html = f'<a class="timeline-title-link" href="{link}" target="_blank" rel="noopener">{azienda} <span class="timeline-arrow-icon" aria-hidden="true">↗</span></a>'
+    else:
+        company_html = f'<span class="timeline-title-text">{azienda}</span>'
+
+    row_html = f"""        <div class="timeline-row timeline-row--{stato}" role="row">
+          <div class="timeline-col col-time" role="cell">
+            <span class="timeline-time-val">{periodo}</span>
+            {dot_html}
+          </div>
+          <div class="timeline-col col-title" role="cell">
+            <h3 class="timeline-title">{company_html}</h3>
+          </div>
+          <div class="timeline-col col-details" role="cell">
+            <div class="timeline-role">{ruolo}</div>
+            <div class="timeline-desc">{descrizione}</div>
+          </div>
+        </div>"""
+    exp_items_html.append(row_html)
+
+exp_section_html = f"""  <section class="about-experience-sezione" id="experienceSection">
+    <div class="landing-titolo-wrap experience-titolo-wrap">
+      <svg class="titolo-asterisco" viewBox="0 0 84 86" aria-hidden="true">
+        <g transform="translate(42, 43)">
+          <rect x="-9.5" y="-43" width="19" height="43" fill="currentColor"/>
+          <rect x="-9.5" y="-43" width="19" height="43" fill="currentColor" transform="rotate(72)"/>
+          <rect x="-9.5" y="-43" width="19" height="43" fill="currentColor" transform="rotate(144)"/>
+          <rect x="-9.5" y="-43" width="19" height="43" fill="currentColor" transform="rotate(216)"/>
+          <rect x="-9.5" y="-43" width="19" height="43" fill="currentColor" transform="rotate(288)"/>
+        </g>
+      </svg>
+      <h2 class="titolo-testo">{titolo_experience}</h2>
+    </div>
+
+    <div class="timeline-container">
+      <div class="timeline-table" role="table" aria-label="Cronologia esperienze e ruoli">
+        <div class="timeline-header-row" role="row" aria-hidden="true">
+          <div class="timeline-th th-time" role="columnheader">TIME (YEARS)</div>
+          <div class="timeline-th th-title" role="columnheader">TITLE</div>
+          <div class="timeline-th th-details" role="columnheader">ROLES &amp; FOCUS</div>
+        </div>
+
+        <div class="timeline-body" role="rowgroup">
+{chr(10).join(exp_items_html)}
+        </div>
+      </div>
+    </div>
+  </section>"""
 
 def extract_words(val, default_list):
     if not val:
@@ -1543,6 +1706,8 @@ about_body = f"""<article class="about-sezione">
       <div class="about-3d-hint" aria-hidden="true">[ ✦ TRASCINA PER RUOTARE ]</div>
     </div>
   </section>
+
+{exp_section_html}
 </article>
 {coin_3d_script.replace('__WORDS_LEFT__', words_left_json).replace('__WORDS_RIGHT__', words_right_json)}"""
 write('chi-sono', page(depth=1, current='chi-sono', title='About me', desc=about['body'].split('\n')[0], body=about_body))

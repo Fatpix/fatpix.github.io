@@ -73,6 +73,22 @@ collections:
             widget: "list"
             required: false
             hint: "Elenco delle parole che scendono sul lato destro della testa 3D"
+          - { name: "titolo_experience", label: "Titolo Sezione Esperienze (es: Experience)", widget: "string", default: "Experience" }
+          - { name: "breadcrumb_experience", label: "Breadcrumb Tech Header (es: ~ / WORK / ROLES.MD)", widget: "string", default: "~ / WORK / ROLES.MD" }
+          - { name: "section_id_experience", label: "ID Sezione Tech (es: § 02.B)", widget: "string", default: "§ 02.B" }
+          - label: "Esperienze Lavorative & Ruoli (Jonathan Moore Style)"
+            name: "esperienze"
+            widget: "list"
+            required: false
+            fields:
+              - { name: "azienda", label: "Azienda / Studio / Organizzazione", widget: "string" }
+              - { name: "ruolo", label: "Ruolo / Posizione (es: LEAD DESIGN ENGINEER IC · 3D ARTIST)", widget: "string" }
+              - { name: "periodo", label: "Periodo Anni (es: 2023-··· o 2020-2022)", widget: "string" }
+              - { name: "stato", label: "Stato", widget: "select", options: ["active", "past", "archive", "beta"], default: "active" }
+              - { name: "descrizione", label: "Descrizione delle responsabilità e progetti", widget: "text" }
+              - { name: "ref", label: "Codice Referenza (es: FP-019 o 576602E)", widget: "string", required: false }
+              - { name: "durata", label: "Durata (es: ±28 MO)", widget: "string", required: false }
+              - { name: "link", label: "Link Esterno (opzionale)", widget: "string", required: false }
           - { name: "body", label: "Biografia / Presentazione", widget: "markdown" }
 
       - name: "sito"
