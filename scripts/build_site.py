@@ -368,7 +368,7 @@ def page(depth=0, title='', desc='', current='', body='', root=False, back=False
 <link rel="apple-touch-icon" href="__P__apple-touch-icon.png">
 <link rel="preload" href="__P__fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="__P__css/tokens.css?v=3.0">
-<link rel="stylesheet" href="__P__css/style.css?v=4.2">
+<link rel="stylesheet" href="__P__css/style.css?v=4.3">
 </head>
 <body__BODY_CLASS__>
 __PAGE_LOADER_HTML__
@@ -1106,8 +1106,29 @@ for i, l in enumerate(lavori):
     links_list = [x.split('|') for x in m.get('link', '').replace(';', ',').split(',') if '|' in x]
     links_html = ''.join([f'<a class="pulsante" href="{esc(u.strip())}" rel="noopener">{esc(t.strip())}</a>' for t, u in links_list if u.strip()])
     
-    prev_link = f'<a href="../{prev_l["slug"]}/">Previous: {esc(prev_l["meta"]["titolo"])}</a>' if prev_l else '<span></span>'
-    next_link = f'<a href="../{next_l["slug"]}/">Next: {esc(next_l["meta"]["titolo"])}</a>' if next_l else '<span></span>'
+    def render_seq_media(item):
+        c_file = item['meta'].get('cover') or 'cover.svg'
+        src = f"../{item['slug']}/{esc(c_file)}"
+        if is_video(c_file):
+            return f'<video src="{src}" autoplay loop muted playsinline preload="metadata" data-pixel-player-init="true" aria-hidden="true"></video>'
+        return f'<img src="{src}" alt="" loading="lazy" decoding="async">'
+
+    prev_link = f"""<a class="sequenza-item is-prev" href="../{prev_l["slug"]}/">
+    <div class="sequenza-text">
+      <div class="sequenza-meta"><span>Previous</span></div>
+      <div class="sequenza-name"><span class="sequenza-arrow" aria-hidden="true">←</span><span>{esc(prev_l["meta"]["titolo"])}</span></div>
+      {f'<div class="sequenza-role">{esc(prev_l["meta"]["ruolo"])}</div>' if prev_l["meta"].get("ruolo") else ''}
+    </div>
+    <div class="sequenza-thumb" aria-hidden="true">{render_seq_media(prev_l)}</div>
+  </a>""" if prev_l else '<span class="sequenza-vuoto" aria-hidden="true"></span>'
+    next_link = f"""<a class="sequenza-item is-next" href="../{next_l["slug"]}/">
+    <div class="sequenza-thumb" aria-hidden="true">{render_seq_media(next_l)}</div>
+    <div class="sequenza-text">
+      <div class="sequenza-meta"><span>Next</span></div>
+      <div class="sequenza-name"><span>{esc(next_l["meta"]["titolo"])}</span><span class="sequenza-arrow" aria-hidden="true">→</span></div>
+      {f'<div class="sequenza-role">{esc(next_l["meta"]["ruolo"])}</div>' if next_l["meta"].get("ruolo") else ''}
+    </div>
+  </a>""" if next_l else '<span class="sequenza-vuoto" aria-hidden="true"></span>'
     nav_html = f"""<nav class="sequenza" aria-label="More works">
   {prev_link}
   {next_link}

@@ -390,7 +390,7 @@ function page({ depth, title, desc, current, body, root, back, hero_html = '' })
 <link rel="apple-touch-icon" href="${p}apple-touch-icon.png">
 <link rel="preload" href="${p}fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${p}css/tokens.css?v=3.0">
-<link rel="stylesheet" href="${p}css/style.css?v=4.2">
+<link rel="stylesheet" href="${p}css/style.css?v=4.3">
 </head>
 <body${bodyCls}>
 ${pageLoaderHtml}
@@ -1094,9 +1094,33 @@ lavori.forEach((l, i) => {
   const m = l.meta, prev = lavori[i - 1], next = lavori[i + 1];
   const links = list(m.link?.replace(/;/g, ',')).map(x => x.split('|').map(s => s.trim()))
     .filter(([, u]) => u).map(([t, u]) => `<a class="pulsante" href="${esc(u)}" rel="noopener">${esc(t)}</a>`).join('');
+  const renderSeqMedia = item => {
+    const file = item.meta.cover || 'cover.svg';
+    const src = `../${item.slug}/${esc(file)}`;
+    if (isVideo(file)) {
+      return `<video src="${src}" autoplay loop muted playsinline preload="metadata" data-pixel-player-init="true" aria-hidden="true"></video>`;
+    }
+    return `<img src="${src}" alt="" loading="lazy" decoding="async">`;
+  };
+  const prevCard = prev ? `<a class="sequenza-item is-prev" href="../${prev.slug}/">
+    <div class="sequenza-text">
+      <div class="sequenza-meta"><span>Previous</span></div>
+      <div class="sequenza-name"><span class="sequenza-arrow" aria-hidden="true">←</span><span>${esc(prev.meta.titolo)}</span></div>
+      ${prev.meta.ruolo ? `<div class="sequenza-role">${esc(prev.meta.ruolo)}</div>` : ''}
+    </div>
+    <div class="sequenza-thumb" aria-hidden="true">${renderSeqMedia(prev)}</div>
+  </a>` : '<span class="sequenza-vuoto" aria-hidden="true"></span>';
+  const nextCard = next ? `<a class="sequenza-item is-next" href="../${next.slug}/">
+    <div class="sequenza-thumb" aria-hidden="true">${renderSeqMedia(next)}</div>
+    <div class="sequenza-text">
+      <div class="sequenza-meta"><span>Next</span></div>
+      <div class="sequenza-name"><span>${esc(next.meta.titolo)}</span><span class="sequenza-arrow" aria-hidden="true">→</span></div>
+      ${next.meta.ruolo ? `<div class="sequenza-role">${esc(next.meta.ruolo)}</div>` : ''}
+    </div>
+  </a>` : '<span class="sequenza-vuoto" aria-hidden="true"></span>';
   const nav = `<nav class="sequenza" aria-label="More works">
-  ${prev ? `<a href="../${prev.slug}/">Previous: ${esc(prev.meta.titolo)}</a>` : '<span></span>'}
-  ${next ? `<a href="../${next.slug}/">Next: ${esc(next.meta.titolo)}</a>` : '<span></span>'}
+  ${prevCard}
+  ${nextCard}
 </nav>`;
 
   const metaItems = [

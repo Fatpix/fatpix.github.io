@@ -402,9 +402,162 @@ body.pagina-home main#contenuto {
 .galleria img { width: 100%; border-radius: var(--raggio); background: var(--colore-segnaposto); }
 .pulsante { display: inline-block; border: var(--spessore-linea) solid var(--colore-testo); padding: 0.6rem 1.1rem; text-decoration: none; margin: 0 var(--spazio-s) var(--spazio-s) 0; font-family: var(--font-mono); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; transition: color .15s, border-color .15s; }
 .pulsante:hover { color: var(--colore-hover); border-color: var(--colore-hover); }
-.sequenza { display: flex; justify-content: space-between; gap: var(--spazio-m); border-top: 1px solid rgba(0, 0, 0, 0.12); margin-top: var(--spazio-l); padding-top: var(--spazio-m); font-family: var(--font-mono); font-size: clamp(0.8rem, 0.95vw, 0.9rem); letter-spacing: 0.05em; }
-.sequenza a { text-decoration: none; color: var(--colore-testo); transition: color 0.15s ease; }
-.sequenza a:hover { color: var(--colore-hover); }
+
+/* ── Navigazione Progetti (Timeline Split Row) ───────────── */
+.sequenza {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid rgba(0, 0, 0, 0.14);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.14);
+  margin-top: var(--spazio-l);
+}
+.sequenza-vuoto {
+  display: block;
+}
+.sequenza-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(0.85rem, 2vw, 1.5rem);
+  padding: clamp(1.1rem, 2vw, 1.55rem) clamp(0.85rem, 1.5vw, 1.25rem);
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  transition: background 0.25s ease;
+}
+.sequenza-item.is-prev {
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
+}
+.sequenza-vuoto + .sequenza-item.is-next {
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
+}
+.sequenza-item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--colore-hover);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.sequenza-item.is-prev::after {
+  transform-origin: right;
+}
+.sequenza-item:hover {
+  background: rgba(0, 0, 0, 0.025);
+  color: inherit;
+}
+.sequenza-item:hover::after {
+  transform: scaleX(1);
+}
+.sequenza-text {
+  min-width: 0;
+}
+.sequenza-meta {
+  display: flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #777777;
+  margin-bottom: 0.35rem;
+  transition: color 0.25s ease;
+}
+.sequenza-item.is-next .sequenza-meta {
+  justify-content: flex-end;
+}
+.sequenza-item.is-next .sequenza-text {
+  text-align: right;
+  order: 2;
+}
+.sequenza-item.is-next .sequenza-thumb {
+  order: 1;
+}
+.sequenza-name {
+  font-family: var(--font-testo);
+  font-size: clamp(1.1rem, 1.75vw, 1.5rem);
+  font-weight: 500;
+  color: #111111;
+  letter-spacing: -0.015em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.25s ease;
+}
+.sequenza-arrow {
+  font-family: var(--font-mono);
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), color 0.25s ease;
+}
+.sequenza-role {
+  font-family: var(--font-testo);
+  font-size: 0.84rem;
+  color: #666666;
+  margin-top: 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sequenza-item:hover .sequenza-meta,
+.sequenza-item:hover .sequenza-name,
+.sequenza-item:hover .sequenza-arrow {
+  color: var(--colore-hover);
+}
+.sequenza-item.is-prev:hover .sequenza-arrow {
+  transform: translateX(-5px);
+}
+.sequenza-item.is-next:hover .sequenza-arrow {
+  transform: translateX(5px);
+}
+.sequenza-thumb {
+  width: clamp(4.75rem, 8vw, 6.5rem);
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--colore-segnaposto);
+  opacity: 0.4;
+  transform: scale(0.94);
+  filter: grayscale(100%);
+  transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), filter 0.3s ease;
+  flex-shrink: 0;
+}
+.sequenza-thumb img,
+.sequenza-thumb video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.sequenza-item:hover .sequenza-thumb {
+  opacity: 1;
+  transform: scale(1);
+  filter: grayscale(0%);
+}
+@media (max-width: 48rem) {
+  .sequenza {
+    grid-template-columns: 1fr;
+  }
+  .sequenza-vuoto {
+    display: none;
+  }
+  .sequenza-item.is-prev {
+    border-right: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .sequenza-vuoto + .sequenza-item.is-next {
+    border-left: none;
+  }
+  .sequenza-thumb {
+    width: 4.5rem;
+    opacity: 0.9;
+    transform: none;
+    filter: none;
+  }
+}
 
 /* ── Layout pagina Progetto (Dettaglio modulare da Figma) ─ */
 body.pagina-progetto main {
@@ -1008,9 +1161,6 @@ html.skip-loader #loader { display: none !important; }
     margin-inline: var(--spazio-m);
     padding-top: calc(env(safe-area-inset-top, 0px) + var(--menu-h-mobile) + var(--spazio-l));
   }
-
-  /* Nav progetto: colonna per evitare testi schiacciati */
-  .sequenza { flex-direction: column; gap: var(--spazio-s); }
 }
 
 @media (prefers-reduced-motion: reduce) {
