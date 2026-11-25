@@ -1073,7 +1073,7 @@ for i, l in enumerate(lavori):
     # Metadata
     meta_items = []
     if m.get('anno'):
-        meta_items.append(f'<div><dt>Year</dt><dd>{esc(m["anno"])}</dd></div>')
+        meta_items.append(f'<div class="progetto-meta-year"><dt>Year</dt><dd>{esc(m["anno"])}</dd></div>')
     if m.get('ruolo'):
         meta_items.append(f'<div><dt>Role</dt><dd>{esc(m["ruolo"])}</dd></div>')
     if m.get('team'):

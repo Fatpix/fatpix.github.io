@@ -1057,7 +1057,7 @@ lavori.forEach((l, i) => {
 </nav>`;
 
   const metaItems = [
-    m.anno ? `<div><dt>Year</dt><dd>${esc(m.anno)}</dd></div>` : '',
+    m.anno ? `<div class="progetto-meta-year"><dt>Year</dt><dd>${esc(m.anno)}</dd></div>` : '',
     m.ruolo ? `<div><dt>Role</dt><dd>${esc(m.ruolo)}</dd></div>` : '',
     m.team ? `<div><dt>Team</dt><dd>${esc(m.team)}</dd></div>` : '',
     m.cliente ? `<div><dt>Client</dt><dd>${esc(m.cliente)}</dd></div>` : ''
