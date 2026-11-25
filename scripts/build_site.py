@@ -352,7 +352,7 @@ def page(depth=0, title='', desc='', current='', body='', root=False, back=False
 
     theme_color = '#000000' if current in ('chi-sono', 'home') else '#f5f5f5'
     template = """<!doctype html>
-<html lang="__LANG__">
+<html lang="__LANG__" style="background-color:__THEME_COLOR__;">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -368,7 +368,7 @@ def page(depth=0, title='', desc='', current='', body='', root=False, back=False
 <link rel="apple-touch-icon" href="__P__apple-touch-icon.png">
 <link rel="preload" href="__P__fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="__P__css/tokens.css?v=3.0">
-<link rel="stylesheet" href="__P__css/style.css?v=3.8">
+<link rel="stylesheet" href="__P__css/style.css?v=3.9">
 </head>
 <body__BODY_CLASS__>
 __PAGE_LOADER_HTML__
@@ -376,6 +376,7 @@ __PAGE_LOADER_HTML__
 __EXTRA_BODY__
 <a class="salta" href="#contenuto">Vai al contenuto</a>
 <header class="menu">
+  <div class="header-safe-cap" aria-hidden="true"></div>
   <button type="button" class="menu-nome" aria-label="__NOME__"><span class="nome-esteso">__NOME__</span><span class="nome-alias" aria-hidden="true">__ALIAS__</span></button>
   <nav class="menu-voci" aria-label="Principale">
     __MENU_LINKS__
@@ -480,8 +481,12 @@ __BODY__
         var isHeroUnder = isMasked && rRect.bottom > 56;
         if (isHeroUnder !== lastHeroUnder) {
           document.body.classList.toggle('hero-under-header', isHeroUnder);
+          var bgHex = isHeroUnder ? '#000000' : '#f5f5f5';
+          document.documentElement.style.backgroundColor = bgHex;
+          mask.style.backgroundColor = bgHex;
+          root.style.backgroundColor = bgHex;
           var tc = document.querySelector('meta[name="theme-color"]');
-          if (tc) tc.setAttribute('content', isHeroUnder ? '#000000' : '#f5f5f5');
+          if (tc) tc.setAttribute('content', bgHex);
           lastHeroUnder = isHeroUnder;
         }
 
@@ -946,7 +951,7 @@ __BODY__
         .replace('__TITLE__', esc(full))
         .replace('__DESC__', esc(desc or site.get('descrizione', '')))
         .replace('__P__', p)
-        .replace('__BODY_CLASS__', f' class="pagina-{current}"' if current else '')
+        .replace('__BODY_CLASS__', ' class="pagina-home hero-under-header"' if current == 'home' else (f' class="pagina-{current}"' if current else ''))
         .replace('__PAGE_LOADER_HTML__', page_loader_html)
         .replace('__EXTRA_BODY__', extra_body)
         .replace('__NOME__', esc(site['nome']))
@@ -1062,7 +1067,7 @@ loader_div = '<div id="loader" aria-hidden="true"><div class="loader-inner"><div
 with open(f'{OUT}/index.html', 'r', encoding='utf-8') as f:
     home_html = f.read()
 
-home_html = home_html.replace('class="pagina-home">', 'class="pagina-home">' + anti_flicker + loader_div).replace('</body>', '<script src="loader.js?v=3.2"></script></body>')
+home_html = home_html.replace('class="pagina-home hero-under-header">', 'class="pagina-home hero-under-header">' + anti_flicker + loader_div).replace('</body>', '<script src="loader.js?v=3.2"></script></body>')
 with open(f'{OUT}/index.html', 'w', encoding='utf-8') as f:
     f.write(home_html)
 

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="it">
+<html lang="it" style="background-color:#000000;">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -15,9 +15,9 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preload" href="fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/tokens.css?v=3.0">
-<link rel="stylesheet" href="css/style.css?v=3.8">
+<link rel="stylesheet" href="css/style.css?v=3.9">
 </head>
-<body class="pagina-home"><script>try{var r=false,n=performance.getEntriesByType('navigation')[0];if(n)r=(n.type==='reload');else if(performance.navigation)r=(performance.navigation.type===1);if(document.referrer&&new URL(document.referrer).origin===window.location.origin&&sessionStorage.getItem('portfolio_loader_shown')&&!r){document.documentElement.classList.add('skip-loader');}}catch(e){}</script><div id="loader" aria-hidden="true"><div class="loader-inner"><div class="loader-log" id="loaderLog"></div><div class="loader-barra"><div class="loader-fill" id="loaderFill"></div></div><p class="loader-pct" id="loaderPct">0%</p></div></div>
+<body class="pagina-home hero-under-header"><script>try{var r=false,n=performance.getEntriesByType('navigation')[0];if(n)r=(n.type==='reload');else if(performance.navigation)r=(performance.navigation.type===1);if(document.referrer&&new URL(document.referrer).origin===window.location.origin&&sessionStorage.getItem('portfolio_loader_shown')&&!r){document.documentElement.classList.add('skip-loader');}}catch(e){}</script><div id="loader" aria-hidden="true"><div class="loader-inner"><div class="loader-log" id="loaderLog"></div><div class="loader-barra"><div class="loader-fill" id="loaderFill"></div></div><p class="loader-pct" id="loaderPct">0%</p></div></div>
 <div id="pageLoader" class="page-loader" aria-hidden="true">
   <div class="flip-tile-wave">
     <div class="flip-tile-grid">
@@ -44,6 +44,7 @@
 
 <a class="salta" href="#contenuto">Vai al contenuto</a>
 <header class="menu">
+  <div class="header-safe-cap" aria-hidden="true"></div>
   <button type="button" class="menu-nome" aria-label="Filippo Arpe"><span class="nome-esteso">Filippo Arpe</span><span class="nome-alias" aria-hidden="true">Fatpix</span></button>
   <nav class="menu-voci" aria-label="Principale">
     <a href="./" aria-current="page">Works</a>
@@ -213,8 +214,12 @@
         var isHeroUnder = isMasked && rRect.bottom > 56;
         if (isHeroUnder !== lastHeroUnder) {
           document.body.classList.toggle('hero-under-header', isHeroUnder);
+          var bgHex = isHeroUnder ? '#000000' : '#f5f5f5';
+          document.documentElement.style.backgroundColor = bgHex;
+          mask.style.backgroundColor = bgHex;
+          root.style.backgroundColor = bgHex;
           var tc = document.querySelector('meta[name="theme-color"]');
-          if (tc) tc.setAttribute('content', isHeroUnder ? '#000000' : '#f5f5f5');
+          if (tc) tc.setAttribute('content', bgHex);
           lastHeroUnder = isHeroUnder;
         }
 

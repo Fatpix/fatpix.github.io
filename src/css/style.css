@@ -8,7 +8,20 @@
   -ms-hyphens: none !important;
   hyphens: none !important;
 }
-html { -webkit-text-size-adjust: 100%; -webkit-hyphens: none !important; hyphens: none !important; overflow-x: clip; }
+html {
+  background-color: var(--colore-sfondo);
+  -webkit-text-size-adjust: 100%;
+  -webkit-hyphens: none !important;
+  hyphens: none !important;
+  overflow-x: clip;
+}
+html:has(body.pagina-chi-sono),
+body.pagina-chi-sono {
+  background-color: #000000 !important;
+}
+html:has(body.pagina-home.hero-under-header) {
+  background-color: #000000;
+}
 body {
   margin: 0;
   background: var(--colore-sfondo);
@@ -55,6 +68,9 @@ h1 { font-size: var(--testo-xl); }
   cursor: pointer;
   text-align: inherit;
   outline: none;
+}
+.header-safe-cap {
+  display: none;
 }
 .menu-nome > span { grid-area: 1 / 1; }
 .nome-alias { visibility: hidden; }
@@ -718,7 +734,7 @@ html.skip-loader #loader { display: none !important; }
   height: 100vh;
   z-index: 999999;
   background: #000000 !important;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   opacity: 0;
@@ -728,6 +744,7 @@ html.skip-loader #loader { display: none !important; }
 }
 
 .page-loader.attivo {
+  display: flex !important;
   opacity: 1 !important;
   visibility: visible !important;
   pointer-events: auto !important;
@@ -811,24 +828,41 @@ html.skip-loader #loader { display: none !important; }
     background: transparent;
   }
 
-  /* Gradiente morbido sullo sfondo della pagina, esteso anche dietro la status bar iOS (safe-area-inset-top) */
+  /* Fascia solida sopra l'header (copre status bar / safe-area e blocca lo sfondo Safari iOS 26) */
+  .header-safe-cap {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: calc(env(safe-area-inset-top, 0px) + 0.85rem);
+    z-index: 96;
+    pointer-events: none;
+    background-color: #f5f5f5;
+  }
+
+  body.pagina-chi-sono .header-safe-cap,
+  body.pagina-home.hero-under-header .header-safe-cap {
+    background-color: #000000;
+  }
+
+  /* Gradiente morbido sullo sfondo della pagina sotto alla fascia solida */
   .menu::before {
     content: "";
     position: fixed;
-    top: -4rem;
+    top: calc(env(safe-area-inset-top, 0px) + 0.8rem);
     left: -1rem;
     right: -1rem;
-    height: calc(env(safe-area-inset-top, 0px) + 10.5rem);
+    height: 5.75rem;
     z-index: 90;
     pointer-events: none;
     background: linear-gradient(
       to bottom,
-      rgba(245, 245, 245, 1) 0,
-      rgba(245, 245, 245, 1) calc(env(safe-area-inset-top, 0px) + 4.35rem),
-      rgba(245, 245, 245, 0.92) calc(env(safe-area-inset-top, 0px) + 5.4rem),
-      rgba(245, 245, 245, 0.72) calc(env(safe-area-inset-top, 0px) + 6.7rem),
-      rgba(245, 245, 245, 0.42) calc(env(safe-area-inset-top, 0px) + 8.1rem),
-      rgba(245, 245, 245, 0.14) calc(env(safe-area-inset-top, 0px) + 9.4rem),
+      rgba(245, 245, 245, 1) 0%,
+      rgba(245, 245, 245, 0.94) 18%,
+      rgba(245, 245, 245, 0.74) 40%,
+      rgba(245, 245, 245, 0.42) 64%,
+      rgba(245, 245, 245, 0.14) 84%,
       rgba(245, 245, 245, 0) 100%
     );
   }
@@ -837,12 +871,11 @@ html.skip-loader #loader { display: none !important; }
   body.pagina-home.hero-under-header .menu::before {
     background: linear-gradient(
       to bottom,
-      rgba(0, 0, 0, 1) 0,
-      rgba(0, 0, 0, 1) calc(env(safe-area-inset-top, 0px) + 4.35rem),
-      rgba(0, 0, 0, 0.92) calc(env(safe-area-inset-top, 0px) + 5.4rem),
-      rgba(0, 0, 0, 0.72) calc(env(safe-area-inset-top, 0px) + 6.7rem),
-      rgba(0, 0, 0, 0.42) calc(env(safe-area-inset-top, 0px) + 8.1rem),
-      rgba(0, 0, 0, 0.14) calc(env(safe-area-inset-top, 0px) + 9.4rem),
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 0.94) 18%,
+      rgba(0, 0, 0, 0.74) 40%,
+      rgba(0, 0, 0, 0.42) 64%,
+      rgba(0, 0, 0, 0.14) 84%,
       rgba(0, 0, 0, 0) 100%
     );
   }

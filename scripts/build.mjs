@@ -371,12 +371,14 @@ function page({ depth, title, desc, current, body, root, back, hero_html = '' })
     `<a href="mailto:${esc(site.email)}">${esc(site.etichetta_email || 'Contattami')}</a>`
   ].join('<span class="linea linea-corta" aria-hidden="true"></span>');
   const extraBody = current === 'progetto' ? `<div id="scrollProgress" class="scroll-progress" aria-hidden="true"></div><div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-modal="true"><button type="button" class="lightbox-chiudi" aria-label="Chiudi visualizzazione a schermo pieno">x</button><img class="lightbox-img" src="" alt="" style="display:none;"><video class="lightbox-video" src="" autoplay loop muted playsinline controls style="display:none;"></video></div>` : '';
+  const isDarkInit = current === 'chi-sono' || current === 'home';
+  const bodyCls = current ? (current === 'home' ? ' class="pagina-home hero-under-header"' : ` class="pagina-${current}"`) : '';
   return `<!doctype html>
-<html lang="${site.lingua || 'it'}">
+<html lang="${site.lingua || 'it'}" style="background-color:${isDarkInit ? '#000000' : '#f5f5f5'};">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="${current === 'chi-sono' || current === 'home' ? '#000000' : '#f5f5f5'}">
+<meta name="theme-color" content="${isDarkInit ? '#000000' : '#f5f5f5'}">
 <title>${esc(full)}</title>
 <meta name="description" content="${esc(desc || site.descrizione)}">
 <meta property="og:title" content="${esc(full)}">
@@ -388,14 +390,15 @@ function page({ depth, title, desc, current, body, root, back, hero_html = '' })
 <link rel="apple-touch-icon" href="${p}apple-touch-icon.png">
 <link rel="preload" href="${p}fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${p}css/tokens.css?v=3.0">
-<link rel="stylesheet" href="${p}css/style.css?v=3.8">
+<link rel="stylesheet" href="${p}css/style.css?v=3.9">
 </head>
-<body${current ? ` class="pagina-${current}"` : ''}>
+<body${bodyCls}>
 ${pageLoaderHtml}
 <div id="cursorBadge" class="cursor-badge" aria-hidden="true"></div>
 ${extraBody}
 <a class="salta" href="#contenuto">Vai al contenuto</a>
 <header class="menu">
+  <div class="header-safe-cap" aria-hidden="true"></div>
   <button type="button" class="menu-nome" aria-label="${esc(site.nome)}"><span class="nome-esteso">${esc(site.nome)}</span><span class="nome-alias" aria-hidden="true">${esc(site.alias || site.nome)}</span></button>
   <nav class="menu-voci" aria-label="Principale">
     ${back
@@ -504,8 +507,12 @@ ${body}
         var isHeroUnder = isMasked && rRect.bottom > 56;
         if (isHeroUnder !== lastHeroUnder) {
           document.body.classList.toggle('hero-under-header', isHeroUnder);
+          var bgHex = isHeroUnder ? '#000000' : '#f5f5f5';
+          document.documentElement.style.backgroundColor = bgHex;
+          mask.style.backgroundColor = bgHex;
+          root.style.backgroundColor = bgHex;
           var tc = document.querySelector('meta[name="theme-color"]');
-          if (tc) tc.setAttribute('content', isHeroUnder ? '#000000' : '#f5f5f5');
+          if (tc) tc.setAttribute('content', bgHex);
           lastHeroUnder = isHeroUnder;
         }
 
@@ -1053,7 +1060,7 @@ writeFileSync(`${OUT}/index.html`, page({
 const antiFlicker = `<script>try{var r=false,n=performance.getEntriesByType('navigation')[0];if(n)r=(n.type==='reload');else if(performance.navigation)r=(performance.navigation.type===1);if(document.referrer&&new URL(document.referrer).origin===window.location.origin&&sessionStorage.getItem('portfolio_loader_shown')&&!r){document.documentElement.classList.add('skip-loader');}}catch(e){}</script>`;
 const loaderDiv = `<div id="loader" aria-hidden="true"><div class="loader-inner"><div class="loader-log" id="loaderLog"></div><div class="loader-barra"><div class="loader-fill" id="loaderFill"></div></div><p class="loader-pct" id="loaderPct">0%</p></div></div>`;
 let homeHtml = readFileSync(`${OUT}/index.html`, 'utf8');
-homeHtml = homeHtml.replace(/class="pagina-home">/, '$&' + antiFlicker + loaderDiv).replace('</body>', '<script src="loader.js?v=3.2"></script></body>');
+homeHtml = homeHtml.replace(/class="pagina-home[^"]*">/, '$&' + antiFlicker + loaderDiv).replace('</body>', '<script src="loader.js?v=3.2"></script></body>');
 writeFileSync(`${OUT}/index.html`, homeHtml);
 
 // Dettaglio
