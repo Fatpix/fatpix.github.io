@@ -387,7 +387,7 @@ function page({ depth, title, desc, current, body, root, back, hero_html = '' })
 <link rel="apple-touch-icon" href="${p}apple-touch-icon.png">
 <link rel="preload" href="${p}fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${p}css/tokens.css?v=3.0">
-<link rel="stylesheet" href="${p}css/style.css?v=3.2">
+<link rel="stylesheet" href="${p}css/style.css?v=3.4">
 </head>
 <body${current ? ` class="pagina-${current}"` : ''}>
 ${pageLoaderHtml}

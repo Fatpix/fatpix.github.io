@@ -446,10 +446,10 @@ body.pagina-progetto main {
 
 .progetto-meta dt {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 600;
+  font-size: 0.82rem;
+  font-weight: 400;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   color: var(--colore-testo-attenuato);
 }
 
@@ -464,7 +464,7 @@ body.pagina-progetto main {
 
 .progetto-meta .progetto-meta-year dd {
   font-family: var(--font-mono);
-  font-size: clamp(0.85rem, 1vw, 0.95rem);
+  font-size: clamp(0.95rem, 1.05vw, 1.05rem);
   font-weight: 400;
   letter-spacing: 0.05em;
 }
