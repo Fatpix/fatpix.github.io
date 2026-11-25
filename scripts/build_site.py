@@ -368,7 +368,7 @@ def page(depth=0, title='', desc='', current='', body='', root=False, back=False
 <link rel="apple-touch-icon" href="__P__apple-touch-icon.png">
 <link rel="preload" href="__P__fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="__P__css/tokens.css?v=3.0">
-<link rel="stylesheet" href="__P__css/style.css?v=4.1">
+<link rel="stylesheet" href="__P__css/style.css?v=4.2">
 </head>
 <body__BODY_CLASS__>
 __PAGE_LOADER_HTML__
@@ -1115,6 +1115,8 @@ for i, l in enumerate(lavori):
 
     # Metadata
     meta_items = []
+    if m.get('titolo'):
+        meta_items.append(f'<div class="progetto-meta-title"><dt>Project</dt><dd><h1>{esc(m["titolo"])}</h1></dd></div>')
     if m.get('anno'):
         meta_items.append(f'<div class="progetto-meta-year"><dt>Year</dt><dd>{esc(m["anno"])}</dd></div>')
     if m.get('ruolo'):
@@ -1154,13 +1156,12 @@ for i, l in enumerate(lavori):
 
     detail_body = f"""<article class="progetto-dettaglio">
 <header class="progetto-testata">
-  <div class="progetto-titolo-blocco">
-    <h1>{esc(m.get('titolo', ''))}</h1>
+  <div class="progetto-testata-griglia{' senza-hero' if not hero_img else ''}">
     {hero_html}
+    <dl class="meta progetto-meta">
+      {meta_html}
+    </dl>
   </div>
-  <dl class="meta progetto-meta">
-    {meta_html}
-  </dl>
 </header>
 
 <div class="progetto-intro-griglia">

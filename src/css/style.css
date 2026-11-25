@@ -400,19 +400,19 @@ body.pagina-home main#contenuto {
 .testo p { margin: 0 0 var(--spazio-m); }
 .galleria { display: grid; gap: var(--spazio-m); margin-block: var(--spazio-l); }
 .galleria img { width: 100%; border-radius: var(--raggio); background: var(--colore-segnaposto); }
-.pulsante { display: inline-block; border: var(--spessore-linea) solid var(--colore-testo); padding: 0.6rem 1.1rem; text-decoration: none; margin: 0 var(--spazio-s) var(--spazio-s) 0; font-family: var(--font-mono); font-size: var(--corpo-mono); letter-spacing: 0.04em; transition: color .15s; }
-.pulsante:hover { color: var(--colore-hover); }
-.sequenza { display: flex; justify-content: space-between; gap: var(--spazio-m); border-top: var(--spessore-linea) solid var(--colore-linea); margin-top: var(--spazio-l); padding-top: var(--spazio-m); font-family: var(--font-mono); font-size: var(--corpo-mono); letter-spacing: 0.04em; }
+.pulsante { display: inline-block; border: var(--spessore-linea) solid var(--colore-testo); padding: 0.6rem 1.1rem; text-decoration: none; margin: 0 var(--spazio-s) var(--spazio-s) 0; font-family: var(--font-mono); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; transition: color .15s, border-color .15s; }
+.pulsante:hover { color: var(--colore-hover); border-color: var(--colore-hover); }
+.sequenza { display: flex; justify-content: space-between; gap: var(--spazio-m); border-top: 1px solid rgba(0, 0, 0, 0.12); margin-top: var(--spazio-l); padding-top: var(--spazio-m); font-family: var(--font-mono); font-size: clamp(0.8rem, 0.95vw, 0.9rem); letter-spacing: 0.05em; }
 .sequenza a { text-decoration: none; color: var(--colore-testo); transition: color 0.15s ease; }
 .sequenza a:hover { color: var(--colore-hover); }
 
 /* ── Layout pagina Progetto (Dettaglio modulare da Figma) ─ */
 body.pagina-progetto main {
-  padding-top: clamp(11rem, 14vw, 13.5rem);
+  padding-top: clamp(5.5rem, 8.5vw, 8rem);
 }
 @media (max-width: 44rem) {
   body.pagina-progetto main {
-    padding-top: calc(var(--menu-h-mobile) + var(--spazio-l));
+    padding-top: calc(env(safe-area-inset-top, 0px) + var(--menu-h-mobile) + 2.25rem);
   }
 }
 
@@ -424,32 +424,29 @@ body.pagina-progetto main {
 }
 
 .progetto-testata {
+  display: block;
+}
+
+.progetto-testata-griglia {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(14rem, 22rem);
-  gap: clamp(2rem, 5vw, 4.5rem);
-  align-items: start;
+  grid-template-columns: minmax(0, 1.45fr) minmax(15rem, 1fr);
+  column-gap: clamp(2rem, 4.5vw, 4.5rem);
+  align-items: stretch;
 }
 
-.progetto-titolo-blocco {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spazio-m);
+.progetto-testata-griglia.senza-hero {
+  grid-template-columns: minmax(0, 34rem);
+}
+
+.progetto-hero-media {
+  width: 100%;
   min-width: 0;
-}
-
-.progetto-titolo-blocco h1 {
-  font-family: var(--font-testo);
-  font-size: clamp(2.5rem, 5.5vw, 4rem);
-  font-weight: 500;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  margin: 0;
 }
 
 .progetto-hero-media img,
 .progetto-hero-media video {
   width: 100%;
-  max-width: 32rem;
+  height: 100%;
   aspect-ratio: 16 / 9;
   object-fit: cover;
   border-radius: var(--raggio);
@@ -460,25 +457,40 @@ body.pagina-progetto main {
 .progetto-meta {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  border-top: none;
-  padding-top: 0.25rem;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.14);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.14);
+  padding-block: 0.9rem;
   margin: 0;
+  min-width: 0;
 }
 
 .progetto-meta > div {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.2rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  transition: border-color 0.25s ease;
+}
+
+.progetto-meta > div:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.progetto-meta > div:not(:last-child):hover {
+  border-bottom-color: rgba(239, 17, 17, 0.35);
 }
 
 .progetto-meta dt {
   font-family: var(--font-mono);
-  font-size: 0.82rem;
-  font-weight: 400;
+  font-size: 0.72rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--colore-testo-attenuato);
+  letter-spacing: 0.12em;
+  color: #777777;
 }
 
 .progetto-meta dd {
@@ -486,15 +498,27 @@ body.pagina-progetto main {
   font-size: clamp(0.95rem, 1.1vw, 1.05rem);
   font-weight: 500;
   line-height: 1.35;
-  color: var(--colore-testo);
+  letter-spacing: -0.005em;
+  color: #111111;
+  margin: 0;
+}
+
+.progetto-meta .progetto-meta-title h1 {
+  font-family: var(--font-testo);
+  font-size: clamp(1.2rem, 1.45vw, 1.45rem);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: #000000;
   margin: 0;
 }
 
 .progetto-meta .progetto-meta-year dd {
   font-family: var(--font-mono);
-  font-size: clamp(0.95rem, 1.05vw, 1.05rem);
+  font-size: clamp(0.84rem, 0.95vw, 0.94rem);
   font-weight: 400;
   letter-spacing: 0.05em;
+  color: #444444;
 }
 
 .progetto-intro-griglia {
@@ -516,7 +540,8 @@ body.pagina-progetto main {
 
 .progetto-testo {
   font-family: var(--font-testo);
-  font-size: clamp(0.9rem, 1vw, 0.98rem);
+  font-size: clamp(0.88rem, 0.98vw, 0.96rem);
+  font-weight: 400;
   line-height: 1.6;
   max-width: 52rem;
   min-width: 0;
@@ -526,6 +551,14 @@ body.pagina-progetto main {
 
 .progetto-testo p {
   margin: 0 0 1.25rem;
+}
+
+.progetto-testo p:first-child {
+  font-size: clamp(1rem, 1.15vw, 1.1rem);
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -0.005em;
+  color: #111111;
 }
 
 .progetto-testo p:last-child {
@@ -580,14 +613,28 @@ body.pagina-progetto main {
 }
 
 @media (max-width: 56rem) {
-  .progetto-testata {
+  .progetto-testata-griglia {
     grid-template-columns: 1fr;
     gap: var(--spazio-l);
+  }
+  .progetto-hero-media img,
+  .progetto-hero-media video {
+    height: auto;
   }
   .progetto-meta {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: var(--spazio-m);
+    border-bottom: none;
+    padding-block: 1.1rem 0;
+  }
+  .progetto-meta .progetto-meta-title {
+    grid-column: 1 / -1;
+  }
+  .progetto-meta > div,
+  .progetto-meta > div:last-child {
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   }
   .progetto-intro-griglia {
     grid-template-columns: 1fr;

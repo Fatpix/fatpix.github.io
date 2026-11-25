@@ -390,7 +390,7 @@ function page({ depth, title, desc, current, body, root, back, hero_html = '' })
 <link rel="apple-touch-icon" href="${p}apple-touch-icon.png">
 <link rel="preload" href="${p}fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${p}css/tokens.css?v=3.0">
-<link rel="stylesheet" href="${p}css/style.css?v=4.1">
+<link rel="stylesheet" href="${p}css/style.css?v=4.2">
 </head>
 <body${bodyCls}>
 ${pageLoaderHtml}
@@ -1100,6 +1100,7 @@ lavori.forEach((l, i) => {
 </nav>`;
 
   const metaItems = [
+    m.titolo ? `<div class="progetto-meta-title"><dt>Project</dt><dd><h1>${esc(m.titolo)}</h1></dd></div>` : '',
     m.anno ? `<div class="progetto-meta-year"><dt>Year</dt><dd>${esc(m.anno)}</dd></div>` : '',
     m.ruolo ? `<div><dt>Role</dt><dd>${esc(m.ruolo)}</dd></div>` : '',
     m.team ? `<div><dt>Team</dt><dd>${esc(m.team)}</dd></div>` : '',
@@ -1130,13 +1131,12 @@ lavori.forEach((l, i) => {
 
   const detailBody = `<article class="progetto-dettaglio">
 <header class="progetto-testata">
-  <div class="progetto-titolo-blocco">
-    <h1>${esc(m.titolo)}</h1>
+  <div class="progetto-testata-griglia${!m.hero ? ' senza-hero' : ''}">
     ${heroHtml}
+    <dl class="meta progetto-meta">
+      ${metaItems}
+    </dl>
   </div>
-  <dl class="meta progetto-meta">
-    ${metaItems}
-  </dl>
 </header>
 
 <div class="progetto-intro-griglia">
