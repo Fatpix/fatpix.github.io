@@ -2,7 +2,8 @@
 <html lang="it">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
 <title>About me | Filippo Arpe</title>
 <meta name="description" content="I'm a young German/Italian web designer, motion designer, and video maker with an incurable passion for anything creative or techy. I'm not one to stick to a single lane: if there's something new to try, I'm already halfway there – whether it's designing a website, animating a video, or getting my hands dirty with a hands-on project (literally, I don't mind a bit of mess).">
 <meta property="og:title" content="About me | Filippo Arpe">
@@ -14,7 +15,7 @@
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="preload" href="../fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="../css/tokens.css?v=3.0">
-<link rel="stylesheet" href="../css/style.css?v=3.7">
+<link rel="stylesheet" href="../css/style.css?v=3.8">
 </head>
 <body class="pagina-chi-sono">
 <div id="pageLoader" class="page-loader" aria-hidden="true">
@@ -706,6 +707,8 @@
         var isHeroUnder = isMasked && rRect.bottom > 56;
         if (isHeroUnder !== lastHeroUnder) {
           document.body.classList.toggle('hero-under-header', isHeroUnder);
+          var tc = document.querySelector('meta[name="theme-color"]');
+          if (tc) tc.setAttribute('content', isHeroUnder ? '#000000' : '#f5f5f5');
           lastHeroUnder = isHeroUnder;
         }
 

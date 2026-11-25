@@ -350,11 +350,13 @@ def page(depth=0, title='', desc='', current='', body='', root=False, back=False
 
     extra_body = '<div id="scrollProgress" class="scroll-progress" aria-hidden="true"></div><div id="lightbox" class="lightbox" aria-hidden="true" role="dialog" aria-modal="true"><button type="button" class="lightbox-chiudi" aria-label="Chiudi visualizzazione a schermo pieno">x</button><img class="lightbox-img" src="" alt="" style="display:none;"><video class="lightbox-video" src="" autoplay loop muted playsinline controls style="display:none;"></video></div>' if current == 'progetto' else ''
 
+    theme_color = '#000000' if current in ('chi-sono', 'home') else '#f5f5f5'
     template = """<!doctype html>
 <html lang="__LANG__">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="__THEME_COLOR__">
 <title>__TITLE__</title>
 <meta name="description" content="__DESC__">
 <meta property="og:title" content="__TITLE__">
@@ -366,7 +368,7 @@ def page(depth=0, title='', desc='', current='', body='', root=False, back=False
 <link rel="apple-touch-icon" href="__P__apple-touch-icon.png">
 <link rel="preload" href="__P__fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="__P__css/tokens.css?v=3.0">
-<link rel="stylesheet" href="__P__css/style.css?v=3.7">
+<link rel="stylesheet" href="__P__css/style.css?v=3.8">
 </head>
 <body__BODY_CLASS__>
 __PAGE_LOADER_HTML__
@@ -478,6 +480,8 @@ __BODY__
         var isHeroUnder = isMasked && rRect.bottom > 56;
         if (isHeroUnder !== lastHeroUnder) {
           document.body.classList.toggle('hero-under-header', isHeroUnder);
+          var tc = document.querySelector('meta[name="theme-color"]');
+          if (tc) tc.setAttribute('content', isHeroUnder ? '#000000' : '#f5f5f5');
           lastHeroUnder = isHeroUnder;
         }
 
@@ -938,6 +942,7 @@ __BODY__
 </html>"""
     return (template
         .replace('__LANG__', esc(site.get('lingua', 'it')))
+        .replace('__THEME_COLOR__', theme_color)
         .replace('__TITLE__', esc(full))
         .replace('__DESC__', esc(desc or site.get('descrizione', '')))
         .replace('__P__', p)

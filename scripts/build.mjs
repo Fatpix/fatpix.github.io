@@ -375,7 +375,8 @@ function page({ depth, title, desc, current, body, root, back, hero_html = '' })
 <html lang="${site.lingua || 'it'}">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="${current === 'chi-sono' || current === 'home' ? '#000000' : '#f5f5f5'}">
 <title>${esc(full)}</title>
 <meta name="description" content="${esc(desc || site.descrizione)}">
 <meta property="og:title" content="${esc(full)}">
@@ -387,7 +388,7 @@ function page({ depth, title, desc, current, body, root, back, hero_html = '' })
 <link rel="apple-touch-icon" href="${p}apple-touch-icon.png">
 <link rel="preload" href="${p}fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${p}css/tokens.css?v=3.0">
-<link rel="stylesheet" href="${p}css/style.css?v=3.7">
+<link rel="stylesheet" href="${p}css/style.css?v=3.8">
 </head>
 <body${current ? ` class="pagina-${current}"` : ''}>
 ${pageLoaderHtml}
@@ -503,6 +504,8 @@ ${body}
         var isHeroUnder = isMasked && rRect.bottom > 56;
         if (isHeroUnder !== lastHeroUnder) {
           document.body.classList.toggle('hero-under-header', isHeroUnder);
+          var tc = document.querySelector('meta[name="theme-color"]');
+          if (tc) tc.setAttribute('content', isHeroUnder ? '#000000' : '#f5f5f5');
           lastHeroUnder = isHeroUnder;
         }
 

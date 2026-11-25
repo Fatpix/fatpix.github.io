@@ -339,7 +339,7 @@ body.pagina-home main#contenuto {
 }
 .lightbox-chiudi {
   position: fixed;
-  top: clamp(1.2rem, 2.5vw, 2.5rem);
+  top: calc(env(safe-area-inset-top, 0px) + clamp(1.2rem, 2.5vw, 2.5rem));
   left: var(--menu-x);
   z-index: 100005;
   background: transparent;
@@ -811,25 +811,24 @@ html.skip-loader #loader { display: none !important; }
     background: transparent;
   }
 
-  /* Gradiente morbido sullo sfondo della pagina (chiaro su Works/Progetti, nero su About me/Hero scuro) */
+  /* Gradiente morbido sullo sfondo della pagina, esteso anche dietro la status bar iOS (safe-area-inset-top) */
   .menu::before {
     content: "";
     position: fixed;
-    top: -5rem;
+    top: -4rem;
     left: -1rem;
     right: -1rem;
-    height: 11.25rem;
+    height: calc(env(safe-area-inset-top, 0px) + 10.5rem);
     z-index: 90;
     pointer-events: none;
     background: linear-gradient(
       to bottom,
-      rgba(245, 245, 245, 1) 0%,
-      rgba(245, 245, 245, 0.98) 44.4%,
-      rgba(245, 245, 245, 0.9) 55%,
-      rgba(245, 245, 245, 0.72) 66%,
-      rgba(245, 245, 245, 0.44) 77%,
-      rgba(245, 245, 245, 0.16) 88%,
-      rgba(245, 245, 245, 0.04) 95%,
+      rgba(245, 245, 245, 1) 0,
+      rgba(245, 245, 245, 1) calc(env(safe-area-inset-top, 0px) + 4.35rem),
+      rgba(245, 245, 245, 0.92) calc(env(safe-area-inset-top, 0px) + 5.4rem),
+      rgba(245, 245, 245, 0.72) calc(env(safe-area-inset-top, 0px) + 6.7rem),
+      rgba(245, 245, 245, 0.42) calc(env(safe-area-inset-top, 0px) + 8.1rem),
+      rgba(245, 245, 245, 0.14) calc(env(safe-area-inset-top, 0px) + 9.4rem),
       rgba(245, 245, 245, 0) 100%
     );
   }
@@ -838,13 +837,12 @@ html.skip-loader #loader { display: none !important; }
   body.pagina-home.hero-under-header .menu::before {
     background: linear-gradient(
       to bottom,
-      rgba(0, 0, 0, 1) 0%,
-      rgba(0, 0, 0, 0.98) 44.4%,
-      rgba(0, 0, 0, 0.9) 55%,
-      rgba(0, 0, 0, 0.72) 66%,
-      rgba(0, 0, 0, 0.44) 77%,
-      rgba(0, 0, 0, 0.16) 88%,
-      rgba(0, 0, 0, 0.04) 95%,
+      rgba(0, 0, 0, 1) 0,
+      rgba(0, 0, 0, 1) calc(env(safe-area-inset-top, 0px) + 4.35rem),
+      rgba(0, 0, 0, 0.92) calc(env(safe-area-inset-top, 0px) + 5.4rem),
+      rgba(0, 0, 0, 0.72) calc(env(safe-area-inset-top, 0px) + 6.7rem),
+      rgba(0, 0, 0, 0.42) calc(env(safe-area-inset-top, 0px) + 8.1rem),
+      rgba(0, 0, 0, 0.14) calc(env(safe-area-inset-top, 0px) + 9.4rem),
       rgba(0, 0, 0, 0) 100%
     );
   }
@@ -856,7 +854,7 @@ html.skip-loader #loader { display: none !important; }
     top: 0;
     left: 0;
     right: 0;
-    height: 3.5rem;
+    height: calc(env(safe-area-inset-top, 0px) + 3.5rem);
     z-index: 95;
     pointer-events: auto;
     background: transparent;
@@ -864,7 +862,7 @@ html.skip-loader #loader { display: none !important; }
 
   /* Nome: orizzontale fisso in alto a sinistra, in negativo, rosso solido al tocco */
   .menu-nome {
-    top: 0.5rem;
+    top: calc(env(safe-area-inset-top, 0px) + 0.5rem);
     left: calc(var(--spazio-m) - 0.55rem);
     padding: 0.75rem 0.55rem;
     z-index: 100;
@@ -889,7 +887,7 @@ html.skip-loader #loader { display: none !important; }
     position: static;
   }
   .menu-voci a {
-    top: 0.5rem;
+    top: calc(env(safe-area-inset-top, 0px) + 0.5rem);
     left: auto;
     padding: 0.85rem 0.55rem;
     z-index: 100;
@@ -914,13 +912,13 @@ html.skip-loader #loader { display: none !important; }
     mix-blend-mode: normal !important;
   }
 
-  /* Contenuto: margini simmetrici, clearance dalla top bar */
+  /* Contenuto: margini simmetrici, clearance dalla top bar e safe-area */
   main,
   main.contenitore {
     width: auto;
     max-width: none;
     margin-inline: var(--spazio-m);
-    padding-top: calc(var(--menu-h-mobile) + var(--spazio-l));
+    padding-top: calc(env(safe-area-inset-top, 0px) + var(--menu-h-mobile) + var(--spazio-l));
   }
 
   /* Nav progetto: colonna per evitare testi schiacciati */
