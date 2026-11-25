@@ -89,6 +89,11 @@ collections:
               - { name: "ref", label: "Codice Referenza (es: FP-019 o 576602E)", widget: "string", required: false }
               - { name: "durata", label: "Durata (es: ±28 MO)", widget: "string", required: false }
               - { name: "link", label: "Link Esterno (opzionale)", widget: "string", required: false }
+          - { name: "mostra_terminale", label: "Mostra Finestra Terminale Mac (Interessi & Sperimentazioni)", widget: "boolean", default: true, hint: "Attiva o nascondi la finestra stile macOS Terminal sotto la sezione Experience." }
+          - { name: "terminale_titolo", label: "Titolo Finestra Terminale", widget: "string", default: "fatpix — ~/now — -zsh", required: false }
+          - { name: "terminale_comando", label: "Comando Prompt Terminale", widget: "string", default: "cat ./now.txt", required: false }
+          - { name: "terminale_aggiornamento", label: "Data / Stato Aggiornamento", widget: "string", default: "LAST UPDATE: NOV 2026", required: false }
+          - { name: "terminale_nota", label: "Testo libero nel Terminale (Interessi & Sperimentazioni)", widget: "text", required: false, hint: "Scrivi liberamente i tuoi interessi, sperimentazioni o aggiornamenti attuali. Puoi andare a capo liberamente o separare i paragrafi con una riga vuota." }
           - { name: "body", label: "Biografia / Presentazione", widget: "markdown" }
 
       - name: "sito"

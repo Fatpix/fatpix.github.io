@@ -31,18 +31,26 @@ def parse(file_path):
         stripped = line.strip()
         indent = len(line) - len(line.lstrip(' '))
         
-        if not stripped or stripped.startswith('#'):
-            i += 1
-            continue
-            
         if multiline_key is not None:
+            if not stripped:
+                if multiline_target.get('sep') == '\n' and multiline_target['dict'][multiline_key]:
+                    multiline_target['dict'][multiline_key] += '\n'
+                i += 1
+                continue
             if indent > multiline_target['indent']:
-                multiline_target['dict'][multiline_key] = (multiline_target['dict'][multiline_key] + ' ' + stripped).strip()
+                sep = multiline_target.get('sep', ' ')
+                prev = multiline_target['dict'][multiline_key]
+                multiline_target['dict'][multiline_key] = f"{prev}{sep}{stripped}" if prev else stripped
                 i += 1
                 continue
             else:
+                multiline_target['dict'][multiline_key] = multiline_target['dict'][multiline_key].strip()
                 multiline_key = None
                 multiline_target = None
+
+        if not stripped or stripped.startswith('#'):
+            i += 1
+            continue
                 
         if indent == 0 and ':' in line:
             idx = line.index(':')
@@ -54,7 +62,7 @@ def parse(file_path):
             if val in ('>', '>-', '|', '|-'):
                 meta[key] = ""
                 multiline_key = key
-                multiline_target = {'dict': meta, 'indent': 0}
+                multiline_target = {'dict': meta, 'indent': 0, 'sep': '\n' if val.startswith('|') else ' '}
             else:
                 meta[key] = val
             i += 1
@@ -64,7 +72,7 @@ def parse(file_path):
             rest = stripped[2:].strip()
             if current_key and not isinstance(meta.get(current_key), list):
                 meta[current_key] = []
-                current_list = meta[current_key]
+            current_list = meta.get(current_key)
                 
             if ':' in rest:
                 k, v = rest.split(':', 1)
@@ -76,7 +84,7 @@ def parse(file_path):
                 if v in ('>', '>-', '|', '|-'):
                     current_dict[k] = ""
                     multiline_key = k
-                    multiline_target = {'dict': current_dict, 'indent': indent}
+                    multiline_target = {'dict': current_dict, 'indent': indent, 'sep': '\n' if v.startswith('|') else ' '}
             else:
                 item_val = rest.strip('"\'')
                 if current_list is not None:
@@ -92,7 +100,7 @@ def parse(file_path):
             if v in ('>', '>-', '|', '|-'):
                 current_dict[k] = ""
                 multiline_key = k
-                multiline_target = {'dict': current_dict, 'indent': indent}
+                multiline_target = {'dict': current_dict, 'indent': indent, 'sep': '\n' if v.startswith('|') else ' '}
             else:
                 current_dict[k] = v
             i += 1
@@ -1242,6 +1250,37 @@ exp_section_html = f"""  <section class="about-experience-sezione" id="experienc
     </div>
   </section>"""
 
+show_terminal = str(about['meta'].get('mostra_terminale', 'true')).strip().lower() != 'false'
+term_title = esc(str(about['meta'].get('terminale_titolo') or 'fatpix — ~/now — -zsh').strip())
+term_command = esc(str(about['meta'].get('terminale_comando') or 'cat ./now.txt').strip())
+term_updated = esc(str(about['meta'].get('terminale_aggiornamento') or '').strip())
+term_note_raw = str(about['meta'].get('terminale_nota') or '').strip()
+
+term_meta_html = f"""<div class="mac-terminal-meta">
+        {f'<span class="mac-terminal-title">{term_title}</span>' if term_title else '<span></span>'}
+        {f'<span class="mac-terminal-badge">{term_updated}</span>' if term_updated else ''}
+      </div>""" if (term_title or term_updated) else ''
+term_text_html = f'<div class="mac-terminal-text">\n{paras(term_note_raw)}\n        </div>' if term_note_raw else ''
+
+terminal_section_html = f"""  <section class="about-terminal-sezione" id="terminalSection" aria-label="Aggiornamenti e sperimentazioni attuali">
+    <div class="mac-terminal" id="macTerminalWindow">
+      {term_meta_html}
+      <div class="mac-terminal-body">
+        <div class="mac-terminal-prompt">
+          <span class="term-user">fatpix</span>
+          <span class="term-sym">%</span>
+          <span class="term-cmd">{term_command}</span>
+        </div>
+        {term_text_html}
+        <div class="mac-terminal-footer-line">
+          <span class="term-user">fatpix</span>
+          <span class="term-sym">%</span>
+          <span class="term-cursor" aria-hidden="true"></span>
+        </div>
+      </div>
+    </div>
+  </section>""" if show_terminal else ""
+
 def extract_words(val, default_list):
     if not val:
         return default_list
@@ -1731,6 +1770,7 @@ about_body = f"""<article class="about-sezione">
   </section>
 
 {exp_section_html}
+{terminal_section_html}
 </article>
 {coin_3d_script.replace('__WORDS_LEFT__', words_left_json).replace('__WORDS_RIGHT__', words_right_json)}"""
 write('chi-sono', page(depth=1, current='chi-sono', title='About me', desc=about['body'].split('\n')[0], body=about_body))

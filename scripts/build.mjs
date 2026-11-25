@@ -24,20 +24,30 @@ function parse(file) {
     const stripped = line.trim();
     const indent = line.length - line.trimStart().length;
 
-    if (!stripped || stripped.startsWith('#')) {
-      i++;
-      continue;
-    }
-
     if (multilineKey !== null) {
+      if (!stripped) {
+        if (multilineTarget.sep === '\n' && multilineTarget.dict[multilineKey]) {
+          multilineTarget.dict[multilineKey] += '\n';
+        }
+        i++;
+        continue;
+      }
       if (indent > multilineTarget.indent) {
-        multilineTarget.dict[multilineKey] = (multilineTarget.dict[multilineKey] + ' ' + stripped).trim();
+        const sep = multilineTarget.sep || ' ';
+        const prev = multilineTarget.dict[multilineKey];
+        multilineTarget.dict[multilineKey] = prev ? `${prev}${sep}${stripped}` : stripped;
         i++;
         continue;
       } else {
+        multilineTarget.dict[multilineKey] = multilineTarget.dict[multilineKey].trim();
         multilineKey = null;
         multilineTarget = null;
       }
+    }
+
+    if (!stripped || stripped.startsWith('#')) {
+      i++;
+      continue;
     }
 
     if (indent === 0 && line.includes(':')) {
@@ -50,7 +60,7 @@ function parse(file) {
       if (['>', '>-', '|', '|-'].includes(val)) {
         meta[key] = '';
         multilineKey = key;
-        multilineTarget = { dict: meta, indent: 0 };
+        multilineTarget = { dict: meta, indent: 0, sep: val.startsWith('|') ? '\n' : ' ' };
       } else {
         meta[key] = val;
       }
@@ -74,7 +84,7 @@ function parse(file) {
         if (['>', '>-', '|', '|-'].includes(v)) {
           currentDict[k] = '';
           multilineKey = k;
-          multilineTarget = { dict: currentDict, indent: indent };
+          multilineTarget = { dict: currentDict, indent: indent, sep: v.startsWith('|') ? '\n' : ' ' };
         }
       } else {
         const itemVal = rest.replace(/^["']|["']$/g, '');
@@ -92,7 +102,7 @@ function parse(file) {
       if (['>', '>-', '|', '|-'].includes(v)) {
         currentDict[k] = '';
         multilineKey = k;
-        multilineTarget = { dict: currentDict, indent: indent };
+        multilineTarget = { dict: currentDict, indent: indent, sep: v.startsWith('|') ? '\n' : ' ' };
       } else {
         currentDict[k] = v;
       }
@@ -1258,6 +1268,35 @@ ${expItemsHtml}
     </div>
   </section>`;
 
+const showTerminal = String(about.meta.mostra_terminale ?? 'true').trim().toLowerCase() !== 'false';
+const termTitle = esc(String(about.meta.terminale_titolo || 'fatpix — ~/now — -zsh').trim());
+const termCommand = esc(String(about.meta.terminale_comando || 'cat ./now.txt').trim());
+const termUpdated = esc(String(about.meta.terminale_aggiornamento || '').trim());
+const termNoteRaw = String(about.meta.terminale_nota || '').trim();
+const termNoteHtml = termNoteRaw ? paras(termNoteRaw) : '';
+
+const terminalSectionHtml = showTerminal ? `  <section class="about-terminal-sezione" id="terminalSection" aria-label="Aggiornamenti e sperimentazioni attuali">
+    <div class="mac-terminal" id="macTerminalWindow">
+      ${(termTitle || termUpdated) ? `<div class="mac-terminal-meta">
+        ${termTitle ? `<span class="mac-terminal-title">${termTitle}</span>` : '<span></span>'}
+        ${termUpdated ? `<span class="mac-terminal-badge">${termUpdated}</span>` : ''}
+      </div>` : ''}
+      <div class="mac-terminal-body">
+        <div class="mac-terminal-prompt">
+          <span class="term-user">fatpix</span>
+          <span class="term-sym">%</span>
+          <span class="term-cmd">${termCommand}</span>
+        </div>
+        ${termNoteHtml ? `<div class="mac-terminal-text">\n${termNoteHtml}\n        </div>` : ''}
+        <div class="mac-terminal-footer-line">
+          <span class="term-user">fatpix</span>
+          <span class="term-sym">%</span>
+          <span class="term-cursor" aria-hidden="true"></span>
+        </div>
+      </div>
+    </div>
+  </section>` : '';
+
 const aboutBody = `<article class="about-sezione">
   <div class="about-layout">
   <div class="about-colonna-sinistra">
@@ -1316,6 +1355,7 @@ const aboutBody = `<article class="about-sezione">
   </section>
 
 ${expSectionHtml}
+${terminalSectionHtml}
 </article>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>

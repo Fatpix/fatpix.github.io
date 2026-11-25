@@ -76,6 +76,14 @@ parole_destra:
   - "Swiss Army Knife"
   - "Genova / Italy"
   - "Fatpix Studio"
+mostra_terminale: true
+terminale_titolo: "fatpix — ~/now — -zsh"
+terminale_comando: "cat ./now.txt"
+terminale_aggiornamento: "LAST UPDATE: NOV 2026"
+terminale_nota: |-
+  Lately I've been spending time experimenting with WebGL shaders, procedural textures in Three.js, and interactive 3D typography.
+
+  On the side, I'm still blending analog 35mm grain and motion graphics with clean code — always tinkering with tactile micro-interactions, Blender geometry nodes, and audio-reactive visuals between Genova and the digital void.
 ---
 I'm a young German/Italian web designer, motion designer, and video maker with an incurable passion for anything creative or techy. I'm not one to stick to a single lane: if there's something new to try, I'm already halfway there – whether it's designing a website, animating a video, or getting my hands dirty with a hands-on project (literally, I don't mind a bit of mess).
 
