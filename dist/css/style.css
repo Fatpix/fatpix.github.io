@@ -811,7 +811,7 @@ html.skip-loader #loader { display: none !important; }
     background: transparent;
   }
 
-  /* Gradiente morbido liquid glass / opacità sotto all'header mobile */
+  /* Gradiente di sola sfocatura sotto all'header mobile (nessun colore/tinta sovrapposta) */
   .menu::before {
     content: "";
     position: fixed;
@@ -821,27 +821,11 @@ html.skip-loader #loader { display: none !important; }
     height: 5.5rem;
     z-index: 90;
     pointer-events: none;
-    background: linear-gradient(
-      to bottom,
-      rgba(245, 245, 245, 0.58) 0%,
-      rgba(245, 245, 245, 0.24) 55%,
-      rgba(245, 245, 245, 0) 100%
-    );
-    -webkit-backdrop-filter: blur(12px) saturate(160%);
-    backdrop-filter: blur(12px) saturate(160%);
+    background: transparent;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
     -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.72) 52%, transparent 100%);
     mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.72) 52%, transparent 100%);
-    transition: background 0.25s ease;
-  }
-
-  body.pagina-chi-sono .menu::before,
-  body.pagina-home.hero-under-header .menu::before {
-    background: linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0.58) 0%,
-      rgba(0, 0, 0, 0.24) 55%,
-      rgba(0, 0, 0, 0) 100%
-    );
   }
 
   /* Barriera touch dell'header: impedisce ai tocchi nella fascia alta di finire sui link sottostanti */

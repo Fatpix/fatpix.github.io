@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="../apple-touch-icon.png">
 <link rel="preload" href="../fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="../css/tokens.css?v=3.0">
-<link rel="stylesheet" href="../css/style.css?v=3.5">
+<link rel="stylesheet" href="../css/style.css?v=3.6">
 </head>
 <body class="pagina-chi-sono">
 <div id="pageLoader" class="page-loader" aria-hidden="true">
@@ -653,7 +653,6 @@
       var eased = 0;
       var isMasked = true;
       var exitThreshold = 0.46;
-      var lastHeroUnder = null;
 
       function rawProgress() {
         var rect = root.getBoundingClientRect();
@@ -702,15 +701,9 @@
           isMasked = true;
         }
 
-        var rRect = root.getBoundingClientRect();
-        var isHeroUnder = rRect.bottom > 56;
-        if (isHeroUnder !== lastHeroUnder) {
-          document.body.classList.toggle('hero-under-header', isHeroUnder);
-          lastHeroUnder = isHeroUnder;
-        }
-
         var hHud = root.querySelector('.pixel-player-hud');
         if (hHud) {
+          var rRect = root.getBoundingClientRect();
           if (rRect.bottom <= 40) {
             hHud.style.display = 'none';
           } else {

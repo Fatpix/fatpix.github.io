@@ -366,7 +366,7 @@ def page(depth=0, title='', desc='', current='', body='', root=False, back=False
 <link rel="apple-touch-icon" href="__P__apple-touch-icon.png">
 <link rel="preload" href="__P__fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="__P__css/tokens.css?v=3.0">
-<link rel="stylesheet" href="__P__css/style.css?v=3.5">
+<link rel="stylesheet" href="__P__css/style.css?v=3.6">
 </head>
 <body__BODY_CLASS__>
 __PAGE_LOADER_HTML__
@@ -425,7 +425,6 @@ __BODY__
       var eased = 0;
       var isMasked = true;
       var exitThreshold = 0.46;
-      var lastHeroUnder = null;
 
       function rawProgress() {
         var rect = root.getBoundingClientRect();
@@ -474,15 +473,9 @@ __BODY__
           isMasked = true;
         }
 
-        var rRect = root.getBoundingClientRect();
-        var isHeroUnder = rRect.bottom > 56;
-        if (isHeroUnder !== lastHeroUnder) {
-          document.body.classList.toggle('hero-under-header', isHeroUnder);
-          lastHeroUnder = isHeroUnder;
-        }
-
         var hHud = root.querySelector('.pixel-player-hud');
         if (hHud) {
+          var rRect = root.getBoundingClientRect();
           if (rRect.bottom <= 40) {
             hHud.style.display = 'none';
           } else {
