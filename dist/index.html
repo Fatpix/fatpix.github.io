@@ -14,7 +14,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preload" href="fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/tokens.css?v=3.0">
-<link rel="stylesheet" href="css/style.css?v=3.4">
+<link rel="stylesheet" href="css/style.css?v=3.5">
 </head>
 <body class="pagina-home"><script>try{var r=false,n=performance.getEntriesByType('navigation')[0];if(n)r=(n.type==='reload');else if(performance.navigation)r=(performance.navigation.type===1);if(document.referrer&&new URL(document.referrer).origin===window.location.origin&&sessionStorage.getItem('portfolio_loader_shown')&&!r){document.documentElement.classList.add('skip-loader');}}catch(e){}</script><div id="loader" aria-hidden="true"><div class="loader-inner"><div class="loader-log" id="loaderLog"></div><div class="loader-barra"><div class="loader-fill" id="loaderFill"></div></div><p class="loader-pct" id="loaderPct">0%</p></div></div>
 <div id="pageLoader" class="page-loader" aria-hidden="true">
@@ -159,6 +159,7 @@
       var eased = 0;
       var isMasked = true;
       var exitThreshold = 0.46;
+      var lastHeroUnder = null;
 
       function rawProgress() {
         var rect = root.getBoundingClientRect();
@@ -207,9 +208,15 @@
           isMasked = true;
         }
 
+        var rRect = root.getBoundingClientRect();
+        var isHeroUnder = rRect.bottom > 56;
+        if (isHeroUnder !== lastHeroUnder) {
+          document.body.classList.toggle('hero-under-header', isHeroUnder);
+          lastHeroUnder = isHeroUnder;
+        }
+
         var hHud = root.querySelector('.pixel-player-hud');
         if (hHud) {
-          var rRect = root.getBoundingClientRect();
           if (rRect.bottom <= 40) {
             hHud.style.display = 'none';
           } else {
