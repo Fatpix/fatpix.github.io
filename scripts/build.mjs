@@ -390,10 +390,51 @@ function page({ depth, title, desc, current, body, root, back, hero_html = '' })
 <link rel="apple-touch-icon" href="${p}apple-touch-icon.png">
 <link rel="preload" href="${p}fonts/pixelify-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${p}css/tokens.css?v=3.0">
-<link rel="stylesheet" href="${p}css/style.css?v=3.9">
+<link rel="stylesheet" href="${p}css/style.css?v=4.1">
 </head>
 <body${bodyCls}>
 ${pageLoaderHtml}
+<script>
+(function() {
+  var loader = document.getElementById('pageLoader');
+  if (!loader) return;
+  var isLoaded = false;
+  var hideTimer = null;
+  var showTimer = setTimeout(function() {
+    if (!isLoaded) {
+      loader.classList.add('mostra');
+      void loader.offsetWidth;
+      loader.classList.add('attivo');
+    }
+  }, 250);
+
+  function dismiss() {
+    isLoaded = true;
+    clearTimeout(showTimer);
+    clearTimeout(hideTimer);
+    if (!loader.classList.contains('attivo')) {
+      loader.classList.remove('mostra');
+      return;
+    }
+    loader.classList.remove('attivo');
+    hideTimer = setTimeout(function() {
+      if (!loader.classList.contains('attivo')) {
+        loader.classList.remove('mostra');
+      }
+    }, 380);
+  }
+
+  if (document.readyState === 'complete') {
+    dismiss();
+  } else {
+    window.addEventListener('load', function() {
+      setTimeout(dismiss, 100);
+    });
+    setTimeout(dismiss, 6000);
+  }
+  window.__dismissPageLoader = dismiss;
+})();
+</script>
 <div id="cursorBadge" class="cursor-badge" aria-hidden="true"></div>
 ${extraBody}
 <a class="salta" href="#contenuto">Vai al contenuto</a>
@@ -454,7 +495,7 @@ ${body}
       var eased = 0;
       var isMasked = true;
       var exitThreshold = 0.46;
-      var lastHeroUnder = null;
+      var lastHdrChannel = null;
 
       function rawProgress() {
         var rect = root.getBoundingClientRect();
@@ -467,6 +508,7 @@ ${body}
       function loop() {
         var p = rawProgress();
         eased += (p - eased) * easing;
+        var curAlpha = 1;
 
         if (eased >= exitThreshold) {
           if (isMasked) {
@@ -474,6 +516,7 @@ ${body}
             mask.style.maskImage = 'none';
             isMasked = false;
           }
+          curAlpha = 1;
         } else {
           var base = getInitialSize();
           var t = Math.min(1, Math.max(0, eased / exitThreshold));
@@ -486,6 +529,7 @@ ${body}
             var aT = (t - 0.25) / (1 - 0.25);
             alpha = Math.pow(aT, 2.0);
           }
+          curAlpha = alpha;
 
           var combinedMask;
           if (alpha <= 0.001) {
@@ -504,16 +548,26 @@ ${body}
         }
 
         var rRect = root.getBoundingClientRect();
-        var isHeroUnder = isMasked && rRect.bottom > 56;
-        if (isHeroUnder !== lastHeroUnder) {
-          document.body.classList.toggle('hero-under-header', isHeroUnder);
-          var bgHex = isHeroUnder ? '#000000' : '#f5f5f5';
-          document.documentElement.style.backgroundColor = bgHex;
-          mask.style.backgroundColor = bgHex;
-          root.style.backgroundColor = bgHex;
+        var mix = (rRect.bottom <= 56) ? 1 : curAlpha;
+        var c = Math.round(245 * mix);
+        if (c !== lastHdrChannel) {
+          var rgbTriplet = c + ', ' + c + ', ' + c;
+          var rgbStr = 'rgb(' + rgbTriplet + ')';
+          var isDarkDom = (c < 128);
+          document.body.style.setProperty('--hdr-rgb', rgbTriplet);
+          document.documentElement.style.backgroundColor = rgbStr;
+          mask.style.backgroundColor = rgbStr;
+          root.style.backgroundColor = rgbStr;
+          document.body.classList.toggle('hero-under-header', isDarkDom);
+          if (c > 0 && c < 245) {
+            document.body.classList.toggle('hero-trans-dark', isDarkDom);
+            document.body.classList.toggle('hero-trans-light', !isDarkDom);
+          } else {
+            document.body.classList.remove('hero-trans-dark', 'hero-trans-light');
+          }
           var tc = document.querySelector('meta[name="theme-color"]');
-          if (tc) tc.setAttribute('content', bgHex);
-          lastHeroUnder = isHeroUnder;
+          if (tc) tc.setAttribute('content', isDarkDom ? '#000000' : '#f5f5f5');
+          lastHdrChannel = c;
         }
 
         var hHud = root.querySelector('.pixel-player-hud');
@@ -939,34 +993,6 @@ ${body}
     initPixelVideoPlayers();
   }
 
-})();
-</script>
-<script>
-(function() {
-  var loader = document.getElementById('pageLoader');
-  if (!loader) return;
-  var isLoaded = false;
-  var showTimer = setTimeout(function() {
-    if (!isLoaded) {
-      loader.classList.add('attivo');
-    }
-  }, 250);
-
-  function dismiss() {
-    isLoaded = true;
-    clearTimeout(showTimer);
-    loader.classList.remove('attivo');
-  }
-
-  if (document.readyState === 'complete') {
-    dismiss();
-  } else {
-    window.addEventListener('load', function() {
-      setTimeout(dismiss, 100);
-    });
-    setTimeout(dismiss, 6000);
-  }
-  window.__dismissPageLoader = dismiss;
 })();
 </script>
 </body>
