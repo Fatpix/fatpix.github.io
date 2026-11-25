@@ -396,7 +396,7 @@
     document.addEventListener('mouseover', function(e) {
       var t = e.target;
       if (!t) return;
-      if (t.closest('#textClipReveal') || t.closest('.text-clip-reveal-root') || t.closest('#landingHero') || t.closest('.landing-hero-stage')) {
+      if (t.closest('#textClipReveal') || t.closest('.text-clip-reveal-root') || t.closest('#landingHero') || t.closest('.landing-hero-stage') || t.closest('.sequenza')) {
         hideBadge();
       } else if (t.closest('.about-foto')) {
         setBadge('Hi, this is me!');
