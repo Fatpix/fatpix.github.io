@@ -1,0 +1,7 @@
+{
+  "mostra_terminale": true,
+  "terminale_titolo": "fatpix — ~/now — -zsh",
+  "terminale_comando": "cat ./now.txt",
+  "terminale_aggiornamento": "LAST UPDATE: NOV 2026",
+  "terminale_nota": "Lately I've been spending time experimenting with WebGL shaders, procedural textures in Three.js, and interactive 3D typography.\n\nOn the side, I'm still blending analog 35mm grain and motion graphics with clean code — always tinkering with tactile micro-interactions, Blender geometry nodes, and audio-reactive visuals between Genova and the digital void."
+}

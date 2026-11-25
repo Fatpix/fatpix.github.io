@@ -149,7 +149,7 @@ async function copyAssets(from, to) {
   if (!existsSync(from)) return;
   for (const f of readdirSync(from)) {
     const ext = extname(f).toLowerCase();
-    if (ext === '.md') continue;
+    if (ext === '.md' || ext === '.json') continue;
     const src = join(from, f);
     const dst = join(to, f);
     if (sharp && ['.jpg', '.jpeg', '.png', '.webp'].includes(ext)) {
@@ -1123,11 +1123,20 @@ ${nav}
 
 // Chi sono
 const about = parse(`${C}/chi-sono/chi-sono.md`);
+const readAboutJson = name => {
+  const p = `${C}/chi-sono/${name}`;
+  if (!existsSync(p)) return {};
+  try { return JSON.parse(readFileSync(p, 'utf8')); } catch (e) { return {}; }
+};
+const skillsConf = readAboutJson('skills.json');
+const expConf = readAboutJson('experience.json');
+const termConf = readAboutJson('terminal.json');
+
 await copyAssets(`${C}/chi-sono`, `${OUT}/chi-sono`);
 generateAboutPlaceholder(`${OUT}/chi-sono`);
 const fotoSrc = esc(about.meta.foto || 'foto.svg');
 const location = esc(about.meta.location || 'Genova/Italy');
-const titoloSkills = esc(about.meta.titolo_skills || 'Skills');
+const titoloSkills = esc(skillsConf.titolo_skills || about.meta.titolo_skills || 'Skills');
 
 const extractWords = (val, defaultList) => {
   if (!val) return defaultList;
@@ -1158,11 +1167,11 @@ const defaultRight = [
   "Problem Solving", "Swiss Army Knife", "Genova / Italy", "Fatpix Studio"
 ];
 
-const wordsLeft = extractWords(about.meta.parole_sinistra, defaultLeft);
-const wordsRight = extractWords(about.meta.parole_destra, defaultRight);
+const wordsLeft = extractWords(skillsConf.parole_sinistra || about.meta.parole_sinistra, defaultLeft);
+const wordsRight = extractWords(skillsConf.parole_destra || about.meta.parole_destra, defaultRight);
 
-const titoloExperience = esc(about.meta.titolo_experience || 'Experience');
-let esperienzeRaw = about.meta.esperienze;
+const titoloExperience = esc(expConf.titolo_experience || about.meta.titolo_experience || 'Experience');
+let esperienzeRaw = expConf.esperienze || about.meta.esperienze;
 if (!esperienzeRaw || !Array.isArray(esperienzeRaw) || !esperienzeRaw.length) {
   esperienzeRaw = [
     {
@@ -1268,11 +1277,11 @@ ${expItemsHtml}
     </div>
   </section>`;
 
-const showTerminal = String(about.meta.mostra_terminale ?? 'true').trim().toLowerCase() !== 'false';
-const termTitle = esc(String(about.meta.terminale_titolo || 'fatpix — ~/now — -zsh').trim());
-const termCommand = esc(String(about.meta.terminale_comando || 'cat ./now.txt').trim());
-const termUpdated = esc(String(about.meta.terminale_aggiornamento || '').trim());
-const termNoteRaw = String(about.meta.terminale_nota || '').trim();
+const showTerminal = String(termConf.mostra_terminale ?? about.meta.mostra_terminale ?? 'true').trim().toLowerCase() !== 'false';
+const termTitle = esc(String(termConf.terminale_titolo ?? about.meta.terminale_titolo ?? 'fatpix — ~/now — -zsh').trim());
+const termCommand = esc(String(termConf.terminale_comando ?? about.meta.terminale_comando ?? 'cat ./now.txt').trim());
+const termUpdated = esc(String(termConf.terminale_aggiornamento ?? about.meta.terminale_aggiornamento ?? '').trim());
+const termNoteRaw = String(termConf.terminale_nota ?? about.meta.terminale_nota ?? '').trim();
 const termNoteHtml = termNoteRaw ? paras(termNoteRaw) : '';
 
 const terminalSectionHtml = showTerminal ? `  <section class="about-terminal-sezione" id="terminalSection" aria-label="Aggiornamenti e sperimentazioni attuali">

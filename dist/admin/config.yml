@@ -40,8 +40,68 @@ collections:
       - { name: "merch_02", label: "10. Merchandising 2 Destra [1000×1250 px — 4:5] (Foto / Video / GIF)", widget: "file", required: false, hint: "Media prodotto/packaging a destra nella coppia (4:5). Supporta foto, video o GIF." }
       - { name: "body", label: "Descrizione / Testo narrativo del progetto", widget: "markdown" }
 
+  - name: "about"
+    label: "About Me (Sezioni)"
+    files:
+      - name: "profilo"
+        label: "01 · Profilo & Biografia"
+        file: "content/chi-sono/chi-sono.md"
+        media_folder: ""
+        public_folder: ""
+        fields:
+          - { name: "foto", label: "Media Profilo [1000×1050 px — Quadrata o Verticale] (Foto / Video / GIF)", widget: "file", default: "foto.svg", hint: "Media del profilo (foto, video o GIF). Si adatta all'altezza della bio al suo fianco." }
+          - { name: "location", label: "Posizione / Città (es: Genova/Italy)", widget: "string", default: "Genova/Italy" }
+          - { name: "body", label: "Biografia / Presentazione", widget: "markdown", hint: "Testo principale della sezione Chi Sono / Who Am I." }
+
+      - name: "skills"
+        label: "02 · Skills & Moneta 3D"
+        file: "content/chi-sono/skills.json"
+        format: "json"
+        fields:
+          - { name: "titolo_skills", label: "Titolo Sezione", widget: "string", default: "Skills" }
+          - label: "Parole Lato Sinistro (Discipline / Skill)"
+            name: "parole_sinistra"
+            widget: "list"
+            required: false
+            hint: "Parole che scorrono sul lato sinistro della moneta 3D."
+          - label: "Parole Lato Destro (Strumenti / Dettagli)"
+            name: "parole_destra"
+            widget: "list"
+            required: false
+            hint: "Parole che scorrono sul lato destro della moneta 3D."
+
+      - name: "experience"
+        label: "03 · Experience (Timeline)"
+        file: "content/chi-sono/experience.json"
+        format: "json"
+        fields:
+          - { name: "titolo_experience", label: "Titolo Sezione", widget: "string", default: "Experience" }
+          - label: "Esperienze Lavorative & Ruoli"
+            name: "esperienze"
+            widget: "list"
+            required: false
+            summary: "{{fields.azienda}} — {{fields.periodo}} ({{fields.stato}})"
+            fields:
+              - { name: "azienda", label: "Azienda / Studio / Organizzazione", widget: "string" }
+              - { name: "ruolo", label: "Ruolo / Posizione", widget: "string" }
+              - { name: "periodo", label: "Periodo (es: 2023 — NOW)", widget: "string" }
+              - { name: "stato", label: "Stato", widget: "select", options: [{ label: "Attivo (pallino rosso)", value: "active" }, { label: "Archivio", value: "archive" }], default: "active" }
+              - { name: "descrizione", label: "Descrizione", widget: "text" }
+              - { name: "link", label: "Link Esterno (opzionale)", widget: "string", required: false }
+
+      - name: "terminal"
+        label: "04 · Terminale (/now)"
+        file: "content/chi-sono/terminal.json"
+        format: "json"
+        fields:
+          - { name: "mostra_terminale", label: "Mostra sezione Terminale nella pagina", widget: "boolean", default: true, hint: "Disattiva per nascondere completamente il blocco terminale sotto Experience." }
+          - { name: "terminale_titolo", label: "Intestazione sessione", widget: "string", default: "fatpix — ~/now — -zsh", required: false }
+          - { name: "terminale_aggiornamento", label: "Data aggiornamento (in alto a destra)", widget: "string", default: "LAST UPDATE: NOV 2026", required: false }
+          - { name: "terminale_comando", label: "Comando prompt", widget: "string", default: "cat ./now.txt", required: false }
+          - { name: "terminale_nota", label: "Testo libero (Interessi & Sperimentazioni)", widget: "text", required: false, hint: "Scrivi liberamente i tuoi interessi e sperimentazioni attuali. Separa i paragrafi con una riga vuota." }
+
   - name: "pagine"
-    label: "Pagine e Informazioni"
+    label: "Home & Dati Sito"
     files:
       - name: "home"
         label: "Home Page (Hero Video Cutout & Titolo)"
@@ -54,47 +114,6 @@ collections:
           - { name: "video_hero", label: "Video Hero Cutout [1920×1080 px — 16:9] (.mp4 / .webm)", widget: "file", default: "reveal-video.mp4", hint: "Carica il file video in formato 1920×1080 px (16:9). Verrà riprodotto in loop attraverso il cutout della scritta PORTFOLIO e a tutto schermo con lo scroll." }
           - { name: "poster_hero", label: "Copertina / Poster Video [1920×1080 px] (opzionale)", widget: "file", required: false, hint: "Immagine di copertina (1920×1080 px) per il caricamento del video." }
           - { name: "titolo_lavori", label: "Titolo Sezione Lavori", widget: "string", default: "My Works" }
-      - name: "chi-sono"
-        label: "About Me (Chi Sono)"
-        file: "content/chi-sono/chi-sono.md"
-        media_folder: ""
-        public_folder: ""
-        fields:
-          - { name: "location", label: "Posizione / Città (es: Genova/Italy)", widget: "string" }
-          - { name: "foto", label: "Media Profilo [1000×1050 px — Quadrata o Verticale] (Foto / Video / GIF)", widget: "file", default: "foto.svg", hint: "Media del profilo (foto, video o GIF). Si adatta all'altezza del testo della bio al suo fianco. Risoluzione consigliata: 1000x1050 px (~1:1 o 3:4)." }
-          - { name: "titolo_skills", label: "Titolo Sezione 3D (es: Skills)", widget: "string", default: "Skills" }
-          - label: "Parole Animate Sinistra (Discipline / Skill)"
-            name: "parole_sinistra"
-            widget: "list"
-            required: false
-            hint: "Elenco delle parole che salgono sul lato sinistro della testa 3D"
-          - label: "Parole Animate Destra (Strumenti / Dettagli)"
-            name: "parole_destra"
-            widget: "list"
-            required: false
-            hint: "Elenco delle parole che scendono sul lato destro della testa 3D"
-          - { name: "titolo_experience", label: "Titolo Sezione Esperienze (es: Experience)", widget: "string", default: "Experience" }
-          - { name: "breadcrumb_experience", label: "Breadcrumb Tech Header (es: ~ / WORK / ROLES.MD)", widget: "string", default: "~ / WORK / ROLES.MD" }
-          - { name: "section_id_experience", label: "ID Sezione Tech (es: § 02.B)", widget: "string", default: "§ 02.B" }
-          - label: "Esperienze Lavorative & Ruoli (Jonathan Moore Style)"
-            name: "esperienze"
-            widget: "list"
-            required: false
-            fields:
-              - { name: "azienda", label: "Azienda / Studio / Organizzazione", widget: "string" }
-              - { name: "ruolo", label: "Ruolo / Posizione (es: LEAD DESIGN ENGINEER IC · 3D ARTIST)", widget: "string" }
-              - { name: "periodo", label: "Periodo Anni (es: 2023-··· o 2020-2022)", widget: "string" }
-              - { name: "stato", label: "Stato", widget: "select", options: ["active", "past", "archive", "beta"], default: "active" }
-              - { name: "descrizione", label: "Descrizione delle responsabilità e progetti", widget: "text" }
-              - { name: "ref", label: "Codice Referenza (es: FP-019 o 576602E)", widget: "string", required: false }
-              - { name: "durata", label: "Durata (es: ±28 MO)", widget: "string", required: false }
-              - { name: "link", label: "Link Esterno (opzionale)", widget: "string", required: false }
-          - { name: "mostra_terminale", label: "Mostra Finestra Terminale Mac (Interessi & Sperimentazioni)", widget: "boolean", default: true, hint: "Attiva o nascondi la finestra stile macOS Terminal sotto la sezione Experience." }
-          - { name: "terminale_titolo", label: "Titolo Finestra Terminale", widget: "string", default: "fatpix — ~/now — -zsh", required: false }
-          - { name: "terminale_comando", label: "Comando Prompt Terminale", widget: "string", default: "cat ./now.txt", required: false }
-          - { name: "terminale_aggiornamento", label: "Data / Stato Aggiornamento", widget: "string", default: "LAST UPDATE: NOV 2026", required: false }
-          - { name: "terminale_nota", label: "Testo libero nel Terminale (Interessi & Sperimentazioni)", widget: "text", required: false, hint: "Scrivi liberamente i tuoi interessi, sperimentazioni o aggiornamenti attuali. Puoi andare a capo liberamente o separare i paragrafi con una riga vuota." }
-          - { name: "body", label: "Biografia / Presentazione", widget: "markdown" }
 
       - name: "sito"
         label: "Dati Sito & Social"

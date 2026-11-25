@@ -1,0 +1,43 @@
+{
+  "titolo_skills": "Skills",
+  "parole_sinistra": [
+    "Web Design",
+    "Motion Graphics",
+    "3D Modeling",
+    "Video Making",
+    "Brand Identity",
+    "Creative Direction",
+    "Interaction Design",
+    "Visual Storytelling",
+    "Typography & Layout",
+    "UI & UX Craft",
+    "Generative Art",
+    "Stop Motion",
+    "Analog Experiments",
+    "Prototyping",
+    "Sound & Atmosphere",
+    "Editorial Design",
+    "Digital Experiences",
+    "Creative Coding"
+  ],
+  "parole_destra": [
+    "Three.js & WebGL",
+    "Blender 3D",
+    "After Effects",
+    "Figma",
+    "Premiere Pro",
+    "Cinema 4D",
+    "Illustrator",
+    "Photoshop",
+    "Modern JavaScript",
+    "CSS Animation",
+    "DaVinci Resolve",
+    "35mm Photography",
+    "Hand-made Craft",
+    "Rapid Iteration",
+    "Problem Solving",
+    "Swiss Army Knife",
+    "Genova / Italy",
+    "Fatpix Studio"
+  ]
+}

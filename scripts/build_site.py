@@ -141,7 +141,7 @@ def copy_assets(from_dir, to_dir):
     if not os.path.exists(from_dir):
         return
     for f in os.listdir(from_dir):
-        if not f.endswith('.md'):
+        if not f.endswith(('.md', '.json')):
             src = os.path.join(from_dir, f)
             dst = os.path.join(to_dir, f)
             if os.path.isdir(src):
@@ -1142,15 +1142,27 @@ for i, l in enumerate(lavori):
 
 # Chi sono
 about = parse(f'{C}/chi-sono/chi-sono.md')
+def read_about_json(name):
+    p = f'{C}/chi-sono/{name}'
+    if not os.path.exists(p):
+        return {}
+    try:
+        with open(p, 'r', encoding='utf-8') as jf:
+            return json.load(jf)
+    except Exception:
+        return {}
+
+skills_conf = read_about_json('skills.json')
+exp_conf = read_about_json('experience.json')
+term_conf = read_about_json('terminal.json')
+
 copy_assets(f'{C}/chi-sono', f'{OUT}/chi-sono')
 generate_about_placeholder(f'{OUT}/chi-sono')
 foto_src = esc(about['meta'].get('foto', 'foto.svg'))
 location = esc(about['meta'].get('location', 'Genova/Italy'))
-titolo_skills = esc(about['meta'].get('titolo_skills', 'Skills') or 'Skills')
-titolo_experience = esc(about['meta'].get('titolo_experience', 'Experience') or 'Experience')
-breadcrumb_exp = esc(about['meta'].get('breadcrumb_experience', '~ / WORK / ROLES.MD') or '~ / WORK / ROLES.MD')
-section_id_exp = esc(about['meta'].get('section_id_experience', '§ 02.B') or '§ 02.B')
-esperienze_raw = about['meta'].get('esperienze', [])
+titolo_skills = esc(skills_conf.get('titolo_skills') or about['meta'].get('titolo_skills', 'Skills') or 'Skills')
+titolo_experience = esc(exp_conf.get('titolo_experience') or about['meta'].get('titolo_experience', 'Experience') or 'Experience')
+esperienze_raw = exp_conf.get('esperienze') or about['meta'].get('esperienze', [])
 if not esperienze_raw or not isinstance(esperienze_raw, list):
     esperienze_raw = [
         {
@@ -1250,11 +1262,12 @@ exp_section_html = f"""  <section class="about-experience-sezione" id="experienc
     </div>
   </section>"""
 
-show_terminal = str(about['meta'].get('mostra_terminale', 'true')).strip().lower() != 'false'
-term_title = esc(str(about['meta'].get('terminale_titolo') or 'fatpix — ~/now — -zsh').strip())
-term_command = esc(str(about['meta'].get('terminale_comando') or 'cat ./now.txt').strip())
-term_updated = esc(str(about['meta'].get('terminale_aggiornamento') or '').strip())
-term_note_raw = str(about['meta'].get('terminale_nota') or '').strip()
+_mostra_term = term_conf.get('mostra_terminale') if 'mostra_terminale' in term_conf else about['meta'].get('mostra_terminale', 'true')
+show_terminal = str(_mostra_term).strip().lower() != 'false'
+term_title = esc(str(term_conf.get('terminale_titolo') or about['meta'].get('terminale_titolo') or 'fatpix — ~/now — -zsh').strip())
+term_command = esc(str(term_conf.get('terminale_comando') or about['meta'].get('terminale_comando') or 'cat ./now.txt').strip())
+term_updated = esc(str(term_conf.get('terminale_aggiornamento') or about['meta'].get('terminale_aggiornamento') or '').strip())
+term_note_raw = str(term_conf.get('terminale_nota') or about['meta'].get('terminale_nota') or '').strip()
 
 term_meta_html = f"""<div class="mac-terminal-meta">
         {f'<span class="mac-terminal-title">{term_title}</span>' if term_title else '<span></span>'}
@@ -1311,8 +1324,8 @@ default_right = [
   "Problem Solving", "Swiss Army Knife", "Genova / Italy", "Fatpix Studio"
 ]
 
-words_left = extract_words(about['meta'].get('parole_sinistra'), default_left)
-words_right = extract_words(about['meta'].get('parole_destra'), default_right)
+words_left = extract_words(skills_conf.get('parole_sinistra') or about['meta'].get('parole_sinistra'), default_left)
+words_right = extract_words(skills_conf.get('parole_destra') or about['meta'].get('parole_destra'), default_right)
 words_left_json = json.dumps(words_left, ensure_ascii=False)
 words_right_json = json.dumps(words_right, ensure_ascii=False)
 
