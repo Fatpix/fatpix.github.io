@@ -503,7 +503,6 @@ body.pagina-home main#contenuto {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.sequenza-item:hover .sequenza-meta,
 .sequenza-item:hover .sequenza-name,
 .sequenza-item:hover .sequenza-arrow {
   color: var(--colore-hover);
